@@ -1,2 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Error><Code>NoSuchBucket</Code><Message>The specified bucket does not exist</Message><BucketName>claude-artifacts-production</BucketName><RequestId>Q0M3GP04QX1DQ9AQ</RequestId><HostId>5MmeBBmUx3Lc260qTPgCGmYRtobAQj6YLZkD5SQKCSKdap3zH8IWYttwPpW5w9c9xKWD5CxbZpLJnLF9pRh1tYFUku/mwQrOrZwYmcxgPvE=</HostId></Error>
