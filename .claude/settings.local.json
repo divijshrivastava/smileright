@@ -5,7 +5,9 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(vercel:*)",
-      "WebFetch(domain:www.rockefellerdentistry.com)"
+      "WebFetch(domain:www.rockefellerdentistry.com)",
+      "Bash(git remote add:*)",
+      "Bash(git push:*)"
     ]
   }
 }
