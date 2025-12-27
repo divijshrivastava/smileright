@@ -103,29 +103,18 @@ header.scrolled {
 .logo {
     text-decoration: none;
     transition: var(--transition);
+    display: flex;
+    align-items: center;
 }
 
-.logo-text h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--primary-dark);
-    margin: 0;
-    letter-spacing: 0;
-    line-height: 1.2;
+.logo-image {
+    height: 50px;
+    width: auto;
+    transition: var(--transition);
 }
 
-.logo-text h1 .highlight {
-    color: var(--accent-blue);
-    font-weight: 700;
-}
-
-.logo-text .tagline {
-    font-size: 0.7rem;
-    color: var(--text-gray);
-    margin-top: 0.25rem;
-    font-weight: 400;
-    letter-spacing: 0.5px;
+.logo:hover .logo-image {
+    transform: scale(1.02);
 }
 
 .nav-menu {
@@ -694,17 +683,14 @@ footer {
     margin-bottom: 2.5rem;
 }
 
-.footer-logo h3 {
-    color: var(--white);
+.footer-logo {
     margin-bottom: 1rem;
-    font-size: 1.5rem;
-    font-family: 'Playfair Display', serif;
-    font-weight: 700;
-    letter-spacing: 0;
 }
 
-.footer-logo h3 .orange {
-    color: var(--accent-blue);
+.footer-logo-image {
+    height: 60px;
+    width: auto;
+    filter: brightness(0) invert(1);
 }
 
 .footer-section h3 {
@@ -860,12 +846,8 @@ footer {
         padding: 0 20px;
     }
 
-    .logo-text h1 {
-        font-size: 1.4rem;
-    }
-
-    .logo-text .tagline {
-        font-size: 0.6rem;
+    .logo-image {
+        height: 40px;
     }
 
     .hero-content h2 {
