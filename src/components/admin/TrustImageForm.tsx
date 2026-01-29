@@ -56,6 +56,7 @@ export default function TrustImageForm({ trustImage }: TrustImageFormProps) {
         <ImageUploader
           currentUrl={imageUrl || null}
           onUpload={(url) => setImageUrl(url)}
+          bucket="trust-images"
         />
       </div>
 

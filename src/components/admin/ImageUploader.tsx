@@ -6,9 +6,10 @@ import { createClient } from '@/lib/supabase/client'
 interface ImageUploaderProps {
   currentUrl: string | null
   onUpload: (url: string) => void
+  bucket?: 'testimonial-images' | 'trust-images'
 }
 
-export default function ImageUploader({ currentUrl, onUpload }: ImageUploaderProps) {
+export default function ImageUploader({ currentUrl, onUpload, bucket = 'testimonial-images' }: ImageUploaderProps) {
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState('')
 
@@ -22,34 +23,47 @@ export default function ImageUploader({ currentUrl, onUpload }: ImageUploaderPro
       return
     }
 
+    const fileSizeMB = (file.size / 1024 / 1024).toFixed(2)
     if (file.size > 5 * 1024 * 1024) {
-      setError('Image must be smaller than 5MB.')
+      setError(`Image must be smaller than 5MB. Current size: ${fileSizeMB}MB`)
       return
     }
 
     setError('')
     setUploading(true)
 
-    const supabase = createClient()
-    const fileExt = file.name.split('.').pop()
-    const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
+    try {
+      const supabase = createClient()
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
 
-    const { error: uploadError } = await supabase.storage
-      .from('testimonial-images')
-      .upload(fileName, file)
+      console.log('Uploading to bucket:', bucket, 'File:', fileName, 'Size:', fileSizeMB, 'MB')
 
-    if (uploadError) {
-      setError(uploadError.message)
+      const { error: uploadError, data: uploadData } = await supabase.storage
+        .from(bucket)
+        .upload(fileName, file)
+
+      if (uploadError) {
+        console.error('Upload error:', uploadError)
+        setError(`Upload failed: ${uploadError.message}`)
+        setUploading(false)
+        return
+      }
+
+      console.log('Upload successful:', uploadData)
+
+      const { data: { publicUrl } } = supabase.storage
+        .from(bucket)
+        .getPublicUrl(fileName)
+
+      console.log('Public URL:', publicUrl)
+      onUpload(publicUrl)
       setUploading(false)
-      return
+    } catch (err) {
+      console.error('Unexpected error during upload:', err)
+      setError(`Unexpected error: ${err instanceof Error ? err.message : 'Unknown error'}`)
+      setUploading(false)
     }
-
-    const { data: { publicUrl } } = supabase.storage
-      .from('testimonial-images')
-      .getPublicUrl(fileName)
-
-    onUpload(publicUrl)
-    setUploading(false)
   }
 
   return (

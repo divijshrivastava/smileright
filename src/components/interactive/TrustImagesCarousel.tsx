@@ -10,6 +10,23 @@ interface TrustImagesCarouselProps {
 
 export default function TrustImagesCarousel({ images }: TrustImagesCarouselProps) {
   const [current, setCurrent] = useState(0)
+  const [carouselHeight, setCarouselHeight] = useState('500px')
+
+  useEffect(() => {
+    const updateHeight = () => {
+      if (window.innerWidth < 768) {
+        setCarouselHeight('320px')
+      } else if (window.innerWidth < 1024) {
+        setCarouselHeight('400px')
+      } else {
+        setCarouselHeight('500px')
+      }
+    }
+
+    updateHeight()
+    window.addEventListener('resize', updateHeight)
+    return () => window.removeEventListener('resize', updateHeight)
+  }, [])
 
   useEffect(() => {
     if (images.length <= 1) return
@@ -37,7 +54,7 @@ export default function TrustImagesCarousel({ images }: TrustImagesCarouselProps
 
   return (
     <div style={styles.carouselContainer}>
-      <div style={styles.carouselWrapper}>
+      <div style={{ ...styles.carouselWrapper, height: carouselHeight }}>
         {images.map((image, index) => (
           <div
             key={image.id}
@@ -52,7 +69,7 @@ export default function TrustImagesCarousel({ images }: TrustImagesCarouselProps
                 src={image.image_url}
                 alt={image.alt_text || 'Trust section image'}
                 fill
-                style={{ objectFit: 'cover' }}
+                style={{ objectFit: 'contain' }}
                 sizes="(max-width: 768px) 100vw, 1200px"
                 priority={index === 0}
               />
@@ -109,13 +126,13 @@ const styles: Record<string, React.CSSProperties> = {
     maxWidth: '1200px',
     margin: '0 auto',
     overflow: 'hidden',
-    borderRadius: '12px',
-    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+    borderRadius: '16px',
+    boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+    background: 'linear-gradient(135deg, #f8f8f8 0%, #e8e8e8 100%)',
   },
   carouselWrapper: {
     position: 'relative',
     width: '100%',
-    height: '500px',
   },
   slide: {
     position: 'absolute',

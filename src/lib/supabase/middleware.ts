@@ -40,12 +40,12 @@ export async function updateSession(request: NextRequest) {
     !request.nextUrl.pathname.startsWith('/admin/login')
   ) {
     const url = request.nextUrl.clone()
-    url.pathname = '/admin/login'
+    url.pathname = '/login'
     return NextResponse.redirect(url)
   }
 
-  // If logged in and visiting /admin/login, redirect to /admin
-  if (user && request.nextUrl.pathname === '/admin/login') {
+  // If logged in and visiting /admin/login or /login, redirect to /admin
+  if (user && (request.nextUrl.pathname === '/admin/login' || request.nextUrl.pathname === '/login')) {
     const url = request.nextUrl.clone()
     url.pathname = '/admin'
     return NextResponse.redirect(url)

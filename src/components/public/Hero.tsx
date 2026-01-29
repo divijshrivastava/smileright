@@ -3,14 +3,32 @@ export default function Hero() {
     <section id="home" className="hero">
       <div className="hero-content-wrapper">
         <div className="hero-content">
+          <div className="hero-badge">✨ Trusted by 1000+ Families in Mumbai</div>
           <h1>Smile Right</h1>
-          <p className="hero-subtitle">Dentistry in Kandivali East, Mumbai</p>
+          <p className="hero-subtitle">Premium Dentistry in Kandivali East, Mumbai</p>
           <p className="hero-doctor">Dr. Sneha Kedia, B.D.S</p>
-          <p className="hero-specialty">Dental Surgeon and Implantologist</p>
-          <div className="hero-buttons">
-            <a href="tel:+917977991130" className="btn btn-primary">Book Appointment</a>
-            <a href="#services" className="btn btn-secondary">Our Services</a>
+          <p className="hero-specialty">Dental Surgeon & Implantologist</p>
+          <div className="hero-features">
+            <span className="hero-feature">✓ Same-Day Appointments</span>
+            <span className="hero-feature">✓ Advanced Technology</span>
+            <span className="hero-feature">✓ Painless Treatments</span>
           </div>
+          <div className="hero-buttons">
+            <a href="tel:+917977991130" className="btn btn-primary btn-large">
+              <span className="btn-icon">📞</span> Book Appointment
+            </a>
+            <a 
+              href="https://wa.me/917977991130?text=Hi,%20I%20would%20like%20to%20book%20an%20appointment" 
+              className="btn btn-secondary btn-large"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span className="btn-icon">💬</span> WhatsApp Us
+            </a>
+          </div>
+          <p className="hero-phone">
+            <span className="phone-icon">📞</span> Call Now: <a href="tel:+917977991130">7977 991 130</a>
+          </p>
         </div>
       </div>
     </section>

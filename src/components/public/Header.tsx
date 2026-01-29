@@ -19,11 +19,29 @@ export default function Header() {
             />
           </div>
 
+          <ul className="nav-links nav-links-desktop">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#gallery">Gallery</a></li>
+            <li><a href="#testimonials">Reviews</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+
           <MobileMenu />
 
           <div className="nav-cta">
-            <a href="tel:+917977991130" className="btn btn-primary">Book Online</a>
-            <a href="tel:+917977991130" className="btn btn-secondary">7977991130</a>
+            <a href="tel:+917977991130" className="btn btn-primary">
+              <span className="btn-icon">📞</span> Book Now
+            </a>
+            <a 
+              href="https://wa.me/917977991130?text=Hi,%20I%20would%20like%20to%20book%20an%20appointment" 
+              className="btn btn-secondary"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span className="btn-icon">💬</span> WhatsApp
+            </a>
           </div>
         </nav>
       </header>
