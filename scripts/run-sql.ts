@@ -74,40 +74,6 @@ async function executeSqlFile(filePath: string) {
   }
 }
 
-async function executeSqlDirect(sql: string) {
-  try {
-    console.log(`🚀 Executing SQL...`);
-    
-    // For PostgreSQL, we need to use the REST API or a direct connection
-    // The Supabase client doesn't directly support arbitrary SQL execution
-    // We'll need to use the Management API or direct PostgreSQL connection
-    
-    const response = await fetch(`${supabaseUrl}/rest/v1/rpc/exec_sql`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': supabaseServiceKey,
-        'Authorization': `Bearer ${supabaseServiceKey}`
-      },
-      body: JSON.stringify({ sql_query: sql })
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`HTTP ${response.status}: ${errorText}`);
-    }
-
-    const result = await response.json();
-    console.log('✅ SQL executed successfully!');
-    if (result) {
-      console.log('📊 Result:', result);
-    }
-  } catch (error) {
-    console.error('❌ Error:', error);
-    throw error;
-  }
-}
-
 // Main execution
 const args = process.argv.slice(2);
 

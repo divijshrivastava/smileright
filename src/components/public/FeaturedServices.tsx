@@ -53,7 +53,7 @@ export default function FeaturedServices({ services }: FeaturedServicesProps) {
                       >
                         <path d="M4.5 2A1.5 1.5 0 0 0 3 3.5v9A1.5 1.5 0 0 0 4.5 14h7a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 11.5 2h-7zM6 5.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm4.5 5.5h-7l2-3 1.5 2 2-3L11 11h.5z"/>
                       </svg>
-                      <span>{service.service_images.length}</span>
+                      <span>{service.service_images?.length || 0}</span>
                     </div>
                   )}
                   {hasImages && (
@@ -91,7 +91,7 @@ export default function FeaturedServices({ services }: FeaturedServicesProps) {
                   )}
                 </div>
                 
-                {isExpanded && hasImages && (
+                {isExpanded && hasImages && service.service_images && (
                   <div className="service-gallery" onClick={(e) => e.stopPropagation()}>
                     <div className="gallery-grid">
                       {service.service_images.map((img) => (
