@@ -24,6 +24,12 @@ export default function AdminSidebar({ profile }: AdminSidebarProps) {
         <Link href="/admin/testimonials/new" style={styles.link}>
           Add Testimonial
         </Link>
+        <Link href="/admin/trust-images" style={styles.link}>
+          Trust Images
+        </Link>
+        <Link href="/admin/trust-images/new" style={styles.link}>
+          Add Trust Image
+        </Link>
         <Link href="/" style={styles.link} target="_blank">
           View Site
         </Link>

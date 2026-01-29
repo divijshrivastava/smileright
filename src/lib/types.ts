@@ -3,12 +3,27 @@ export interface Testimonial {
   name: string
   description: string
   image_url: string | null
+  video_url: string | null
+  media_type: 'text' | 'image' | 'video' | 'image_text' | 'video_text'
   alt_text: string | null
   is_published: boolean
   created_at: string
   updated_at: string
   rating: number
   display_order: number
+  created_by: string | null
+  updated_by: string | null
+}
+
+export interface TrustImage {
+  id: string
+  image_url: string
+  alt_text: string | null
+  caption: string | null
+  display_order: number
+  is_published: boolean
+  created_at: string
+  updated_at: string
   created_by: string | null
   updated_by: string | null
 }

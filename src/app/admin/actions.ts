@@ -28,6 +28,8 @@ export async function createTestimonial(formData: FormData) {
   const displayOrder = parseInt(formData.get('display_order') as string) || 0
   const isPublished = formData.get('is_published') === 'true'
   const imageUrl = formData.get('image_url') as string | null
+  const videoUrl = formData.get('video_url') as string | null
+  const mediaType = formData.get('media_type') as string || 'text'
   const altText = formData.get('alt_text') as string | null
 
   const { error } = await supabase.from('testimonials').insert({
@@ -37,6 +39,8 @@ export async function createTestimonial(formData: FormData) {
     display_order: displayOrder,
     is_published: isPublished,
     image_url: imageUrl || null,
+    video_url: videoUrl || null,
+    media_type: mediaType,
     alt_text: altText || null,
     created_by: user.id,
     updated_by: user.id,
@@ -64,6 +68,8 @@ export async function updateTestimonial(id: string, formData: FormData) {
   const displayOrder = parseInt(formData.get('display_order') as string) || 0
   const isPublished = formData.get('is_published') === 'true'
   const imageUrl = formData.get('image_url') as string | null
+  const videoUrl = formData.get('video_url') as string | null
+  const mediaType = formData.get('media_type') as string || 'text'
   const altText = formData.get('alt_text') as string | null
 
   const { error } = await supabase.from('testimonials').update({
@@ -73,6 +79,8 @@ export async function updateTestimonial(id: string, formData: FormData) {
     display_order: displayOrder,
     is_published: isPublished,
     image_url: imageUrl || null,
+    video_url: videoUrl || null,
+    media_type: mediaType,
     alt_text: altText || null,
     updated_by: user.id,
   }).eq('id', id)
@@ -122,4 +130,110 @@ export async function togglePublish(id: string, isPublished: boolean) {
 
   revalidatePath('/', 'page')
   revalidatePath('/admin/testimonials')
+}
+
+// ========================================
+// Trust Images Actions
+// ========================================
+
+export async function createTrustImage(formData: FormData) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    throw new Error('Unauthorized')
+  }
+
+  const imageUrl = formData.get('image_url') as string
+  const altText = formData.get('alt_text') as string | null
+  const caption = formData.get('caption') as string | null
+  const displayOrder = parseInt(formData.get('display_order') as string) || 0
+  const isPublished = formData.get('is_published') === 'true'
+
+  const { error } = await supabase.from('trust_images').insert({
+    image_url: imageUrl,
+    alt_text: altText || null,
+    caption: caption || null,
+    display_order: displayOrder,
+    is_published: isPublished,
+    created_by: user.id,
+    updated_by: user.id,
+  })
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  revalidatePath('/', 'page')
+  revalidatePath('/admin/trust-images')
+}
+
+export async function updateTrustImage(id: string, formData: FormData) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    throw new Error('Unauthorized')
+  }
+
+  const imageUrl = formData.get('image_url') as string
+  const altText = formData.get('alt_text') as string | null
+  const caption = formData.get('caption') as string | null
+  const displayOrder = parseInt(formData.get('display_order') as string) || 0
+  const isPublished = formData.get('is_published') === 'true'
+
+  const { error } = await supabase.from('trust_images').update({
+    image_url: imageUrl,
+    alt_text: altText || null,
+    caption: caption || null,
+    display_order: displayOrder,
+    is_published: isPublished,
+    updated_by: user.id,
+  }).eq('id', id)
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  revalidatePath('/', 'page')
+  revalidatePath('/admin/trust-images')
+}
+
+export async function deleteTrustImage(id: string) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    throw new Error('Unauthorized')
+  }
+
+  const { error } = await supabase.from('trust_images').delete().eq('id', id)
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  revalidatePath('/', 'page')
+  revalidatePath('/admin/trust-images')
+}
+
+export async function toggleTrustImagePublish(id: string, isPublished: boolean) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    throw new Error('Unauthorized')
+  }
+
+  const { error } = await supabase.from('trust_images').update({
+    is_published: isPublished,
+    updated_by: user.id,
+  }).eq('id', id)
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  revalidatePath('/', 'page')
+  revalidatePath('/admin/trust-images')
 }

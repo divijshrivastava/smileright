@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createTestimonial, updateTestimonial } from '@/app/admin/actions'
 import ImageUploader from './ImageUploader'
+import VideoUploader from './VideoUploader'
 import type { Testimonial } from '@/lib/types'
 
 interface TestimonialFormProps {
@@ -13,6 +14,8 @@ interface TestimonialFormProps {
 export default function TestimonialForm({ testimonial }: TestimonialFormProps) {
   const router = useRouter()
   const [imageUrl, setImageUrl] = useState(testimonial?.image_url ?? '')
+  const [videoUrl, setVideoUrl] = useState(testimonial?.video_url ?? '')
+  const [mediaType, setMediaType] = useState<string>(testimonial?.media_type ?? 'text')
   const [error, setError] = useState('')
   const [saving, setSaving] = useState(false)
   const isEditing = !!testimonial
@@ -25,6 +28,8 @@ export default function TestimonialForm({ testimonial }: TestimonialFormProps) {
     const form = e.currentTarget
     const formData = new FormData(form)
     formData.set('image_url', imageUrl || '')
+    formData.set('video_url', videoUrl || '')
+    formData.set('media_type', mediaType)
     formData.set('is_published', formData.has('is_published') ? 'true' : 'false')
 
     try {
@@ -71,6 +76,43 @@ export default function TestimonialForm({ testimonial }: TestimonialFormProps) {
         />
       </div>
 
+      <div style={styles.field}>
+        <label htmlFor="media_type" style={styles.label}>Media Type</label>
+        <select
+          id="media_type"
+          name="media_type"
+          value={mediaType}
+          onChange={(e) => setMediaType(e.target.value)}
+          style={styles.input}
+        >
+          <option value="text">Text Only</option>
+          <option value="image">Image Only</option>
+          <option value="video">Video Only</option>
+          <option value="image_text">Image + Text</option>
+          <option value="video_text">Video + Text</option>
+        </select>
+      </div>
+
+      {(mediaType === 'image' || mediaType === 'image_text') && (
+        <div style={styles.field}>
+          <label style={styles.label}>Photo</label>
+          <ImageUploader
+            currentUrl={imageUrl || null}
+            onUpload={(url) => setImageUrl(url)}
+          />
+        </div>
+      )}
+
+      {(mediaType === 'video' || mediaType === 'video_text') && (
+        <div style={styles.field}>
+          <label style={styles.label}>Video</label>
+          <VideoUploader
+            currentUrl={videoUrl || null}
+            onUpload={(url) => setVideoUrl(url)}
+          />
+        </div>
+      )}
+
       <div style={styles.row}>
         <div style={styles.field}>
           <label htmlFor="rating" style={styles.label}>Rating (1-5)</label>
@@ -97,14 +139,6 @@ export default function TestimonialForm({ testimonial }: TestimonialFormProps) {
             style={styles.input}
           />
         </div>
-      </div>
-
-      <div style={styles.field}>
-        <label style={styles.label}>Photo (Optional)</label>
-        <ImageUploader
-          currentUrl={imageUrl || null}
-          onUpload={(url) => setImageUrl(url)}
-        />
       </div>
 
       <div style={styles.field}>

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import type { Testimonial } from '@/lib/types'
+import Image from 'next/image'
 
 interface TestimonialsCarouselProps {
   testimonials: Testimonial[]
@@ -65,15 +66,68 @@ export default function TestimonialsCarousel({ testimonials }: TestimonialsCarou
     return '★'.repeat(rating) + '☆'.repeat(5 - rating)
   }
 
+  const renderMedia = (testimonial: Testimonial) => {
+    const mediaType = testimonial.media_type || 'text'
+
+    if (mediaType === 'image' || mediaType === 'image_text') {
+      if (testimonial.image_url) {
+        return (
+          <div style={styles.mediaContainer}>
+            <Image
+              src={testimonial.image_url}
+              alt={testimonial.alt_text || `${testimonial.name}'s testimonial`}
+              width={400}
+              height={300}
+              style={{ objectFit: 'cover', borderRadius: '8px', width: '100%', height: 'auto' }}
+            />
+          </div>
+        )
+      }
+    }
+
+    if (mediaType === 'video' || mediaType === 'video_text') {
+      if (testimonial.video_url) {
+        return (
+          <div style={styles.mediaContainer}>
+            <video
+              src={testimonial.video_url}
+              controls
+              style={{ width: '100%', borderRadius: '8px', maxHeight: '400px' }}
+            />
+          </div>
+        )
+      }
+    }
+
+    return null
+  }
+
+  const shouldShowText = (testimonial: Testimonial) => {
+    const mediaType = testimonial.media_type || 'text'
+    return mediaType === 'text' || mediaType === 'image_text' || mediaType === 'video_text'
+  }
+
   return (
     <div className="testimonials-carousel" ref={carouselRef}>
       {testimonials.map((testimonial) => (
         <div key={testimonial.id} className="testimonial-card">
-          <div className="stars">{renderStars(testimonial.rating)}</div>
-          <p className="testimonial-text">&ldquo;{testimonial.description}&rdquo;</p>
+          {renderMedia(testimonial)}
+          {shouldShowText(testimonial) && (
+            <>
+              <div className="stars">{renderStars(testimonial.rating)}</div>
+              <p className="testimonial-text">&ldquo;{testimonial.description}&rdquo;</p>
+            </>
+          )}
           <p className="testimonial-author">&mdash; {testimonial.name}</p>
         </div>
       ))}
     </div>
   )
+}
+
+const styles: Record<string, React.CSSProperties> = {
+  mediaContainer: {
+    marginBottom: '1rem',
+    width: '100%',
+  },
 }

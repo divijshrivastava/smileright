@@ -1,7 +1,28 @@
-export default function TrustSection() {
+import { createClient } from '@/lib/supabase/server'
+import TrustImagesCarousel from '@/components/interactive/TrustImagesCarousel'
+import type { TrustImage } from '@/lib/types'
+
+export default async function TrustSection() {
+  const supabase = await createClient()
+
+  const { data: trustImages } = await supabase
+    .from('trust_images')
+    .select('*')
+    .eq('is_published', true)
+    .order('display_order', { ascending: true })
+    .order('created_at', { ascending: false })
+
+  const images: TrustImage[] = trustImages ?? []
+
   return (
     <section className="trust-section">
       <div className="container">
+        {images.length > 0 ? (
+          <div style={{ marginBottom: '3rem' }}>
+            <TrustImagesCarousel images={images} />
+          </div>
+        ) : null}
+
         <div className="trust-grid">
           <div className="trust-item">
             <h4>Trusted Care</h4>
