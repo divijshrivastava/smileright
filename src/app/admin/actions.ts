@@ -237,3 +237,195 @@ export async function toggleTrustImagePublish(id: string, isPublished: boolean) 
   revalidatePath('/', 'page')
   revalidatePath('/admin/trust-images')
 }
+
+// ========================================
+// Services Actions
+// ========================================
+
+export async function createService(formData: FormData) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    throw new Error('Unauthorized')
+  }
+
+  const title = formData.get('title') as string
+  const description = formData.get('description') as string
+  const imageUrl = formData.get('image_url') as string
+  const altText = formData.get('alt_text') as string
+  const displayOrder = parseInt(formData.get('display_order') as string) || 0
+  const isPublished = formData.get('is_published') === 'true'
+
+  const { error } = await supabase.from('services').insert({
+    title,
+    description,
+    image_url: imageUrl,
+    alt_text: altText,
+    display_order: displayOrder,
+    is_published: isPublished,
+    created_by: user.id,
+    updated_by: user.id,
+  })
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  revalidatePath('/', 'page')
+  revalidatePath('/admin/services')
+}
+
+export async function updateService(id: string, formData: FormData) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    throw new Error('Unauthorized')
+  }
+
+  const title = formData.get('title') as string
+  const description = formData.get('description') as string
+  const imageUrl = formData.get('image_url') as string
+  const altText = formData.get('alt_text') as string
+  const displayOrder = parseInt(formData.get('display_order') as string) || 0
+  const isPublished = formData.get('is_published') === 'true'
+
+  const { error } = await supabase.from('services').update({
+    title,
+    description,
+    image_url: imageUrl,
+    alt_text: altText,
+    display_order: displayOrder,
+    is_published: isPublished,
+    updated_by: user.id,
+  }).eq('id', id)
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  revalidatePath('/', 'page')
+  revalidatePath('/admin/services')
+}
+
+export async function deleteService(id: string) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    throw new Error('Unauthorized')
+  }
+
+  const { error } = await supabase.from('services').delete().eq('id', id)
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  revalidatePath('/', 'page')
+  revalidatePath('/admin/services')
+}
+
+export async function toggleServicePublish(id: string, isPublished: boolean) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    throw new Error('Unauthorized')
+  }
+
+  const { error } = await supabase.from('services').update({
+    is_published: isPublished,
+    updated_by: user.id,
+  }).eq('id', id)
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  revalidatePath('/', 'page')
+  revalidatePath('/admin/services')
+}
+
+// ========================================
+// Service Images Actions
+// ========================================
+
+export async function createServiceImage(serviceId: string, formData: FormData) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    throw new Error('Unauthorized')
+  }
+
+  const imageUrl = formData.get('image_url') as string
+  const altText = formData.get('alt_text') as string | null
+  const caption = formData.get('caption') as string | null
+  const displayOrder = parseInt(formData.get('display_order') as string) || 0
+
+  const { error } = await supabase.from('service_images').insert({
+    service_id: serviceId,
+    image_url: imageUrl,
+    alt_text: altText || null,
+    caption: caption || null,
+    display_order: displayOrder,
+    created_by: user.id,
+    updated_by: user.id,
+  })
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  revalidatePath('/', 'page')
+  revalidatePath('/admin/services')
+}
+
+export async function updateServiceImage(imageId: string, formData: FormData) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    throw new Error('Unauthorized')
+  }
+
+  const imageUrl = formData.get('image_url') as string
+  const altText = formData.get('alt_text') as string | null
+  const caption = formData.get('caption') as string | null
+  const displayOrder = parseInt(formData.get('display_order') as string) || 0
+
+  const { error } = await supabase.from('service_images').update({
+    image_url: imageUrl,
+    alt_text: altText || null,
+    caption: caption || null,
+    display_order: displayOrder,
+    updated_by: user.id,
+  }).eq('id', imageId)
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  revalidatePath('/', 'page')
+  revalidatePath('/admin/services')
+}
+
+export async function deleteServiceImage(imageId: string) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    throw new Error('Unauthorized')
+  }
+
+  const { error } = await supabase.from('service_images').delete().eq('id', imageId)
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  revalidatePath('/', 'page')
+  revalidatePath('/admin/services')
+}

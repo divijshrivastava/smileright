@@ -28,6 +28,34 @@ export interface TrustImage {
   updated_by: string | null
 }
 
+export interface Service {
+  id: string
+  title: string
+  description: string
+  image_url: string
+  alt_text: string
+  display_order: number
+  is_published: boolean
+  created_at: string
+  updated_at: string
+  created_by: string | null
+  updated_by: string | null
+  service_images?: ServiceImage[]
+}
+
+export interface ServiceImage {
+  id: string
+  service_id: string
+  image_url: string
+  alt_text: string | null
+  caption: string | null
+  display_order: number
+  created_at: string
+  updated_at: string
+  created_by: string | null
+  updated_by: string | null
+}
+
 export interface Profile {
   id: string
   email: string
