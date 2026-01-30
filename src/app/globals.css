@@ -1414,11 +1414,12 @@ footer {
     }
 
     nav {
-        padding: 12px 16px;
+        padding: 8px 16px;
     }
 
     .logo img {
-        height: 90px;
+        height: 60px !important;
+        max-width: 200px !important;
     }
 
     .nav-cta {
@@ -1436,7 +1437,7 @@ footer {
     .nav-links-mobile {
         display: none;
         position: fixed;
-        top: 120px;
+        top: 76px;
         left: 0;
         right: 0;
         background: var(--white);
@@ -1445,7 +1446,7 @@ footer {
         box-shadow: var(--shadow-lg);
         gap: 0;
         z-index: 999;
-        max-height: calc(100vh - 120px);
+        max-height: calc(100vh - 76px);
         overflow-y: auto;
     }
 
@@ -1615,7 +1616,7 @@ footer {
 
     .hero {
         min-height: 450px;
-        margin-top: 120px;
+        margin-top: 76px;
         background-attachment: scroll;
         background-position: center center;
     }
@@ -1735,8 +1736,13 @@ footer {
         padding: 0 16px;
     }
 
+    nav {
+        padding: 6px 12px;
+    }
+
     .logo img {
-        height: 80px;
+        height: 50px !important;
+        max-width: 180px !important;
     }
 
     .services-grid {
@@ -1861,6 +1867,15 @@ footer {
 
 /* Extra small mobile devices */
 @media screen and (max-width: 360px) {
+    nav {
+        padding: 4px 10px;
+    }
+
+    .logo img {
+        height: 45px !important;
+        max-width: 160px !important;
+    }
+
     h1, .hero h1 {
         font-size: 1.75rem;
     }
@@ -1875,6 +1890,15 @@ footer {
 
     .service-card {
         padding: 20px 15px;
+    }
+    
+    .hero {
+        margin-top: 62px;
+    }
+    
+    .nav-links-mobile {
+        top: 62px;
+        max-height: calc(100vh - 62px);
     }
 }
 
@@ -1898,7 +1922,7 @@ footer {
 
     .admin-main {
         margin-left: 0 !important;
-        padding: 70px 20px 20px 20px !important;
+        padding: 80px 20px 20px 20px !important;
     }
     
     /* Admin Cards - Better Touch Targets */
@@ -2007,7 +2031,7 @@ a[style*="viewAllLink"]:hover {
 
 @media (max-width: 480px) {
     .admin-main {
-        padding: 70px 16px 16px 16px !important;
+        padding: 80px 16px 16px 16px !important;
     }
     
     /* Smaller spacing on mobile */
@@ -2065,7 +2089,7 @@ img, video, iframe {
 /* Touch-friendly spacing */
 @media (max-width: 768px) {
     section {
-        scroll-margin-top: 140px; /* Account for fixed header */
+        scroll-margin-top: 80px; /* Account for fixed header */
     }
     
     /* Better spacing between interactive elements */
