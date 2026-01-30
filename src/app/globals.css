@@ -328,9 +328,9 @@ nav {
 .hero {
     min-height: 700px;
     background-image: linear-gradient(to right, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.3) 100%),
-                      url('/images/6572DD12-6B71-45CD-BB10-2A62D2F6FA98.JPG');
+                      url('/images/hero-image.jpg');
     background-size: cover;
-    background-position: right center;
+    background-position: center center;
     background-attachment: fixed;
     display: flex;
     align-items: center;
@@ -1797,7 +1797,7 @@ footer {
     .hero {
         min-height: 400px;
         background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-                          url('/images/6572DD12-6B71-45CD-BB10-2A62D2F6FA98.JPG');
+                          url('/images/hero-image.jpg');
         background-position: center center;
     }
 
