@@ -22,9 +22,9 @@ export default async function TrustImagesPage() {
 
   return (
     <div>
-      <div style={styles.header}>
+      <div style={styles.header} className="admin-page-header">
         <h1 style={styles.title}>Trust Section Images</h1>
-        <Link href="/admin/trust-images/new" style={styles.createBtn}>
+        <Link href="/admin/trust-images/new" style={styles.createBtn} className="admin-add-btn">
           + New Image
         </Link>
       </div>

@@ -33,9 +33,9 @@ export default async function ServicesPage() {
 
   return (
     <div>
-      <div style={styles.header}>
+      <div style={styles.header} className="admin-page-header">
         <h1 style={styles.title}>Featured Services</h1>
-        <Link href="/admin/services/new" style={styles.addBtn}>
+        <Link href="/admin/services/new" style={styles.addBtn} className="admin-add-btn">
           + Add Service
         </Link>
       </div>

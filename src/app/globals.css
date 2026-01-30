@@ -1900,10 +1900,257 @@ footer {
         margin-left: 0 !important;
         padding: 70px 20px 20px 20px !important;
     }
+    
+    /* Admin Cards - Better Touch Targets */
+    .admin-card,
+    .stat-card,
+    .action-card {
+        min-height: 100px !important;
+    }
+    
+    /* Admin Forms - Better Mobile Input */
+    input[type="text"],
+    input[type="email"],
+    input[type="number"],
+    input[type="url"],
+    textarea,
+    select {
+        font-size: 16px !important; /* Prevents zoom on iOS */
+        padding: 12px 16px !important;
+        min-height: 48px !important;
+    }
+    
+    /* Admin Buttons - Touch Friendly */
+    button,
+    .btn,
+    a.btn {
+        min-height: 48px !important;
+        padding: 12px 20px !important;
+        font-size: 1rem !important;
+    }
+    
+    /* Admin Page Headers - Mobile Responsive */
+    .admin-page-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+    }
+    
+    .admin-page-header h1 {
+        font-size: 1.5rem !important;
+    }
+    
+    .admin-add-btn {
+        width: 100% !important;
+        text-align: center !important;
+        padding: 14px 20px !important;
+        min-height: 48px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    
+    /* Admin Dashboard Grids - Mobile Responsive */
+    .admin-stats-grid {
+        grid-template-columns: 1fr !important;
+        gap: 16px !important;
+    }
+    
+    .admin-link-grid {
+        grid-template-columns: 1fr !important;
+        gap: 16px !important;
+    }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+    .admin-stats-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+/* Additional Admin Dashboard Responsive Styles */
+@media (max-width: 1024px) {
+    .admin-recent-section {
+        grid-template-columns: 1fr !important;
+        gap: 20px !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-link-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .admin-action-card:hover {
+        transform: none !important;
+    }
+    
+    .admin-recent-item {
+        padding: 12px !important;
+    }
+}
+
+/* Admin Dashboard Interactive Elements */
+.admin-recent-item:hover {
+    background: #f0f0f0 !important;
+    transform: translateX(4px);
+    border-color: #1B73BA !important;
+}
+
+a[style*="actionCard"]:hover {
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15) !important;
+    transform: translateY(-4px);
+}
+
+a[style*="viewAllLink"]:hover {
+    background: rgba(27, 115, 186, 0.05) !important;
 }
 
 @media (max-width: 480px) {
     .admin-main {
         padding: 70px 16px 16px 16px !important;
+    }
+    
+    /* Smaller spacing on mobile */
+    h1 {
+        font-size: 1.5rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    h2 {
+        font-size: 1.25rem !important;
+        margin-bottom: 0.75rem !important;
+    }
+}
+
+/* ========================================
+   MOBILE-FIRST IMPROVEMENTS
+   ======================================== */
+/* Better tap targets for all interactive elements */
+@media (hover: none) and (pointer: coarse) {
+    a, button, input, select, textarea {
+        min-height: 48px;
+        min-width: 48px;
+    }
+    
+    /* Larger click areas for links */
+    a {
+        padding: 8px 12px;
+    }
+}
+
+/* Prevent horizontal scrolling issues */
+* {
+    max-width: 100%;
+}
+
+img, video, iframe {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Better readability on mobile */
+@media (max-width: 768px) {
+    body {
+        font-size: 16px; /* Better base size for mobile */
+        line-height: 1.6;
+    }
+    
+    /* Prevent text overflow */
+    h1, h2, h3, h4, h5, h6, p {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+}
+
+/* Touch-friendly spacing */
+@media (max-width: 768px) {
+    section {
+        scroll-margin-top: 140px; /* Account for fixed header */
+    }
+    
+    /* Better spacing between interactive elements */
+    .nav-links li,
+    .mobile-menu-cta,
+    .hero-buttons > *,
+    .faq-buttons > * {
+        margin-bottom: 8px;
+    }
+}
+
+/* Improve form usability on mobile */
+@media (max-width: 768px) {
+    form {
+        width: 100%;
+    }
+    
+    input, textarea, select {
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    /* Remove inner shadows on iOS */
+    input[type="text"],
+    input[type="email"],
+    input[type="number"],
+    input[type="url"],
+    textarea {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+    }
+}
+
+/* Prevent zoom on input focus (iOS) */
+@supports (-webkit-touch-callout: none) {
+    input, textarea, select {
+        font-size: 16px !important;
+    }
+}
+
+/* Better mobile menu animations */
+@media (max-width: 768px) {
+    .nav-links-mobile {
+        animation: slideDown 0.3s ease-in-out;
+    }
+    
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+}
+
+/* Landscape mobile optimizations */
+@media (max-height: 500px) and (orientation: landscape) {
+    header {
+        position: relative !important;
+    }
+    
+    .hero {
+        margin-top: 0 !important;
+        min-height: 400px !important;
+    }
+    
+    .hero-content {
+        padding: 20px !important;
+    }
+}
+
+/* Safe area for notched devices */
+@supports (padding: max(0px)) {
+    body {
+        padding-left: max(0px, env(safe-area-inset-left));
+        padding-right: max(0px, env(safe-area-inset-right));
+    }
+    
+    header nav,
+    .container {
+        padding-left: max(20px, env(safe-area-inset-left));
+        padding-right: max(20px, env(safe-area-inset-right));
     }
 }

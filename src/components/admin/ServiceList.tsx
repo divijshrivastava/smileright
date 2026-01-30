@@ -46,65 +46,104 @@ export default function ServiceList({ services }: ServiceListProps) {
   }
 
   return (
-    <div style={styles.list}>
-      {services.map((service) => (
-        <div key={service.id} style={styles.card}>
-          <div style={styles.imageContainer}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={service.image_url}
-              alt={service.alt_text}
-              style={styles.image}
-            />
-          </div>
-          <div style={styles.content}>
-            <div style={styles.header}>
-              <h3 style={styles.title}>{service.title}</h3>
-              <span style={{
-                ...styles.badge,
-                background: service.is_published ? '#d4edda' : '#f8d7da',
-                color: service.is_published ? '#155724' : '#721c24',
-              }}>
-                {service.is_published ? 'Published' : 'Draft'}
-              </span>
+    <>
+      <div style={styles.list}>
+        {services.map((service) => (
+          <div key={service.id} style={styles.card} className="service-card">
+            <div style={styles.imageContainer} className="service-image-container">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={service.image_url}
+                alt={service.alt_text}
+                style={styles.image}
+              />
             </div>
-            <p style={styles.description}>{service.description}</p>
-            <div style={styles.meta}>
-              <span>Order: {service.display_order}</span>
-              {service.service_images && service.service_images.length > 0 && (
-                <span style={styles.imageBadge}>
-                  📷 {service.service_images.length} {service.service_images.length === 1 ? 'image' : 'images'}
+            <div style={styles.content} className="service-content">
+              <div style={styles.header}>
+                <h3 style={styles.title}>{service.title}</h3>
+                <span style={{
+                  ...styles.badge,
+                  background: service.is_published ? '#d4edda' : '#f8d7da',
+                  color: service.is_published ? '#155724' : '#721c24',
+                }}>
+                  {service.is_published ? 'Published' : 'Draft'}
                 </span>
-              )}
-            </div>
-            <div style={styles.actions}>
-              <button
-                onClick={() => router.push(`/admin/services/${service.id}/edit`)}
-                style={styles.editBtn}
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => handleTogglePublish(service.id, service.is_published)}
-                style={styles.toggleBtn}
-              >
-                {service.is_published ? 'Unpublish' : 'Publish'}
-              </button>
-              <button
-                onClick={() => handleDelete(service.id, service.title)}
-                disabled={deleting === service.id}
-                style={{
-                  ...styles.deleteBtn,
-                  opacity: deleting === service.id ? 0.5 : 1,
-                }}
-              >
-                {deleting === service.id ? 'Deleting...' : 'Delete'}
-              </button>
+              </div>
+              <p style={styles.description}>{service.description}</p>
+              <div style={styles.meta}>
+                <span>Order: {service.display_order}</span>
+                {service.service_images && service.service_images.length > 0 && (
+                  <span style={styles.imageBadge}>
+                    📷 {service.service_images.length} {service.service_images.length === 1 ? 'image' : 'images'}
+                  </span>
+                )}
+              </div>
+              <div style={styles.actions} className="service-actions">
+                <button
+                  onClick={() => router.push(`/admin/services/${service.id}/edit`)}
+                  style={styles.editBtn}
+                  className="action-btn-mobile"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleTogglePublish(service.id, service.is_published)}
+                  style={styles.toggleBtn}
+                  className="action-btn-mobile"
+                >
+                  {service.is_published ? 'Unpublish' : 'Publish'}
+                </button>
+                <button
+                  onClick={() => handleDelete(service.id, service.title)}
+                  disabled={deleting === service.id}
+                  style={{
+                    ...styles.deleteBtn,
+                    opacity: deleting === service.id ? 0.5 : 1,
+                  }}
+                  className="action-btn-mobile"
+                >
+                  {deleting === service.id ? 'Deleting...' : 'Delete'}
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+
+      <style jsx global>{`
+        @media (max-width: 768px) {
+          .service-card {
+            flex-direction: column !important;
+          }
+          
+          .service-image-container {
+            width: 100% !important;
+            height: 200px !important;
+          }
+          
+          .service-content {
+            padding: 1rem !important;
+          }
+          
+          .service-actions {
+            flex-direction: column !important;
+          }
+          
+          .action-btn-mobile {
+            width: 100% !important;
+            padding: 12px 16px !important;
+            font-size: 0.95rem !important;
+            min-height: 48px !important;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          .service-image-container {
+            height: 180px !important;
+          }
+        }
+      `}</style>
+    </>
   )
 }
 

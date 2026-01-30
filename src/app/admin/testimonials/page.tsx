@@ -26,7 +26,9 @@ export default async function TestimonialsPage() {
         justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: '2rem',
-      }}>
+        flexWrap: 'wrap',
+        gap: '1rem',
+      }} className="admin-page-header">
         <h1 style={{
           fontFamily: 'var(--font-serif)',
           fontSize: '2rem',
@@ -46,7 +48,9 @@ export default async function TestimonialsPage() {
             fontFamily: 'var(--font-sans)',
             fontSize: '0.9rem',
             fontWeight: 600,
+            whiteSpace: 'nowrap',
           }}
+          className="admin-add-btn"
         >
           Add Testimonial
         </Link>

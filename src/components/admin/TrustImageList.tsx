@@ -52,58 +52,99 @@ export default function TrustImageList({ images }: TrustImageListProps) {
   }
 
   return (
-    <div style={styles.list}>
-      {images.map((image) => (
-        <div key={image.id} style={styles.card}>
-          <div style={styles.imageContainer}>
-            <Image
-              src={image.image_url}
-              alt={image.alt_text || 'Trust image'}
-              width={300}
-              height={200}
-              style={{ objectFit: 'cover', borderRadius: '4px' }}
-            />
-          </div>
-          
-          <div style={styles.content}>
-            <div style={styles.info}>
-              <p style={styles.caption}>
-                {image.caption || <em style={{ color: '#999' }}>No caption</em>}
-              </p>
-              <p style={styles.meta}>
-                Order: {image.display_order} · {image.is_published ? '✓ Published' : '✗ Draft'}
-              </p>
+    <>
+      <div style={styles.list}>
+        {images.map((image) => (
+          <div key={image.id} style={styles.card} className="trust-image-card">
+            <div style={styles.imageContainer} className="trust-image-container">
+              <Image
+                src={image.image_url}
+                alt={image.alt_text || 'Trust image'}
+                width={300}
+                height={200}
+                style={{ objectFit: 'cover', borderRadius: '4px' }}
+              />
             </div>
+            
+            <div style={styles.content} className="trust-image-content">
+              <div style={styles.info}>
+                <p style={styles.caption}>
+                  {image.caption || <em style={{ color: '#999' }}>No caption</em>}
+                </p>
+                <p style={styles.meta}>
+                  Order: {image.display_order} · {image.is_published ? '✓ Published' : '✗ Draft'}
+                </p>
+              </div>
 
-            <div style={styles.actions}>
-              <button
-                onClick={() => handleTogglePublish(image.id, image.is_published)}
-                style={{
-                  ...styles.actionBtn,
-                  background: image.is_published ? '#f5f5f5' : '#1B73BA',
-                  color: image.is_published ? '#292828' : '#fff',
-                }}
-              >
-                {image.is_published ? 'Unpublish' : 'Publish'}
-              </button>
-              <button
-                onClick={() => router.push(`/admin/trust-images/${image.id}/edit`)}
-                style={styles.actionBtn}
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => handleDelete(image.id)}
-                disabled={deletingId === image.id}
-                style={{ ...styles.actionBtn, ...styles.deleteBtn }}
-              >
-                {deletingId === image.id ? 'Deleting...' : 'Delete'}
-              </button>
+              <div style={styles.actions} className="trust-image-actions">
+                <button
+                  onClick={() => handleTogglePublish(image.id, image.is_published)}
+                  style={{
+                    ...styles.actionBtn,
+                    background: image.is_published ? '#f5f5f5' : '#1B73BA',
+                    color: image.is_published ? '#292828' : '#fff',
+                  }}
+                  className="trust-action-btn"
+                >
+                  {image.is_published ? 'Unpublish' : 'Publish'}
+                </button>
+                <button
+                  onClick={() => router.push(`/admin/trust-images/${image.id}/edit`)}
+                  style={styles.actionBtn}
+                  className="trust-action-btn"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(image.id)}
+                  disabled={deletingId === image.id}
+                  style={{ ...styles.actionBtn, ...styles.deleteBtn }}
+                  className="trust-action-btn"
+                >
+                  {deletingId === image.id ? 'Deleting...' : 'Delete'}
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+
+      <style jsx global>{`
+        @media (max-width: 768px) {
+          .trust-image-card {
+            flex-direction: column !important;
+          }
+          
+          .trust-image-container {
+            width: 100% !important;
+            flex-shrink: 1 !important;
+          }
+          
+          .trust-image-container img {
+            width: 100% !important;
+            height: auto !important;
+            max-height: 240px !important;
+          }
+          
+          .trust-image-content {
+            padding: 1rem 0 0 0 !important;
+          }
+          
+          .trust-image-actions {
+            flex-direction: column !important;
+            gap: 10px !important;
+          }
+          
+          .trust-action-btn {
+            width: 100% !important;
+            padding: 12px 16px !important;
+            font-size: 0.95rem !important;
+            min-height: 48px !important;
+            text-align: center !important;
+          }
+        }
+      `}</style>
+    </>
   )
 }
 
