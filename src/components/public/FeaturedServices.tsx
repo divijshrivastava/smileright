@@ -93,13 +93,14 @@ export default function FeaturedServices({ services }: FeaturedServicesProps) {
                 
                 {isExpanded && hasImages && service.service_images && (
                   <div className="service-gallery" onClick={(e) => e.stopPropagation()}>
+                    <h4 className="gallery-title">Service Gallery</h4>
                     <div className="gallery-grid">
                       {service.service_images.map((img) => (
                         <div key={img.id} className="gallery-item">
                           <Image
                             src={img.image_url}
                             alt={img.alt_text || service.title}
-                            width={300}
+                            width={400}
                             height={300}
                             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                           />
@@ -167,30 +168,47 @@ export default function FeaturedServices({ services }: FeaturedServicesProps) {
 
         .view-images-btn {
           display: inline-block;
-          margin-top: 12px;
-          padding: 10px 20px;
+          margin-top: 16px;
+          padding: 12px 28px;
           background: #1B73BA;
           color: white;
           border: none;
-          border-radius: 6px;
-          font-size: 0.9rem;
+          border-radius: 8px;
+          font-size: 0.95rem;
           font-weight: 600;
           cursor: pointer;
-          transition: background 0.3s ease;
+          transition: all 0.3s ease;
           font-family: var(--font-sans);
           text-transform: uppercase;
           letter-spacing: 0.05em;
+          box-shadow: 0 2px 8px rgba(27, 115, 186, 0.3);
         }
 
         .view-images-btn:hover {
           background: #155a91;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(27, 115, 186, 0.4);
+        }
+
+        .view-images-btn:active {
+          transform: translateY(0);
         }
 
         .service-gallery {
-          padding: 24px;
+          padding: 32px;
           background: #f8f9fa;
           border-top: 2px solid #e9ecef;
           animation: slideDown 0.3s ease;
+          width: 100%;
+        }
+
+        .gallery-title {
+          font-family: var(--font-serif);
+          font-size: 1.5rem;
+          color: #292828;
+          margin: 0 0 24px 0;
+          text-align: center;
+          font-weight: 600;
         }
 
         @keyframes slideDown {
@@ -206,29 +224,49 @@ export default function FeaturedServices({ services }: FeaturedServicesProps) {
 
         .gallery-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-          gap: 16px;
+          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+          gap: 24px;
+          max-width: 100%;
+        }
+
+        @media (max-width: 1024px) {
+          .gallery-grid {
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+          }
         }
 
         @media (max-width: 768px) {
+          .service-gallery {
+            padding: 20px;
+          }
+          
           .gallery-grid {
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .gallery-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
           }
         }
 
         .gallery-item {
           position: relative;
-          aspect-ratio: 1;
-          border-radius: 8px;
+          aspect-ratio: 4/3;
+          border-radius: 12px;
           overflow: hidden;
-          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
           transition: transform 0.3s ease, box-shadow 0.3s ease;
+          background: #fff;
         }
 
         .gallery-item:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+          transform: translateY(-6px);
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
         }
 
         .gallery-caption {
