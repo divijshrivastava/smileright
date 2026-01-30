@@ -36,7 +36,7 @@ export default async function AdminLayout({
         padding: '40px',
         background: '#f5f5f5',
         minHeight: '100vh',
-      }}>
+      }} className="admin-main">
         {children}
       </main>
     </div>

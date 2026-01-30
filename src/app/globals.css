@@ -1877,3 +1877,33 @@ footer {
         padding: 20px 15px;
     }
 }
+
+/* ========================================
+   ADMIN PANEL MOBILE RESPONSIVENESS
+   ======================================== */
+@media (max-width: 768px) {
+    .mobile-menu-btn {
+        display: block !important;
+    }
+
+    .admin-sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 1000;
+    }
+
+    .mobile-overlay {
+        display: block !important;
+    }
+
+    .admin-main {
+        margin-left: 0 !important;
+        padding: 70px 20px 20px 20px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-main {
+        padding: 70px 16px 16px 16px !important;
+    }
+}
