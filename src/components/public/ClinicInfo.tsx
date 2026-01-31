@@ -68,7 +68,7 @@ export default function ClinicInfo() {
 
               <div className="map-container">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3768.0847254389!2d72.86681!3d19.20559!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTnCsDEyJzIwLjEiTiA3MsKwNTInMDAuNSJF!5e0!3m2!1sen!2sin!4v1234567890"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3767.7926415893!2d72.866748!3d19.214462!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTnCsDEyJzUyLjEiTiA3MsKwNTInMDguNCJF!5e0!3m2!1sen!2sin!4v1234567890"
                   allowFullScreen
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
@@ -76,7 +76,7 @@ export default function ClinicInfo() {
                 />
               </div>
               <a
-                href="https://www.google.com/maps?q=19.20559,72.86681"
+                href="https://www.google.com/maps?q=19.214462,72.868988"
                 className="btn btn-outline"
                 style={{ width: '100%', textAlign: 'center', marginTop: '1rem' }}
                 target="_blank"

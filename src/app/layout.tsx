@@ -54,8 +54,8 @@ const structuredData = {
   },
   geo: {
     '@type': 'GeoCoordinates',
-    latitude: '19.2056',
-    longitude: '72.8690',
+    latitude: '19.214462',
+    longitude: '72.868988',
   },
   telephone: '+91-7977991130',
   openingHoursSpecification: [
