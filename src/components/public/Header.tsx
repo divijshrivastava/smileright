@@ -21,13 +21,13 @@ export default function Header() {
           </div>
 
           <ul className="nav-links nav-links-desktop">
-            <li><a href="#home">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#services">Services</a></li>
-            <li><a href="#gallery">Gallery</a></li>
-            <li><a href="#testimonials">Reviews</a></li>
+            <li><a href="/#home">Home</a></li>
+            <li><a href="/#about">About</a></li>
+            <li><a href="/#services">Services</a></li>
+            <li><a href="/#gallery">Gallery</a></li>
+            <li><a href="/#testimonials">Reviews</a></li>
             <li><Link href="/blog">Blog</Link></li>
-            <li><a href="#contact">Contact</a></li>
+            <li><a href="/#contact">Contact</a></li>
           </ul>
 
           <MobileMenu />

@@ -20,13 +20,13 @@ export default function MobileMenu() {
       </button>
 
       <ul className={`nav-links nav-links-mobile${isOpen ? ' active' : ''}`} id="navLinks">
-        <li><a href="#home" onClick={() => setIsOpen(false)}>Home</a></li>
-        <li><a href="#about" onClick={() => setIsOpen(false)}>About</a></li>
-        <li><a href="#services" onClick={() => setIsOpen(false)}>Services</a></li>
-        <li><a href="#gallery" onClick={() => setIsOpen(false)}>Gallery</a></li>
-        <li><a href="#testimonials" onClick={() => setIsOpen(false)}>Reviews</a></li>
+        <li><a href="/#home" onClick={() => setIsOpen(false)}>Home</a></li>
+        <li><a href="/#about" onClick={() => setIsOpen(false)}>About</a></li>
+        <li><a href="/#services" onClick={() => setIsOpen(false)}>Services</a></li>
+        <li><a href="/#gallery" onClick={() => setIsOpen(false)}>Gallery</a></li>
+        <li><a href="/#testimonials" onClick={() => setIsOpen(false)}>Reviews</a></li>
         <li><Link href="/blog" onClick={() => setIsOpen(false)}>Blog</Link></li>
-        <li><a href="#contact" onClick={() => setIsOpen(false)}>Contact</a></li>
+        <li><a href="/#contact" onClick={() => setIsOpen(false)}>Contact</a></li>
         <li className="mobile-menu-cta">
           <a href="tel:+917977991130" className="btn btn-primary">
             <span className="btn-icon">📞</span> Call Now
