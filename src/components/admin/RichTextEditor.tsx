@@ -37,6 +37,8 @@ export default function RichTextEditor({ value, onChange }: RichTextEditorProps)
 
   const editor = useEditor({
     extensions,
+    // TipTap warns if it thinks SSR is happening; this avoids hydration mismatches in Next.js.
+    immediatelyRender: false,
     content: value || '<p></p>',
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML())
@@ -272,6 +274,7 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '0.9rem',
     fontWeight: 600,
     cursor: 'pointer',
+    color: '#292828',
   },
   primaryBtn: {
     padding: '10px 14px',
