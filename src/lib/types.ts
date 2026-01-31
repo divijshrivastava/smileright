@@ -50,6 +50,7 @@ export interface ServiceImage {
   alt_text: string | null
   caption: string | null
   display_order: number
+  is_primary: boolean
   created_at: string
   updated_at: string
   created_by: string | null

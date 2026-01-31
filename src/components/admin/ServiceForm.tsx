@@ -107,7 +107,6 @@ export default function ServiceForm({ service }: ServiceFormProps) {
               name="alt_text"
               type="text"
               required
-              defaultValue={service?.alt_text ?? ''}
               placeholder="e.g. Root Canal Treatment"
               style={styles.input}
             />

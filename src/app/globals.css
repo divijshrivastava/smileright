@@ -328,7 +328,7 @@ nav {
 .hero {
     min-height: 700px;
     background-image: linear-gradient(to right, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.3) 100%),
-                      url('/images/hero-image.jpg');
+        url('/images/hero-image.jpg');
     background-size: cover;
     background-position: center center;
     background-attachment: fixed;
@@ -346,13 +346,14 @@ nav {
 }
 
 .hero-content {
-    background: rgba(255, 255, 255, 0.97);
+    background: rgba(255, 255, 255, 0.85);
     max-width: 650px;
     padding: 50px 45px;
     border-radius: 12px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(80px);
     border: 1px solid rgba(255, 255, 255, 0.8);
+    margin-left: auto;
 }
 
 .hero-badge {
@@ -825,7 +826,7 @@ nav {
 
 /* Text-only testimonials - Different style */
 .testimonial-card:not(:has(video)):not(:has(img)) {
-    background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,1) 100%);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 1) 100%);
     border: 2px solid rgba(27, 115, 186, 0.2);
 }
 
@@ -1040,13 +1041,13 @@ nav {
     border-radius: 12px;
     text-align: center;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     border: 1px solid rgba(27, 115, 186, 0.1);
 }
 
 .trust-item:hover {
     transform: translateY(-6px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     border-color: rgba(27, 115, 186, 0.4);
 }
 
@@ -1115,6 +1116,7 @@ nav {
     0%, 100% {
         box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
     }
+
     50% {
         box-shadow: 0 4px 20px rgba(37, 211, 102, 0.7);
     }
@@ -1127,11 +1129,11 @@ nav {
         padding: 14px 20px;
         font-size: 0.9rem;
     }
-    
+
     .whatsapp-text {
         display: none;
     }
-    
+
     .floating-whatsapp {
         width: 60px;
         height: 60px;
@@ -1139,7 +1141,7 @@ nav {
         justify-content: center;
         border-radius: 50%;
     }
-    
+
     .whatsapp-icon {
         font-size: 1.8rem;
     }
@@ -1361,7 +1363,7 @@ footer {
         grid-template-columns: repeat(2, 1fr);
         gap: 20px;
     }
-    
+
     .trust-item {
         padding: 24px 20px;
     }
@@ -1379,11 +1381,11 @@ footer {
         grid-template-columns: repeat(2, 1fr);
         gap: 18px;
     }
-    
+
     .testimonials {
         padding: 50px 0;
     }
-    
+
     .testimonials .section-title {
         font-size: 2.2rem;
     }
@@ -1392,7 +1394,7 @@ footer {
         min-height: 550px;
         background-position: center center;
     }
-    
+
     .hero-features {
         gap: 1rem;
     }
@@ -1400,7 +1402,7 @@ footer {
     .hero-feature {
         font-size: 0.85rem;
     }
-    
+
     .hero-content {
         max-width: 600px;
         padding: 40px 35px;
@@ -1509,24 +1511,24 @@ footer {
         grid-template-columns: 1fr;
         gap: 16px;
     }
-    
+
     .testimonials {
         padding: 40px 0;
     }
-    
+
     .testimonials .section-title {
         font-size: 1.9rem;
     }
-    
+
     .testimonials .section-subtitle {
         font-size: 1rem;
         margin-bottom: 2rem;
     }
-    
+
     .testimonial-card video {
         max-height: 240px;
     }
-    
+
     .testimonial-card img {
         height: 200px;
     }
@@ -1553,15 +1555,15 @@ footer {
         grid-template-columns: 1fr;
         gap: 16px;
     }
-    
+
     .trust-item {
         padding: 24px 18px;
     }
-    
+
     .trust-icon {
         font-size: 2.5rem;
     }
-    
+
     .trust-section {
         padding: 50px 0;
     }
@@ -1758,16 +1760,16 @@ footer {
     .testimonial-card video {
         max-height: 200px;
     }
-    
+
     .testimonial-card img {
         height: 180px;
     }
-    
+
     .testimonial-text {
         font-size: 0.9rem;
         line-height: 1.5;
     }
-    
+
     .stars {
         font-size: 1.1rem;
     }
@@ -1803,7 +1805,7 @@ footer {
     .hero {
         min-height: 400px;
         background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-                          url('/images/hero-image.jpg');
+            url('/images/hero-image.jpg');
         background-position: center center;
     }
 
@@ -1820,7 +1822,7 @@ footer {
     section, .welcome, .featured-services, .doctor-bio, .testimonials, .clinic-info {
         padding: 35px 0;
     }
-    
+
     .trust-section {
         padding: 40px 0;
     }
@@ -1891,11 +1893,11 @@ footer {
     .service-card {
         padding: 20px 15px;
     }
-    
+
     .hero {
         margin-top: 62px;
     }
-    
+
     .nav-links-mobile {
         top: 62px;
         max-height: calc(100vh - 62px);
@@ -1924,14 +1926,14 @@ footer {
         margin-left: 0 !important;
         padding: 80px 20px 20px 20px !important;
     }
-    
+
     /* Admin Cards - Better Touch Targets */
     .admin-card,
     .stat-card,
     .action-card {
         min-height: 100px !important;
     }
-    
+
     /* Admin Forms - Better Mobile Input */
     input[type="text"],
     input[type="email"],
@@ -1939,11 +1941,12 @@ footer {
     input[type="url"],
     textarea,
     select {
-        font-size: 16px !important; /* Prevents zoom on iOS */
+        font-size: 16px !important;
+        /* Prevents zoom on iOS */
         padding: 12px 16px !important;
         min-height: 48px !important;
     }
-    
+
     /* Admin Buttons - Touch Friendly */
     button,
     .btn,
@@ -1952,17 +1955,17 @@ footer {
         padding: 12px 20px !important;
         font-size: 1rem !important;
     }
-    
+
     /* Admin Page Headers - Mobile Responsive */
     .admin-page-header {
         flex-direction: column !important;
         align-items: flex-start !important;
     }
-    
+
     .admin-page-header h1 {
         font-size: 1.5rem !important;
     }
-    
+
     .admin-add-btn {
         width: 100% !important;
         text-align: center !important;
@@ -1972,13 +1975,13 @@ footer {
         align-items: center !important;
         justify-content: center !important;
     }
-    
+
     /* Admin Dashboard Grids - Mobile Responsive */
     .admin-stats-grid {
         grid-template-columns: 1fr !important;
         gap: 16px !important;
     }
-    
+
     .admin-link-grid {
         grid-template-columns: 1fr !important;
         gap: 16px !important;
@@ -2003,11 +2006,11 @@ footer {
     .admin-link-grid {
         grid-template-columns: 1fr !important;
     }
-    
+
     .admin-action-card:hover {
         transform: none !important;
     }
-    
+
     .admin-recent-item {
         padding: 12px !important;
     }
@@ -2021,7 +2024,7 @@ footer {
 }
 
 a[style*="actionCard"]:hover {
-    box-shadow: 0 6px 20px rgba(0,0,0,0.15) !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15) !important;
     transform: translateY(-4px);
 }
 
@@ -2033,13 +2036,13 @@ a[style*="viewAllLink"]:hover {
     .admin-main {
         padding: 80px 16px 16px 16px !important;
     }
-    
+
     /* Smaller spacing on mobile */
     h1 {
         font-size: 1.5rem !important;
         margin-bottom: 1rem !important;
     }
-    
+
     h2 {
         font-size: 1.25rem !important;
         margin-bottom: 0.75rem !important;
@@ -2055,7 +2058,7 @@ a[style*="viewAllLink"]:hover {
         min-height: 48px;
         min-width: 48px;
     }
-    
+
     /* Larger click areas for links */
     a {
         padding: 8px 12px;
@@ -2075,10 +2078,11 @@ img, video, iframe {
 /* Better readability on mobile */
 @media (max-width: 768px) {
     body {
-        font-size: 16px; /* Better base size for mobile */
+        font-size: 16px;
+        /* Better base size for mobile */
         line-height: 1.6;
     }
-    
+
     /* Prevent text overflow */
     h1, h2, h3, h4, h5, h6, p {
         word-wrap: break-word;
@@ -2089,14 +2093,15 @@ img, video, iframe {
 /* Touch-friendly spacing */
 @media (max-width: 768px) {
     section {
-        scroll-margin-top: 80px; /* Account for fixed header */
+        scroll-margin-top: 80px;
+        /* Account for fixed header */
     }
-    
+
     /* Better spacing between interactive elements */
     .nav-links li,
     .mobile-menu-cta,
-    .hero-buttons > *,
-    .faq-buttons > * {
+    .hero-buttons>*,
+    .faq-buttons>* {
         margin-bottom: 8px;
     }
 }
@@ -2106,12 +2111,12 @@ img, video, iframe {
     form {
         width: 100%;
     }
-    
+
     input, textarea, select {
         width: 100%;
         box-sizing: border-box;
     }
-    
+
     /* Remove inner shadows on iOS */
     input[type="text"],
     input[type="email"],
@@ -2136,12 +2141,13 @@ img, video, iframe {
     .nav-links-mobile {
         animation: slideDown 0.3s ease-in-out;
     }
-    
+
     @keyframes slideDown {
         from {
             opacity: 0;
             transform: translateY(-20px);
         }
+
         to {
             opacity: 1;
             transform: translateY(0);
@@ -2154,12 +2160,12 @@ img, video, iframe {
     header {
         position: relative !important;
     }
-    
+
     .hero {
         margin-top: 0 !important;
         min-height: 400px !important;
     }
-    
+
     .hero-content {
         padding: 20px !important;
     }
@@ -2171,7 +2177,7 @@ img, video, iframe {
         padding-left: max(0px, env(safe-area-inset-left));
         padding-right: max(0px, env(safe-area-inset-right));
     }
-    
+
     header nav,
     .container {
         padding-left: max(20px, env(safe-area-inset-left));

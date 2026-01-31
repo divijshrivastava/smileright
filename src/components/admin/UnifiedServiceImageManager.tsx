@@ -2,23 +2,24 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createServiceImage, deleteServiceImage } from '@/app/admin/actions'
+import { createServiceImage, deleteServiceImage, setServiceImagePrimary } from '@/app/admin/actions'
 import ImageUploader from './ImageUploader'
 import type { ServiceImage } from '@/lib/types'
 
-interface ServiceImageManagerProps {
+interface UnifiedServiceImageManagerProps {
   serviceId: string
   images: ServiceImage[]
 }
 
-export default function ServiceImageManager({ serviceId, images }: ServiceImageManagerProps) {
+export default function UnifiedServiceImageManager({ serviceId, images }: UnifiedServiceImageManagerProps) {
   const router = useRouter()
-  const [isAdding, setIsAdding] = useState(false)
+  const [isAdding, setIsAdding] = useState(images.length === 0) // Auto-open if no images
   const [newImageUrl, setNewImageUrl] = useState('')
   const [newAltText, setNewAltText] = useState('')
   const [newCaption, setNewCaption] = useState('')
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState<string | null>(null)
+  const [settingPrimary, setSettingPrimary] = useState<string | null>(null)
 
   const handleAddImage = async () => {
     if (!newImageUrl) {
@@ -47,8 +48,12 @@ export default function ServiceImageManager({ serviceId, images }: ServiceImageM
     }
   }
 
-  const handleDeleteImage = async (imageId: string) => {
-    if (!confirm('Are you sure you want to delete this image?')) {
+  const handleDeleteImage = async (imageId: string, isPrimary: boolean) => {
+    if (isPrimary && images.length > 1) {
+      if (!confirm('This is the primary image. Another image will be automatically set as primary. Are you sure you want to delete it?')) {
+        return
+      }
+    } else if (!confirm('Are you sure you want to delete this image?')) {
       return
     }
 
@@ -62,10 +67,33 @@ export default function ServiceImageManager({ serviceId, images }: ServiceImageM
     }
   }
 
+  const handleSetPrimary = async (imageId: string) => {
+    setSettingPrimary(imageId)
+    try {
+      await setServiceImagePrimary(serviceId, imageId)
+      router.refresh()
+    } catch (error) {
+      alert(error instanceof Error ? error.message : 'Failed to set primary image')
+      setSettingPrimary(null)
+    }
+  }
+
+  // Sort images: primary first, then by display_order
+  const sortedImages = [...images].sort((a, b) => {
+    if (a.is_primary && !b.is_primary) return -1
+    if (!a.is_primary && b.is_primary) return 1
+    return a.display_order - b.display_order
+  })
+
   return (
     <div style={styles.container}>
       <div style={styles.header}>
-        <h3 style={styles.title}>Service Images ({images.length})</h3>
+        <div>
+          <h3 style={styles.title}>Service Images ({images.length})</h3>
+          {images.length === 0 && (
+            <p style={styles.subtitle}>Add at least one image to get started</p>
+          )}
+        </div>
         <button
           onClick={() => setIsAdding(!isAdding)}
           style={styles.addBtn}
@@ -86,7 +114,7 @@ export default function ServiceImageManager({ serviceId, images }: ServiceImageM
           </div>
 
           <div style={styles.field}>
-            <label htmlFor="new-alt-text" style={styles.label}>Alt Text</label>
+            <label htmlFor="new-alt-text" style={styles.label}>Alt Text (for SEO)</label>
             <input
               id="new-alt-text"
               type="text"
@@ -117,15 +145,23 @@ export default function ServiceImageManager({ serviceId, images }: ServiceImageM
               opacity: saving || !newImageUrl ? 0.5 : 1,
             }}
           >
-            {saving ? 'Adding...' : 'Add Image'}
+            {saving ? 'Adding...' : images.length === 0 ? 'Add Primary Image' : 'Add Image'}
           </button>
+          {images.length === 0 && (
+            <small style={{ color: '#666', fontSize: '0.85rem', marginTop: '-0.5rem' }}>
+              The first image will be set as the primary/thumbnail image
+            </small>
+          )}
         </div>
       )}
 
       {images.length > 0 ? (
         <div style={styles.grid}>
-          {images.map((image) => (
+          {sortedImages.map((image) => (
             <div key={image.id} style={styles.imageCard}>
+              {image.is_primary && (
+                <div style={styles.primaryBadge}>Primary</div>
+              )}
               <div style={styles.imageWrapper}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -143,16 +179,30 @@ export default function ServiceImageManager({ serviceId, images }: ServiceImageM
                 )}
                 <p style={styles.order}>Order: {image.display_order}</p>
               </div>
-              <button
-                onClick={() => handleDeleteImage(image.id)}
-                disabled={deleting === image.id}
-                style={{
-                  ...styles.deleteBtn,
-                  opacity: deleting === image.id ? 0.5 : 1,
-                }}
-              >
-                {deleting === image.id ? 'Deleting...' : 'Delete'}
-              </button>
+              <div style={styles.actions}>
+                {!image.is_primary && (
+                  <button
+                    onClick={() => handleSetPrimary(image.id)}
+                    disabled={settingPrimary === image.id}
+                    style={{
+                      ...styles.primaryBtn,
+                      opacity: settingPrimary === image.id ? 0.5 : 1,
+                    }}
+                  >
+                    {settingPrimary === image.id ? 'Setting...' : 'Set as Primary'}
+                  </button>
+                )}
+                <button
+                  onClick={() => handleDeleteImage(image.id, image.is_primary)}
+                  disabled={deleting === image.id}
+                  style={{
+                    ...styles.deleteBtn,
+                    opacity: deleting === image.id ? 0.5 : 1,
+                  }}
+                >
+                  {deleting === image.id ? 'Deleting...' : 'Delete'}
+                </button>
+              </div>
             </div>
           ))}
         </div>
@@ -176,7 +226,7 @@ const styles: Record<string, React.CSSProperties> = {
   header: {
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     marginBottom: '1.5rem',
   },
   title: {
@@ -184,6 +234,12 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '1.25rem',
     color: '#292828',
     margin: 0,
+  },
+  subtitle: {
+    fontFamily: 'var(--font-sans)',
+    fontSize: '0.85rem',
+    color: '#666',
+    margin: '0.25rem 0 0 0',
   },
   addBtn: {
     padding: '8px 16px',
@@ -240,7 +296,7 @@ const styles: Record<string, React.CSSProperties> = {
   },
   grid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
     gap: '1rem',
   },
   imageCard: {
@@ -250,11 +306,29 @@ const styles: Record<string, React.CSSProperties> = {
     border: '1px solid #ddd',
     display: 'flex',
     flexDirection: 'column',
+    position: 'relative',
+  },
+  primaryBadge: {
+    position: 'absolute',
+    top: '8px',
+    right: '8px',
+    background: '#1B73BA',
+    color: '#fff',
+    padding: '4px 12px',
+    borderRadius: '4px',
+    fontSize: '0.75rem',
+    fontWeight: 700,
+    fontFamily: 'var(--font-sans)',
+    textTransform: 'uppercase' as const,
+    letterSpacing: '0.05em',
+    zIndex: 1,
+    boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
   },
   imageWrapper: {
     width: '100%',
     aspectRatio: '1',
     overflow: 'hidden',
+    background: '#f5f5f5',
   },
   image: {
     width: '100%',
@@ -283,6 +357,21 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '0.8rem',
     color: '#999',
     margin: 0,
+  },
+  actions: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0px',
+  },
+  primaryBtn: {
+    padding: '8px',
+    background: '#1B73BA',
+    color: '#fff',
+    border: 'none',
+    fontSize: '0.85rem',
+    fontWeight: 600,
+    cursor: 'pointer',
+    fontFamily: 'var(--font-sans)',
   },
   deleteBtn: {
     padding: '8px',

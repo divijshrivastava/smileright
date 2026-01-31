@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { validateFile, fileValidationConfigs } from '@/lib/security/file-validation'
 
 interface VideoUploaderProps {
   currentUrl: string | null
@@ -15,12 +16,6 @@ export default function VideoUploader({ currentUrl, onUpload }: VideoUploaderPro
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-
-    const allowedTypes = ['video/mp4', 'video/quicktime', 'video/webm']
-    if (!allowedTypes.includes(file.type)) {
-      setError('Only MP4, MOV, and WebM videos are allowed.')
-      return
-    }
 
     const fileSizeMB = (file.size / 1024 / 1024).toFixed(2)
     
@@ -37,8 +32,11 @@ export default function VideoUploader({ currentUrl, onUpload }: VideoUploaderPro
       }
     }
 
-    if (file.size > 50 * 1024 * 1024) {
-      setError(`Video must be smaller than 50MB. Current size: ${fileSizeMB}MB`)
+    // Comprehensive file validation including content check
+    const validationResult = await validateFile(file, fileValidationConfigs.video)
+    
+    if (!validationResult.valid) {
+      setError(validationResult.error || 'Invalid file')
       return
     }
 

@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import type { Service } from '@/lib/types'
 
 interface FeaturedServicesProps {
@@ -10,10 +10,25 @@ interface FeaturedServicesProps {
 
 export default function FeaturedServices({ services }: FeaturedServicesProps) {
   const [expandedService, setExpandedService] = useState<string | null>(null)
+  const expandedCardRef = useRef<HTMLDivElement>(null)
 
   const toggleService = (serviceId: string) => {
     setExpandedService(expandedService === serviceId ? null : serviceId)
   }
+
+  useEffect(() => {
+    if (expandedService && expandedCardRef.current) {
+      // Delay scroll slightly to allow the expansion animation to start
+      setTimeout(() => {
+        const element = expandedCardRef.current
+        if (element) {
+          const yOffset = -100 // Offset for fixed header
+          const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
+          window.scrollTo({ top: y, behavior: 'smooth' })
+        }
+      }, 150)
+    }
+  }, [expandedService])
 
   return (
     <section id="services" className="featured-services">
@@ -31,6 +46,7 @@ export default function FeaturedServices({ services }: FeaturedServicesProps) {
             return (
               <div 
                 key={service.id} 
+                ref={isExpanded ? expandedCardRef : null}
                 className={`service-card ${isExpanded ? 'expanded' : ''}`}
                 onClick={() => hasImages && toggleService(service.id)}
                 style={{ cursor: hasImages ? 'pointer' : 'default' }}
@@ -41,7 +57,11 @@ export default function FeaturedServices({ services }: FeaturedServicesProps) {
                     alt={service.alt_text}
                     width={400}
                     height={200}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    style={{ 
+                      width: '100%', 
+                      height: '100%', 
+                      objectFit: isExpanded ? 'contain' : 'cover' 
+                    }}
                   />
                   {hasImages && (
                     <div className="image-count-badge">
@@ -133,6 +153,22 @@ export default function FeaturedServices({ services }: FeaturedServicesProps) {
 
         .service-image {
           position: relative;
+          background: #f8f9fa;
+        }
+
+        .service-card.expanded .service-image {
+          min-height: 400px;
+          max-height: 700px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        @media (max-width: 768px) {
+          .service-card.expanded .service-image {
+            min-height: 300px;
+            max-height: 500px;
+          }
         }
 
         .image-count-badge {
@@ -224,14 +260,14 @@ export default function FeaturedServices({ services }: FeaturedServicesProps) {
 
         .gallery-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
           gap: 24px;
           max-width: 100%;
         }
 
         @media (max-width: 1024px) {
           .gallery-grid {
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 20px;
           }
         }

@@ -28,6 +28,7 @@ export default async function EditServicePage({
         alt_text,
         caption,
         display_order,
+        is_primary,
         created_at,
         updated_at,
         created_by,
