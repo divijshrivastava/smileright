@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { validateFile, fileValidationConfigs } from '@/lib/security/file-validation'
 
 interface ImageUploaderProps {
   currentUrl: string | null
@@ -17,15 +18,11 @@ export default function ImageUploader({ currentUrl, onUpload, bucket = 'testimon
     const file = e.target.files?.[0]
     if (!file) return
 
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
-    if (!allowedTypes.includes(file.type)) {
-      setError('Only JPEG, PNG, and WebP images are allowed.')
-      return
-    }
-
-    const fileSizeMB = (file.size / 1024 / 1024).toFixed(2)
-    if (file.size > 5 * 1024 * 1024) {
-      setError(`Image must be smaller than 5MB. Current size: ${fileSizeMB}MB`)
+    // Comprehensive file validation including content check
+    const validationResult = await validateFile(file, fileValidationConfigs.image)
+    
+    if (!validationResult.valid) {
+      setError(validationResult.error || 'Invalid file')
       return
     }
 
@@ -36,6 +33,7 @@ export default function ImageUploader({ currentUrl, onUpload, bucket = 'testimon
       const supabase = createClient()
       const fileExt = file.name.split('.').pop()
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
+      const fileSizeMB = (file.size / 1024 / 1024).toFixed(2)
 
       console.log('Uploading to bucket:', bucket, 'File:', fileName, 'Size:', fileSizeMB, 'MB')
 

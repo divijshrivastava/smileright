@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createService, updateService } from '@/app/admin/actions'
 import ImageUploader from './ImageUploader'
-import ServiceImageManager from './ServiceImageManager'
+import UnifiedServiceImageManager from './UnifiedServiceImageManager'
 import type { Service } from '@/lib/types'
 
 interface ServiceFormProps {
@@ -21,8 +21,10 @@ export default function ServiceForm({ service }: ServiceFormProps) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     
-    if (!imageUrl) {
-      setError('Please upload an image')
+    // For new services, require an initial image
+    // For existing services, images are managed separately
+    if (!isEditing && !imageUrl) {
+      setError('Please upload an initial image')
       return
     }
 
@@ -31,7 +33,12 @@ export default function ServiceForm({ service }: ServiceFormProps) {
 
     const form = e.currentTarget
     const formData = new FormData(form)
-    formData.set('image_url', imageUrl)
+    
+    // Only include image_url for new services
+    if (!isEditing) {
+      formData.set('image_url', imageUrl)
+    }
+    
     formData.set('is_published', formData.has('is_published') ? 'true' : 'false')
 
     try {
@@ -50,7 +57,7 @@ export default function ServiceForm({ service }: ServiceFormProps) {
 
   return (
     <>
-    <form onSubmit={handleSubmit} style={styles.form}>
+    <form id="service-form" onSubmit={handleSubmit} style={styles.form}>
       {error && <div style={styles.error}>{error}</div>}
 
       <div style={styles.field}>
@@ -79,30 +86,34 @@ export default function ServiceForm({ service }: ServiceFormProps) {
         />
       </div>
 
-      <div style={styles.field}>
-        <label style={styles.label}>Primary Service Image (Thumbnail) *</label>
-        <ImageUploader
-          currentUrl={imageUrl || null}
-          onUpload={(url) => setImageUrl(url)}
-          bucket="testimonial-images"
-        />
-        <small style={{ color: '#666', fontSize: '0.85rem' }}>
-          This image will be shown as the main thumbnail for the service
-        </small>
-      </div>
+      {!isEditing && (
+        <>
+          <div style={styles.field}>
+            <label style={styles.label}>Initial Service Image *</label>
+            <ImageUploader
+              currentUrl={imageUrl || null}
+              onUpload={(url) => setImageUrl(url)}
+              bucket="testimonial-images"
+            />
+            <small style={{ color: '#666', fontSize: '0.85rem' }}>
+              Upload an initial image. You can add more images and manage them after creating the service.
+            </small>
+          </div>
 
-      <div style={styles.field}>
-        <label htmlFor="alt_text" style={styles.label}>Image Alt Text (for SEO) *</label>
-        <input
-          id="alt_text"
-          name="alt_text"
-          type="text"
-          required
-          defaultValue={service?.alt_text ?? ''}
-          placeholder="e.g. Root Canal Treatment"
-          style={styles.input}
-        />
-      </div>
+          <div style={styles.field}>
+            <label htmlFor="alt_text" style={styles.label}>Image Alt Text (for SEO) *</label>
+            <input
+              id="alt_text"
+              name="alt_text"
+              type="text"
+              required
+              defaultValue={service?.alt_text ?? ''}
+              placeholder="e.g. Root Canal Treatment"
+              style={styles.input}
+            />
+          </div>
+        </>
+      )}
 
       <div style={styles.field}>
         <label htmlFor="display_order" style={styles.label}>Display Order</label>
@@ -131,31 +142,32 @@ export default function ServiceForm({ service }: ServiceFormProps) {
           Published (visible on public site)
         </label>
       </div>
-
-      <div style={styles.actions}>
-        <button
-          type="button"
-          onClick={() => router.back()}
-          style={styles.cancelBtn}
-        >
-          Cancel
-        </button>
-        <button
-          type="submit"
-          disabled={saving}
-          style={{ ...styles.submitBtn, opacity: saving ? 0.7 : 1 }}
-        >
-          {saving ? 'Saving...' : isEditing ? 'Update Service' : 'Create Service'}
-        </button>
-      </div>
     </form>
 
     {isEditing && service && (
-      <ServiceImageManager 
+      <UnifiedServiceImageManager 
         serviceId={service.id} 
         images={service.service_images || []} 
       />
     )}
+
+    <div style={styles.actions}>
+      <button
+        type="button"
+        onClick={() => router.back()}
+        style={styles.cancelBtn}
+      >
+        Cancel
+      </button>
+      <button
+        type="submit"
+        form="service-form"
+        disabled={saving}
+        style={{ ...styles.submitBtn, opacity: saving ? 0.7 : 1 }}
+      >
+        {saving ? 'Saving...' : isEditing ? 'Update Service' : 'Create Service'}
+      </button>
+    </div>
     </>
   )
 }
@@ -199,6 +211,8 @@ const styles: Record<string, React.CSSProperties> = {
     gap: '12px',
     justifyContent: 'flex-end',
     paddingTop: '1rem',
+    marginTop: '2rem',
+    maxWidth: '700px',
   },
   cancelBtn: {
     padding: '12px 24px',
