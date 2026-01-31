@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import MobileMenu from '@/components/interactive/MobileMenu'
 import HeaderScroll from '@/components/interactive/HeaderScroll'
 
@@ -25,6 +26,7 @@ export default function Header() {
             <li><a href="#services">Services</a></li>
             <li><a href="#gallery">Gallery</a></li>
             <li><a href="#testimonials">Reviews</a></li>
+            <li><Link href="/blog">Blog</Link></li>
             <li><a href="#contact">Contact</a></li>
           </ul>
 

@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 export default function Footer() {
   return (
     <footer>
@@ -24,6 +26,7 @@ export default function Footer() {
               <li><a href="#about">About Dr. Kedia</a></li>
               <li><a href="#services">Services</a></li>
               <li><a href="#testimonials">Testimonials</a></li>
+              <li><Link href="/blog">Blog</Link></li>
               <li><a href="#contact">Contact</a></li>
             </ul>
           </div>

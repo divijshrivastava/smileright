@@ -66,6 +66,12 @@ export default function AdminSidebar({ profile }: AdminSidebarProps) {
         <Link href="/admin/trust-images/new" style={styles.link} onClick={() => setIsOpen(false)}>
           Add Trust Image
         </Link>
+        <Link href="/admin/blogs" style={styles.link} onClick={() => setIsOpen(false)}>
+          Blogs
+        </Link>
+        <Link href="/admin/blogs/new" style={styles.link} onClick={() => setIsOpen(false)}>
+          Add Blog
+        </Link>
         <Link href="/" style={styles.link} target="_blank" onClick={() => setIsOpen(false)}>
           View Site
         </Link>

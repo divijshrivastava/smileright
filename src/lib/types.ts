@@ -65,3 +65,18 @@ export interface Profile {
   created_at: string
   updated_at: string
 }
+
+export interface Blog {
+  id: string
+  title: string
+  slug: string
+  excerpt: string | null
+  content_html: string
+  is_published: boolean
+  published_at: string | null
+  display_order: number
+  created_at: string
+  updated_at: string
+  created_by: string | null
+  updated_by: string | null
+}

@@ -7,9 +7,10 @@ import { validateFile, fileValidationConfigs } from '@/lib/security/file-validat
 interface VideoUploaderProps {
   currentUrl: string | null
   onUpload: (url: string) => void
+  bucket?: 'testimonial-videos' | 'blog-media'
 }
 
-export default function VideoUploader({ currentUrl, onUpload }: VideoUploaderProps) {
+export default function VideoUploader({ currentUrl, onUpload, bucket = 'testimonial-videos' }: VideoUploaderProps) {
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState('')
 
@@ -51,7 +52,7 @@ export default function VideoUploader({ currentUrl, onUpload }: VideoUploaderPro
       console.log('Uploading video:', fileName, 'Size:', fileSizeMB, 'MB')
 
       const { error: uploadError, data: uploadData } = await supabase.storage
-        .from('testimonial-videos')
+        .from(bucket)
         .upload(fileName, file)
 
       if (uploadError) {
@@ -64,7 +65,7 @@ export default function VideoUploader({ currentUrl, onUpload }: VideoUploaderPro
       console.log('Video upload successful:', uploadData)
 
       const { data: { publicUrl } } = supabase.storage
-        .from('testimonial-videos')
+        .from(bucket)
         .getPublicUrl(fileName)
 
       console.log('Video public URL:', publicUrl)

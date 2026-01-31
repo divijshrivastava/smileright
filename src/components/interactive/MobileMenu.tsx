@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useState } from 'react'
 
 export default function MobileMenu() {
@@ -24,6 +25,7 @@ export default function MobileMenu() {
         <li><a href="#services" onClick={() => setIsOpen(false)}>Services</a></li>
         <li><a href="#gallery" onClick={() => setIsOpen(false)}>Gallery</a></li>
         <li><a href="#testimonials" onClick={() => setIsOpen(false)}>Reviews</a></li>
+        <li><Link href="/blog" onClick={() => setIsOpen(false)}>Blog</Link></li>
         <li><a href="#contact" onClick={() => setIsOpen(false)}>Contact</a></li>
         <li className="mobile-menu-cta">
           <a href="tel:+917977991130" className="btn btn-primary">

@@ -208,7 +208,7 @@ export default function UnifiedServiceImageManager({ serviceId, images }: Unifie
         </div>
       ) : (
         <div style={styles.emptyState}>
-          <p>No images added yet. Click "Add Image" to get started.</p>
+          <p>No images added yet. Click &quot;Add Image&quot; to get started.</p>
         </div>
       )}
     </div>

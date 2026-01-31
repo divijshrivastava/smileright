@@ -6,12 +6,13 @@ import DoctorBio from '@/components/public/DoctorBio'
 import Testimonials from '@/components/public/Testimonials'
 import ClinicInfo from '@/components/public/ClinicInfo'
 import TrustSection from '@/components/public/TrustSection'
+import BlogPreview from '@/components/public/BlogPreview'
 import FAQ from '@/components/public/FAQ'
 import Footer from '@/components/public/Footer'
 import SmoothScrollLink from '@/components/interactive/SmoothScrollLink'
 import FloatingWhatsApp from '@/components/interactive/FloatingWhatsApp'
 import { createClient } from '@/lib/supabase/server'
-import type { Service } from '@/lib/types'
+import type { Blog, Service } from '@/lib/types'
 
 export const revalidate = 3600
 
@@ -44,6 +45,16 @@ export default async function HomePage() {
     service_images: service.service_images?.sort((a, b) => a.display_order - b.display_order)
   })) || []
 
+  const { data: blogs } = await supabase
+    .from('blogs')
+    .select('id, title, slug')
+    .eq('is_published', true)
+    .order('published_at', { ascending: false })
+    .order('created_at', { ascending: false })
+    .limit(3)
+
+  const latestBlogs = (blogs as Pick<Blog, 'id' | 'title' | 'slug'>[]) ?? []
+
   return (
     <>
       <SmoothScrollLink />
@@ -53,6 +64,7 @@ export default async function HomePage() {
       <Welcome />
       <TrustSection />
       <FeaturedServices services={servicesWithSortedImages} />
+      <BlogPreview blogs={latestBlogs} />
       <DoctorBio />
       <Testimonials />
       <FAQ />

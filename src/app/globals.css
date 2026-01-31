@@ -323,100 +323,122 @@ nav {
 }
 
 /* ========================================
-   HERO SECTION
+   HERO SECTION - Mobile First Design
    ======================================== */
 .hero {
-    min-height: 700px;
-    background-image: linear-gradient(to right, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.3) 100%),
-        url('/images/hero-image.jpg');
-    background-size: cover;
-    background-position: center center;
-    background-attachment: fixed;
-    display: flex;
-    align-items: center;
     position: relative;
-    margin-top: 150px;
+    min-height: 100svh; /* Use svh for mobile viewport */
+    display: flex;
+    align-items: flex-end; /* Content at bottom on mobile */
+    padding-top: 70px; /* Account for fixed header */
+}
+
+/* Hero image container - full bleed */
+.hero-image-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+}
+
+/* Gradient overlay for text readability */
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.75) 0%,
+        rgba(0, 0, 0, 0.4) 40%,
+        rgba(0, 0, 0, 0.1) 70%,
+        rgba(0, 0, 0, 0) 100%
+    );
+    z-index: 1;
 }
 
 .hero-content-wrapper {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 50px;
+    position: relative;
+    z-index: 2;
     width: 100%;
+    padding: 0 16px 24px;
 }
 
 .hero-content {
-    background: rgba(255, 255, 255, 0.85);
-    max-width: 650px;
-    padding: 50px 45px;
-    border-radius: 12px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(80px);
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    margin-left: auto;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 24px 20px;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    max-width: 100%;
 }
 
 .hero-badge {
     display: inline-block;
     background: linear-gradient(135deg, #1B73BA, #1561a0);
     color: var(--white);
-    padding: 10px 20px;
-    border-radius: 25px;
-    font-size: 0.9rem;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 0.75rem;
     font-weight: 600;
-    margin-bottom: 2rem;
-    box-shadow: 0 4px 15px rgba(27, 115, 186, 0.4);
-    letter-spacing: 0.03em;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 12px rgba(27, 115, 186, 0.3);
+    letter-spacing: 0.02em;
 }
 
 .hero h1 {
-    font-size: 4.5rem;
-    line-height: 1.1;
-    margin-bottom: 0.8rem;
+    font-size: 2.25rem;
+    line-height: 1.15;
+    margin-bottom: 0.5rem;
     color: var(--dark-charcoal);
     letter-spacing: -0.02em;
 }
 
 .hero-subtitle {
     font-family: var(--font-sans);
-    font-size: 1.05rem;
+    font-size: 0.8rem;
     text-transform: uppercase;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.1em;
     color: var(--primary-blue);
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
     font-weight: 700;
 }
 
 .hero-doctor {
     font-family: var(--font-sans);
-    font-size: 1.35rem;
+    font-size: 1rem;
     font-weight: 700;
     color: var(--dark-charcoal);
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.25rem;
     text-transform: uppercase;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.02em;
 }
 
 .hero-specialty {
     font-family: var(--font-sans);
-    font-size: 1.15rem;
+    font-size: 0.9rem;
     color: var(--medium-gray);
-    margin-bottom: 2rem;
-    line-height: 1.5;
+    margin-bottom: 1rem;
+    line-height: 1.4;
 }
 
 .hero-features {
     display: flex;
-    flex-wrap: wrap;
-    gap: 1.8rem;
-    margin-bottom: 2.5rem;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
 }
 
 .hero-feature {
     font-family: var(--font-sans);
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     color: var(--primary-blue);
-    font-weight: 700;
+    font-weight: 600;
     display: flex;
     align-items: center;
     gap: 6px;
@@ -424,21 +446,26 @@ nav {
 
 .hero-buttons {
     display: flex;
-    gap: 1.2rem;
-    flex-wrap: wrap;
-    margin-bottom: 2rem;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 1rem;
+}
+
+.hero-buttons .btn {
+    width: 100%;
+    justify-content: center;
+    padding: 14px 20px;
+    font-size: 0.95rem;
 }
 
 .btn-large {
-    padding: 18px 36px;
-    font-size: 1.05rem;
-    min-width: 220px;
-    justify-content: center;
+    padding: 16px 24px;
+    font-size: 1rem;
 }
 
 .hero-phone {
     font-family: var(--font-sans);
-    font-size: 1rem;
+    font-size: 0.9rem;
     text-align: center;
     color: var(--medium-gray);
     margin: 0;
@@ -448,11 +475,176 @@ nav {
     color: var(--primary-blue);
     font-weight: 700;
     text-decoration: none;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
 }
 
 .phone-icon {
-    font-size: 1.1rem;
+    font-size: 1rem;
+}
+
+/* Tablet - 768px+ */
+@media screen and (min-width: 768px) {
+    .hero {
+        min-height: 85vh;
+        align-items: center;
+        padding-top: 100px;
+    }
+
+    .hero-overlay {
+        background: linear-gradient(
+            to right,
+            rgba(0, 0, 0, 0.5) 0%,
+            rgba(0, 0, 0, 0.2) 50%,
+            rgba(0, 0, 0, 0.1) 100%
+        );
+    }
+
+    .hero-content-wrapper {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 32px;
+    }
+
+    .hero-content {
+        max-width: 500px;
+        padding: 36px 32px;
+    }
+
+    .hero-badge {
+        font-size: 0.85rem;
+        padding: 10px 18px;
+        margin-bottom: 1.5rem;
+    }
+
+    .hero h1 {
+        font-size: 3rem;
+        margin-bottom: 0.6rem;
+    }
+
+    .hero-subtitle {
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .hero-doctor {
+        font-size: 1.15rem;
+    }
+
+    .hero-specialty {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .hero-features {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.75rem;
+    }
+
+    .hero-feature {
+        font-size: 0.9rem;
+    }
+
+    .hero-buttons {
+        flex-direction: row;
+        gap: 12px;
+        margin-bottom: 1.5rem;
+    }
+
+    .hero-buttons .btn {
+        width: auto;
+        padding: 16px 28px;
+    }
+}
+
+/* Desktop - 1024px+ */
+@media screen and (min-width: 1024px) {
+    .hero {
+        min-height: 90vh;
+        padding-top: 120px;
+    }
+
+    .hero-content-wrapper {
+        max-width: 1400px;
+        padding: 0 50px;
+    }
+
+    .hero-content {
+        max-width: 580px;
+        padding: 48px 42px;
+    }
+
+    .hero-badge {
+        font-size: 0.9rem;
+        padding: 10px 20px;
+        margin-bottom: 2rem;
+    }
+
+    .hero h1 {
+        font-size: 4rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+        letter-spacing: 0.12em;
+        margin-bottom: 2rem;
+    }
+
+    .hero-doctor {
+        font-size: 1.25rem;
+    }
+
+    .hero-specialty {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+
+    .hero-features {
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .hero-feature {
+        font-size: 0.95rem;
+    }
+
+    .hero-buttons {
+        gap: 1rem;
+        margin-bottom: 1.75rem;
+    }
+
+    .hero-buttons .btn {
+        padding: 18px 32px;
+        font-size: 1rem;
+    }
+
+    .btn-large {
+        padding: 18px 36px;
+        font-size: 1.05rem;
+        min-width: 200px;
+    }
+
+    .hero-phone {
+        font-size: 1rem;
+    }
+
+    .hero-phone a {
+        font-size: 1.2rem;
+    }
+}
+
+/* Large Desktop - 1280px+ */
+@media screen and (min-width: 1280px) {
+    .hero h1 {
+        font-size: 4.5rem;
+    }
+
+    .hero-content {
+        max-width: 620px;
+        padding: 50px 45px;
+    }
 }
 
 /* ========================================
@@ -548,6 +740,145 @@ nav {
 
 .highlight-item:hover .highlight-text {
     color: var(--white);
+}
+
+/* ========================================
+   BLOG (PUBLIC)
+   ======================================== */
+.blog-preview {
+    padding: 90px 0;
+    background: var(--white);
+}
+
+.blog-preview-list {
+    max-width: 900px;
+    margin: 40px auto 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.blog-preview-item {
+    display: block;
+    background: var(--light-gray);
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 18px 20px;
+    font-family: var(--font-sans);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--dark-charcoal);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.blog-preview-item:hover {
+    background: var(--primary-blue);
+    color: var(--white);
+    text-decoration: none;
+    transform: translateY(-2px);
+}
+
+.blog-preview-cta {
+    text-align: center;
+    margin-top: 28px;
+}
+
+.blog-index {
+    padding: 60px 0 90px;
+    background: var(--white);
+}
+
+.blog-index-list {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.blog-index-item {
+    display: block;
+    background: var(--white);
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 22px;
+    box-shadow: var(--shadow-sm);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.blog-index-item:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    text-decoration: none;
+}
+
+.blog-index-title {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    margin: 0 0 10px 0;
+    color: var(--dark-charcoal);
+}
+
+.blog-index-excerpt {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--medium-gray);
+    margin: 0;
+}
+
+.blog-post {
+    padding: 60px 0 90px;
+    background: var(--white);
+}
+
+.blog-post-title {
+    font-family: var(--font-serif);
+    font-size: 3rem;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+}
+
+.blog-post-content {
+    max-width: 900px;
+    margin: 0 auto;
+    font-family: var(--font-sans);
+    font-size: 1.05rem;
+    line-height: 1.9;
+    color: var(--dark-charcoal);
+}
+
+.blog-post-content h1,
+.blog-post-content h2,
+.blog-post-content h3,
+.blog-post-content h4 {
+    font-family: var(--font-serif);
+    margin-top: 1.5em;
+    margin-bottom: 0.6em;
+}
+
+.blog-post-content img,
+.blog-post-content video {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+    margin: 12px 0;
+}
+
+.blog-post-content a {
+    color: var(--primary-blue);
+}
+
+@media screen and (max-width: 768px) {
+    .blog-index-list {
+        grid-template-columns: 1fr;
+    }
+
+    .blog-post-title {
+        font-size: 2.1rem;
+    }
 }
 
 /* ========================================
@@ -1319,6 +1650,142 @@ footer {
 }
 
 /* ========================================
+   CKEDITOR ADMIN CUSTOMIZATION
+   ======================================== */
+
+.ck.ck-editor {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.ck.ck-editor__main > .ck-editor__editable {
+    min-height: 500px;
+    max-height: 800px;
+    overflow-y: auto;
+    background: #fff;
+    padding: 20px;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.8;
+    color: #292828;
+}
+
+.ck.ck-editor__main > .ck-editor__editable:focus {
+    border: none;
+    box-shadow: none;
+}
+
+.ck.ck-toolbar {
+    background: #f8f9fa !important;
+    border: none !important;
+    border-bottom: 1px solid #ddd !important;
+    padding: 12px !important;
+}
+
+.ck.ck-button {
+    border-radius: 4px !important;
+}
+
+.ck.ck-button:hover {
+    background: #e9ecef !important;
+}
+
+.ck.ck-button.ck-on {
+    background: #1B73BA !important;
+    color: #fff !important;
+}
+
+/* CKEditor content styles */
+.ck-content h1 {
+    font-family: var(--font-serif);
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 1.5rem 0 1rem 0;
+    color: #292828;
+}
+
+.ck-content h2 {
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 1.5rem 0 1rem 0;
+    color: #292828;
+}
+
+.ck-content h3 {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 1.25rem 0 0.75rem 0;
+    color: #292828;
+}
+
+.ck-content h4 {
+    font-family: var(--font-sans);
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 1rem 0 0.5rem 0;
+    color: #292828;
+}
+
+.ck-content p {
+    margin: 0 0 1rem 0;
+}
+
+.ck-content ul,
+.ck-content ol {
+    margin: 1rem 0;
+    padding-left: 2rem;
+}
+
+.ck-content li {
+    margin: 0.5rem 0;
+}
+
+.ck-content blockquote {
+    border-left: 4px solid #1B73BA;
+    padding-left: 1.5rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+    color: #666;
+}
+
+.ck-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 1.5rem 0;
+}
+
+.ck-content table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1.5rem 0;
+}
+
+.ck-content table td,
+.ck-content table th {
+    border: 1px solid #ddd;
+    padding: 12px;
+}
+
+.ck-content table th {
+    background: #f8f9fa;
+    font-weight: 600;
+}
+
+.ck-content a {
+    color: #1B73BA;
+    text-decoration: underline;
+}
+
+.ck-content a:hover {
+    color: #145a93;
+}
+
+/* ========================================
    RESPONSIVE DESIGN - MOBILE FIRST
    ======================================== */
 
@@ -1390,23 +1857,6 @@ footer {
         font-size: 2.2rem;
     }
 
-    .hero {
-        min-height: 550px;
-        background-position: center center;
-    }
-
-    .hero-features {
-        gap: 1rem;
-    }
-
-    .hero-feature {
-        font-size: 0.85rem;
-    }
-
-    .hero-content {
-        max-width: 600px;
-        padding: 40px 35px;
-    }
 }
 
 /* Mobile landscape and smaller tablets */
@@ -1598,12 +2048,7 @@ footer {
         gap: 30px;
     }
 
-    .hero-badge {
-        font-size: 0.75rem;
-        padding: 6px 12px;
-    }
-
-    h1, .hero h1 {
+    h1 {
         font-size: 2.5rem;
         line-height: 1.2;
     }
@@ -1616,66 +2061,12 @@ footer {
         font-size: 1.5rem;
     }
 
-    .hero {
-        min-height: 450px;
-        margin-top: 76px;
-        background-attachment: scroll;
-        background-position: center center;
-    }
-
-    .hero-content {
-        padding: 30px 20px;
-    }
-
-    .hero-subtitle {
-        font-size: 0.8rem;
-        margin-bottom: 1rem;
-    }
-
-    .hero-doctor {
-        font-size: 0.9rem;
-    }
-
-    .hero-specialty {
-        font-size: 0.95rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .hero-buttons {
-        flex-direction: column;
-        gap: 12px;
-    }
-
     .btn {
         width: 100%;
         text-align: center;
         padding: 16px 24px;
         font-size: 0.95rem;
         min-height: 52px;
-    }
-
-    .btn-large {
-        padding: 18px 28px;
-        font-size: 1rem;
-        min-height: 56px;
-    }
-
-    .hero-features {
-        flex-direction: column;
-        gap: 0.75rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .hero-feature {
-        font-size: 0.85rem;
-    }
-
-    .hero-phone {
-        font-size: 0.9rem;
-    }
-
-    .hero-phone a {
-        font-size: 1.1rem;
     }
 
     section, .welcome, .featured-services, .doctor-bio, .testimonials, .clinic-info {
@@ -1790,7 +2181,7 @@ footer {
         font-size: 0.85rem;
     }
 
-    h1, .hero h1 {
+    h1 {
         font-size: 2rem;
     }
 
@@ -1800,17 +2191,6 @@ footer {
 
     h3 {
         font-size: 1.3rem;
-    }
-
-    .hero {
-        min-height: 400px;
-        background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-            url('/images/hero-image.jpg');
-        background-position: center center;
-    }
-
-    .hero-content {
-        padding: 25px 16px;
     }
 
     .btn {
@@ -1878,7 +2258,7 @@ footer {
         max-width: 160px !important;
     }
 
-    h1, .hero h1 {
+    h1 {
         font-size: 1.75rem;
     }
 
@@ -1886,16 +2266,8 @@ footer {
         font-size: 1.5rem;
     }
 
-    .hero-content {
-        padding: 20px 12px;
-    }
-
     .service-card {
         padding: 20px 15px;
-    }
-
-    .hero {
-        margin-top: 62px;
     }
 
     .nav-links-mobile {

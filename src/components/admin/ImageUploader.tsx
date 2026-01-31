@@ -7,7 +7,7 @@ import { validateFile, fileValidationConfigs } from '@/lib/security/file-validat
 interface ImageUploaderProps {
   currentUrl: string | null
   onUpload: (url: string) => void
-  bucket?: 'testimonial-images' | 'trust-images'
+  bucket?: 'testimonial-images' | 'trust-images' | 'blog-media'
 }
 
 export default function ImageUploader({ currentUrl, onUpload, bucket = 'testimonial-images' }: ImageUploaderProps) {

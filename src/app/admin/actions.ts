@@ -3,7 +3,13 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { logAuditEvent } from '@/lib/security/audit-log'
-import { validateTestimonialInput, validateServiceInput, sanitizeString, validateInteger } from '@/lib/security/input-validation'
+import {
+  validateTestimonialInput,
+  validateServiceInput,
+  validateBlogInput,
+  sanitizeString,
+  validateInteger,
+} from '@/lib/security/input-validation'
 
 export async function revalidateHomePage() {
   const supabase = await createClient()
@@ -712,4 +718,214 @@ export async function setServiceImagePrimary(serviceId: string, imageId: string)
 
   revalidatePath('/', 'page')
   revalidatePath('/admin/services')
+}
+
+// ========================================
+// Blog Actions
+// ========================================
+
+export async function createBlog(formData: FormData) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    throw new Error('Unauthorized')
+  }
+
+  const validatedInput = validateBlogInput(formData)
+  if ('error' in validatedInput) {
+    throw new Error(validatedInput.error)
+  }
+
+  const isPublished = formData.get('is_published') === 'true'
+  const publishedAt = isPublished ? new Date().toISOString() : null
+
+  const { data: blog, error } = await supabase
+    .from('blogs')
+    .insert({
+      title: validatedInput.title,
+      slug: validatedInput.slug,
+      excerpt: validatedInput.excerpt,
+      content_html: validatedInput.content_html,
+      is_published: isPublished,
+      published_at: publishedAt,
+      display_order: validatedInput.display_order,
+      created_by: user.id,
+      updated_by: user.id,
+    })
+    .select('id, slug')
+    .single()
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  await logAuditEvent({
+    action: 'blog.create',
+    user_id: user.id,
+    resource_type: 'blog',
+    resource_id: blog?.id,
+    details: { slug: blog?.slug, is_published: isPublished },
+  })
+
+  revalidatePath('/', 'page')
+  revalidatePath('/blog')
+  if (blog?.slug) {
+    revalidatePath(`/blog/${blog.slug}`)
+  }
+
+  revalidatePath('/admin/blogs')
+}
+
+export async function updateBlog(id: string, formData: FormData) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    throw new Error('Unauthorized')
+  }
+
+  const validatedInput = validateBlogInput(formData)
+  if ('error' in validatedInput) {
+    throw new Error(validatedInput.error)
+  }
+
+  // Grab old slug so we can revalidate it if the slug changes.
+  const { data: existing } = await supabase
+    .from('blogs')
+    .select('slug, is_published')
+    .eq('id', id)
+    .single()
+
+  const isPublished = formData.get('is_published') === 'true'
+
+  // If publishing now (or re-publishing), set published_at if it wasn't set.
+  let publishedAt: string | null | undefined = undefined
+  if (isPublished && existing && !existing.is_published) {
+    publishedAt = new Date().toISOString()
+  }
+
+  const { data: updated, error } = await supabase
+    .from('blogs')
+    .update({
+      title: validatedInput.title,
+      slug: validatedInput.slug,
+      excerpt: validatedInput.excerpt,
+      content_html: validatedInput.content_html,
+      is_published: isPublished,
+      published_at: publishedAt,
+      display_order: validatedInput.display_order,
+      updated_by: user.id,
+    })
+    .eq('id', id)
+    .select('slug')
+    .single()
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  await logAuditEvent({
+    action: 'blog.update',
+    user_id: user.id,
+    resource_type: 'blog',
+    resource_id: id,
+    details: { slug: updated?.slug, is_published: isPublished },
+  })
+
+  const oldSlug = existing?.slug
+  const newSlug = updated?.slug
+
+  revalidatePath('/', 'page')
+  revalidatePath('/blog')
+  if (oldSlug) {
+    revalidatePath(`/blog/${oldSlug}`)
+  }
+  if (newSlug && newSlug !== oldSlug) {
+    revalidatePath(`/blog/${newSlug}`)
+  }
+
+  revalidatePath('/admin/blogs')
+}
+
+export async function deleteBlog(id: string) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    throw new Error('Unauthorized')
+  }
+
+  const { data: existing } = await supabase
+    .from('blogs')
+    .select('slug')
+    .eq('id', id)
+    .single()
+
+  const { error } = await supabase.from('blogs').delete().eq('id', id)
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  await logAuditEvent({
+    action: 'blog.delete',
+    user_id: user.id,
+    resource_type: 'blog',
+    resource_id: id,
+    details: { slug: existing?.slug },
+  })
+
+  revalidatePath('/', 'page')
+  revalidatePath('/blog')
+  if (existing?.slug) {
+    revalidatePath(`/blog/${existing.slug}`)
+  }
+  revalidatePath('/admin/blogs')
+}
+
+export async function toggleBlogPublish(id: string, isPublished: boolean) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    throw new Error('Unauthorized')
+  }
+
+  const { data: existing } = await supabase
+    .from('blogs')
+    .select('slug, published_at')
+    .eq('id', id)
+    .single()
+
+  const updates: Record<string, unknown> = {
+    is_published: isPublished,
+    updated_by: user.id,
+  }
+
+  // When turning published on, ensure published_at is set.
+  if (isPublished && !existing?.published_at) {
+    updates.published_at = new Date().toISOString()
+  }
+
+  const { error } = await supabase.from('blogs').update(updates).eq('id', id)
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  await logAuditEvent({
+    action: 'blog.publish',
+    user_id: user.id,
+    resource_type: 'blog',
+    resource_id: id,
+    details: { is_published: isPublished, slug: existing?.slug },
+  })
+
+  revalidatePath('/', 'page')
+  revalidatePath('/blog')
+  if (existing?.slug) {
+    revalidatePath(`/blog/${existing.slug}`)
+  }
+  revalidatePath('/admin/blogs')
 }
