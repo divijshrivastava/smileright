@@ -10,188 +10,111 @@ interface CKEditorComponentProps {
 }
 
 export default function CKEditorComponent({ value, onChange }: CKEditorComponentProps) {
-  const editorRef = useRef<HTMLDivElement>(null)
-  const [editor, setEditor] = useState<any>(null)
-  const [isLoaded, setIsLoaded] = useState(false)
+  const editorContainerRef = useRef<HTMLDivElement>(null)
+  const editorRef = useRef<any>(null)
+  const [isLayoutReady, setIsLayoutReady] = useState(false)
+  const [error, setError] = useState<string>('')
 
   useEffect(() => {
-    let editorInstance: any = null
+    setIsLayoutReady(true)
 
-    const initializeEditor = async () => {
-      if (!editorRef.current) return
+    return () => {
+      setIsLayoutReady(false)
+    }
+  }, [])
 
+  useEffect(() => {
+    if (!isLayoutReady) return
+
+    let mounted = true
+
+    const initEditor = async () => {
       try {
-        // Dynamically import CKEditor to avoid SSR issues
-        const { ClassicEditor } = await import('ckeditor5')
-        const {
-          Essentials,
-          Bold,
-          Italic,
-          Underline,
-          Strikethrough,
-          Font,
-          Paragraph,
-          Heading,
-          Link,
-          List,
-          BlockQuote,
-          Image,
-          ImageCaption,
-          ImageStyle,
-          ImageToolbar,
-          ImageUpload,
-          ImageResize,
-          MediaEmbed,
-          Table,
-          TableToolbar,
-          Alignment,
-          Indent,
-          IndentBlock,
-          HorizontalLine,
-          RemoveFormat,
-          SourceEditing,
+        // Import CKEditor modules dynamically
+        const { ClassicEditor, Essentials, Bold, Italic, Underline, Strikethrough, Font, 
+          Paragraph, Heading, Link, List, BlockQuote, Image, ImageCaption, ImageStyle, 
+          ImageToolbar, ImageUpload, ImageResize, MediaEmbed, Table, TableToolbar, 
+          Alignment, Indent, IndentBlock, HorizontalLine, RemoveFormat, SourceEditing 
         } = await import('ckeditor5')
 
-        // Custom upload adapter for Supabase
-        class SupabaseUploadAdapter {
-          loader: any
-          
-          constructor(loader: any) {
-            this.loader = loader
-          }
+        if (!mounted || !editorContainerRef.current) return
 
-          async upload() {
-            const file = await this.loader.file
-            
-            // Validate file
-            const validation = await validateFile(file, fileValidationConfigs.image)
-            if (!validation.valid) {
-              throw new Error(validation.error || 'Invalid file')
-            }
+        // Custom upload adapter
+        function uploadAdapter(loader: any) {
+          return {
+            upload: async () => {
+              const file = await loader.file
+              
+              const validation = await validateFile(file, fileValidationConfigs.image)
+              if (!validation.valid) {
+                throw new Error(validation.error || 'Invalid file')
+              }
 
-            // Upload to Supabase
-            const supabase = createClient()
-            const fileExt = file.name.split('.').pop()
-            const fileName = `blog-${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
+              const supabase = createClient()
+              const fileExt = file.name.split('.').pop()
+              const fileName = `blog-${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
 
-            const { error: uploadError, data: uploadData } = await supabase.storage
-              .from('testimonial-images')
-              .upload(fileName, file)
+              const { error: uploadError } = await supabase.storage
+                .from('testimonial-images')
+                .upload(fileName, file)
 
-            if (uploadError) {
-              throw new Error(`Upload failed: ${uploadError.message}`)
-            }
+              if (uploadError) {
+                throw new Error(`Upload failed: ${uploadError.message}`)
+              }
 
-            const { data: { publicUrl } } = supabase.storage
-              .from('testimonial-images')
-              .getPublicUrl(fileName)
+              const { data: { publicUrl } } = supabase.storage
+                .from('testimonial-images')
+                .getPublicUrl(fileName)
 
-            return {
-              default: publicUrl
-            }
-          }
-
-          abort() {
-            // Handle abort if needed
+              return { default: publicUrl }
+            },
+            abort: () => {}
           }
         }
 
-        function SupabaseUploadAdapterPlugin(editor: any) {
+        function uploadPlugin(editor: any) {
           editor.plugins.get('FileRepository').createUploadAdapter = (loader: any) => {
-            return new SupabaseUploadAdapter(loader)
+            return uploadAdapter(loader)
           }
         }
 
-        editorInstance = await ClassicEditor.create(editorRef.current, {
+        const editor = await ClassicEditor.create(editorContainerRef.current, {
           plugins: [
-            Essentials,
-            Bold,
-            Italic,
-            Underline,
-            Strikethrough,
-            Font,
-            Paragraph,
-            Heading,
-            Link,
-            List,
-            BlockQuote,
-            Image,
-            ImageCaption,
-            ImageStyle,
-            ImageToolbar,
-            ImageUpload,
-            ImageResize,
-            MediaEmbed,
-            Table,
-            TableToolbar,
-            Alignment,
-            Indent,
-            IndentBlock,
-            HorizontalLine,
-            RemoveFormat,
-            SourceEditing,
+            Essentials, Bold, Italic, Underline, Strikethrough, Font, Paragraph, 
+            Heading, Link, List, BlockQuote, Image, ImageCaption, ImageStyle, 
+            ImageToolbar, ImageUpload, ImageResize, MediaEmbed, Table, TableToolbar, 
+            Alignment, Indent, IndentBlock, HorizontalLine, RemoveFormat, SourceEditing
           ],
-          extraPlugins: [SupabaseUploadAdapterPlugin],
-          toolbar: {
-            items: [
-              'undo', 'redo',
-              '|',
-              'heading',
-              '|',
-              'bold', 'italic', 'underline', 'strikethrough',
-              '|',
-              'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor',
-              '|',
-              'link', 'uploadImage', 'mediaEmbed',
-              '|',
-              'bulletedList', 'numberedList',
-              '|',
-              'alignment',
-              '|',
-              'indent', 'outdent',
-              '|',
-              'insertTable', 'blockQuote', 'horizontalLine',
-              '|',
-              'removeFormat', 'sourceEditing'
-            ],
-            shouldNotGroupWhenFull: true
-          },
+          extraPlugins: [uploadPlugin],
+          toolbar: [
+            'undo', 'redo', '|',
+            'heading', '|',
+            'bold', 'italic', 'underline', 'strikethrough', '|',
+            'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
+            'link', 'uploadImage', 'mediaEmbed', '|',
+            'bulletedList', 'numberedList', '|',
+            'alignment', '|',
+            'indent', 'outdent', '|',
+            'insertTable', 'blockQuote', 'horizontalLine', '|',
+            'removeFormat', 'sourceEditing'
+          ],
           heading: {
             options: [
               { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
               { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
               { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
-              { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' },
-              { model: 'heading4', view: 'h4', title: 'Heading 4', class: 'ck-heading_heading4' }
+              { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' }
             ]
           },
           image: {
             toolbar: [
-              'imageStyle:inline',
-              'imageStyle:block',
-              'imageStyle:side',
-              '|',
-              'toggleImageCaption',
-              'imageTextAlternative',
-              '|',
-              'linkImage'
+              'imageStyle:inline', 'imageStyle:block', 'imageStyle:side', '|',
+              'toggleImageCaption', 'imageTextAlternative', '|', 'linkImage'
             ],
             resizeOptions: [
-              {
-                name: 'resizeImage:original',
-                value: null,
-                label: 'Original'
-              },
-              {
-                name: 'resizeImage:50',
-                value: '50',
-                label: '50%'
-              },
-              {
-                name: 'resizeImage:75',
-                value: '75',
-                label: '75%'
-              }
+              { name: 'resizeImage:original', value: null, label: 'Original' },
+              { name: 'resizeImage:50', value: '50', label: '50%' },
+              { name: 'resizeImage:75', value: '75', label: '75%' }
             ]
           },
           table: {
@@ -207,67 +130,80 @@ export default function CKEditorComponent({ value, onChange }: CKEditorComponent
           initialData: value || '<p></p>'
         })
 
-        // Listen for changes
-        editorInstance.model.document.on('change:data', () => {
-          const data = editorInstance.getData()
+        if (!mounted) {
+          await editor.destroy()
+          return
+        }
+
+        editorRef.current = editor
+
+        editor.model.document.on('change:data', () => {
+          const data = editor.getData()
           onChange(data)
         })
 
-        setEditor(editorInstance)
-        setIsLoaded(true)
-      } catch (error) {
-        console.error('CKEditor initialization error:', error)
+      } catch (err) {
+        console.error('Error initializing editor:', err)
+        setError(err instanceof Error ? err.message : 'Failed to initialize editor')
       }
     }
 
-    initializeEditor()
+    initEditor()
 
     return () => {
-      if (editorInstance) {
-        editorInstance.destroy().catch((error: any) => {
-          console.error('CKEditor destroy error:', error)
+      mounted = false
+      if (editorRef.current) {
+        editorRef.current.destroy().catch((err: any) => {
+          console.error('Error destroying editor:', err)
         })
+        editorRef.current = null
       }
     }
-  }, [])
+  }, [isLayoutReady])
 
-  // Update editor content when value prop changes
+  // Update content when value prop changes
   useEffect(() => {
-    if (editor && isLoaded && value !== editor.getData()) {
-      editor.setData(value || '<p></p>')
+    if (editorRef.current && value !== editorRef.current.getData()) {
+      editorRef.current.setData(value || '<p></p>')
     }
-  }, [value, editor, isLoaded])
+  }, [value])
+
+  if (error) {
+    return (
+      <div style={{
+        padding: '20px',
+        background: '#fee',
+        color: '#c00',
+        borderRadius: '8px',
+        fontFamily: 'var(--font-sans)'
+      }}>
+        <strong>Editor Error:</strong> {error}
+      </div>
+    )
+  }
 
   return (
-    <div style={styles.wrapper}>
-      <div ref={editorRef} style={styles.editor} />
-      {!isLoaded && (
-        <div style={styles.loading}>Loading editor...</div>
+    <div style={{ position: 'relative' }}>
+      <div ref={editorContainerRef} style={{ minHeight: '500px' }} />
+      {!isLayoutReady && (
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: '#f9f9f9',
+          color: '#666',
+          fontFamily: 'var(--font-sans)',
+          borderRadius: '8px',
+          border: '1px solid #ddd'
+        }}>
+          Loading editor...
+        </div>
       )}
     </div>
   )
-}
-
-const styles: Record<string, React.CSSProperties> = {
-  wrapper: {
-    position: 'relative',
-    minHeight: '500px',
-  },
-  editor: {
-    minHeight: '500px',
-  },
-  loading: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    background: '#f9f9f9',
-    color: '#666',
-    fontFamily: 'var(--font-sans)',
-    fontSize: '1rem',
-  },
 }
