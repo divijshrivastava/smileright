@@ -41,7 +41,12 @@ export default function Footer() {
         </div>
 
         <div className="footer-bottom">
-          <p>&copy; {new Date().getFullYear()} Smile Right - Multispecialty Dental Clinic &amp; Implant Centre. All rights reserved.</p>
+          <div>
+            <p>&copy; {new Date().getFullYear()} Smile Right - Multispecialty Dental Clinic &amp; Implant Centre. All rights reserved.</p>
+            <p style={{ marginTop: '0.5rem', fontSize: '0.85rem', opacity: 0.8 }}>
+              Created by <a href="https://divij.tech" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline' }}>divij.tech</a>
+            </p>
+          </div>
           <ul className="footer-legal">
             <li><a href="#privacy">Privacy Policy</a></li>
             <li><a href="#terms">Terms of Service</a></li>
