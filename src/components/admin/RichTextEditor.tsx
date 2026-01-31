@@ -152,44 +152,58 @@ export default function RichTextEditor({ value, onChange }: RichTextEditorProps)
   }
 
   return (
-    <div style={styles.wrapper}>
-      <div style={styles.toolbar}>
-        <button type="button" onClick={() => editor.chain().focus().toggleBold().run()} style={styles.toolBtn}>
-          Bold
-        </button>
-        <button type="button" onClick={() => editor.chain().focus().toggleItalic().run()} style={styles.toolBtn}>
-          Italic
-        </button>
-        <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} style={styles.toolBtn}>
-          H2
-        </button>
-        <button type="button" onClick={() => editor.chain().focus().toggleBulletList().run()} style={styles.toolBtn}>
-          Bullets
-        </button>
-        <button type="button" onClick={() => editor.chain().focus().toggleOrderedList().run()} style={styles.toolBtn}>
-          Numbers
-        </button>
-        <button type="button" onClick={handleSetLink} style={styles.toolBtn}>
-          Link
-        </button>
+    <div className="rich-text-editor-wrapper">
+      <div className="rich-text-toolbar">
+        <div className="toolbar-group toolbar-formatting">
+          <button type="button" onClick={() => editor.chain().focus().toggleBold().run()} className="tool-btn" title="Bold">
+            <span className="btn-icon">B</span>
+            <span className="btn-label">Bold</span>
+          </button>
+          <button type="button" onClick={() => editor.chain().focus().toggleItalic().run()} className="tool-btn" title="Italic">
+            <span className="btn-icon"><em>I</em></span>
+            <span className="btn-label">Italic</span>
+          </button>
+          <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} className="tool-btn" title="Heading 2">
+            <span className="btn-icon">H</span>
+            <span className="btn-label">H2</span>
+          </button>
+          <button type="button" onClick={() => editor.chain().focus().toggleBulletList().run()} className="tool-btn" title="Bullet List">
+            <span className="btn-icon">•</span>
+            <span className="btn-label">Bullets</span>
+          </button>
+          <button type="button" onClick={() => editor.chain().focus().toggleOrderedList().run()} className="tool-btn" title="Numbered List">
+            <span className="btn-icon">1.</span>
+            <span className="btn-label">Numbers</span>
+          </button>
+          <button type="button" onClick={handleSetLink} className="tool-btn" title="Insert Link">
+            <span className="btn-icon">🔗</span>
+            <span className="btn-label">Link</span>
+          </button>
+        </div>
 
-        <button
-          type="button"
-          onClick={() => imageInputRef.current?.click()}
-          disabled={uploading !== null}
-          style={{ ...styles.primaryBtn, opacity: uploading !== null ? 0.7 : 1 }}
-        >
-          {uploading === 'image' ? 'Uploading image…' : 'Insert Image'}
-        </button>
+        <div className="toolbar-group toolbar-media">
+          <button
+            type="button"
+            onClick={() => imageInputRef.current?.click()}
+            disabled={uploading !== null}
+            className="primary-btn"
+            title="Insert Image"
+          >
+            <span className="btn-icon">📷</span>
+            <span className="btn-label">{uploading === 'image' ? 'Uploading…' : 'Image'}</span>
+          </button>
 
-        <button
-          type="button"
-          onClick={() => videoInputRef.current?.click()}
-          disabled={uploading !== null}
-          style={{ ...styles.primaryBtn, opacity: uploading !== null ? 0.7 : 1 }}
-        >
-          {uploading === 'video' ? 'Uploading video…' : 'Insert Video'}
-        </button>
+          <button
+            type="button"
+            onClick={() => videoInputRef.current?.click()}
+            disabled={uploading !== null}
+            className="primary-btn"
+            title="Insert Video"
+          >
+            <span className="btn-icon">🎬</span>
+            <span className="btn-label">{uploading === 'video' ? 'Uploading…' : 'Video'}</span>
+          </button>
+        </div>
 
         <input
           ref={imageInputRef}
@@ -207,14 +221,107 @@ export default function RichTextEditor({ value, onChange }: RichTextEditorProps)
         />
       </div>
 
-      {error && <div style={styles.error}>{error}</div>}
+      {error && <div className="editor-error">{error}</div>}
 
-      <div style={styles.editorBox}>
+      <div className="editor-box">
         <EditorContent editor={editor} />
       </div>
 
-      {/* Minimal prose styling for the editor content */}
+      {/* Editor styling including mobile responsiveness */}
       <style jsx global>{`
+        .rich-text-editor-wrapper {
+          max-width: 900px;
+        }
+
+        .rich-text-toolbar {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          margin-bottom: 12px;
+          align-items: center;
+        }
+
+        .toolbar-group {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+        }
+
+        .toolbar-formatting {
+          flex: 1;
+          min-width: 0;
+        }
+
+        .toolbar-media {
+          flex-shrink: 0;
+        }
+
+        .tool-btn {
+          padding: 10px 14px;
+          background: #f5f5f5;
+          border: 1px solid #ddd;
+          border-radius: 8px;
+          font-family: var(--font-sans);
+          font-size: 0.9rem;
+          font-weight: 600;
+          cursor: pointer;
+          color: #292828;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+
+        .tool-btn .btn-icon {
+          display: none;
+          font-style: normal;
+          font-weight: 700;
+          min-width: 16px;
+          text-align: center;
+        }
+
+        .primary-btn {
+          padding: 10px 14px;
+          background: #1B73BA;
+          color: #fff;
+          border: none;
+          border-radius: 8px;
+          font-family: var(--font-sans);
+          font-size: 0.9rem;
+          font-weight: 700;
+          cursor: pointer;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+
+        .primary-btn:disabled {
+          opacity: 0.7;
+        }
+
+        .primary-btn .btn-icon {
+          display: none;
+        }
+
+        .editor-box {
+          background: #fff;
+          border: 1px solid #ddd;
+          border-radius: 12px;
+          padding: 16px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .editor-error {
+          background: #fee;
+          color: #c00;
+          padding: 12px;
+          border-radius: 8px;
+          font-size: 0.9rem;
+          font-family: var(--font-sans);
+          margin-bottom: 12px;
+        }
+
         .blog-editor-prose {
           font-family: var(--font-sans);
           font-size: 1rem;
@@ -249,60 +356,82 @@ export default function RichTextEditor({ value, onChange }: RichTextEditorProps)
           color: var(--primary-blue);
           text-decoration: underline;
         }
+
+        /* Mobile responsive styles */
+        @media (max-width: 640px) {
+          .rich-text-toolbar {
+            gap: 6px;
+          }
+
+          .toolbar-group {
+            gap: 4px;
+          }
+
+          .tool-btn {
+            padding: 8px 10px;
+            font-size: 0.85rem;
+            min-width: 40px;
+            justify-content: center;
+          }
+
+          .tool-btn .btn-icon {
+            display: inline;
+          }
+
+          .tool-btn .btn-label {
+            display: none;
+          }
+
+          .primary-btn {
+            padding: 8px 10px;
+            font-size: 0.8rem;
+            min-width: 44px;
+            justify-content: center;
+          }
+
+          .primary-btn .btn-icon {
+            display: inline;
+          }
+
+          .primary-btn .btn-label {
+            display: none;
+          }
+
+          .editor-box {
+            padding: 12px;
+            border-radius: 8px;
+          }
+
+          .editor-error {
+            padding: 10px;
+            font-size: 0.85rem;
+          }
+
+          .blog-editor-prose {
+            font-size: 0.95rem;
+            min-height: 200px;
+          }
+        }
+
+        /* Extra small screens */
+        @media (max-width: 400px) {
+          .tool-btn {
+            padding: 6px 8px;
+            min-width: 36px;
+            border-radius: 6px;
+          }
+
+          .primary-btn {
+            padding: 6px 8px;
+            min-width: 40px;
+            border-radius: 6px;
+          }
+
+          .editor-box {
+            padding: 10px;
+          }
+        }
       `}</style>
     </div>
   )
-}
-
-const styles: Record<string, React.CSSProperties> = {
-  wrapper: {
-    maxWidth: '900px',
-  },
-  toolbar: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: '10px',
-    marginBottom: '12px',
-    alignItems: 'center',
-  },
-  toolBtn: {
-    padding: '10px 14px',
-    background: '#f5f5f5',
-    border: '1px solid #ddd',
-    borderRadius: '8px',
-    fontFamily: 'var(--font-sans)',
-    fontSize: '0.9rem',
-    fontWeight: 600,
-    cursor: 'pointer',
-    color: '#292828',
-  },
-  primaryBtn: {
-    padding: '10px 14px',
-    background: '#1B73BA',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '8px',
-    fontFamily: 'var(--font-sans)',
-    fontSize: '0.9rem',
-    fontWeight: 700,
-    cursor: 'pointer',
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em',
-  },
-  editorBox: {
-    background: '#fff',
-    border: '1px solid #ddd',
-    borderRadius: '12px',
-    padding: '16px',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-  },
-  error: {
-    background: '#fee',
-    color: '#c00',
-    padding: '12px',
-    borderRadius: '8px',
-    fontSize: '0.9rem',
-    fontFamily: 'var(--font-sans)',
-    marginBottom: '12px',
-  },
 }

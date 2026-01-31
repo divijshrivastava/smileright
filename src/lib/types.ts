@@ -72,6 +72,8 @@ export interface Blog {
   slug: string
   excerpt: string | null
   content_html: string
+  main_image_url: string | null
+  main_image_alt_text: string | null
   is_published: boolean
   published_at: string | null
   display_order: number

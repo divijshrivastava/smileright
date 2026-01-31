@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBlog, updateBlog } from '@/app/admin/actions'
 import CKEditorComponent from './CKEditorComponent'
+import ImageUploader from './ImageUploader'
 import type { Blog } from '@/lib/types'
 
 interface BlogFormProps {
@@ -30,6 +31,8 @@ export default function BlogForm({ blog }: BlogFormProps) {
   const [excerpt, setExcerpt] = useState(blog?.excerpt ?? '')
   const [displayOrder, setDisplayOrder] = useState<number>(blog?.display_order ?? 0)
   const [isPublished, setIsPublished] = useState<boolean>(blog?.is_published ?? false)
+  const [mainImageUrl, setMainImageUrl] = useState<string>(blog?.main_image_url ?? '')
+  const [mainImageAltText, setMainImageAltText] = useState<string>(blog?.main_image_alt_text ?? '')
 
   const [contentHtml, setContentHtml] = useState(blog?.content_html ?? '<p></p>')
   const [saving, setSaving] = useState(false)
@@ -51,6 +54,8 @@ export default function BlogForm({ blog }: BlogFormProps) {
     formData.set('slug', slug)
     formData.set('excerpt', excerpt)
     formData.set('content_html', contentHtml)
+    formData.set('main_image_url', mainImageUrl)
+    formData.set('main_image_alt_text', mainImageAltText)
     formData.set('display_order', String(displayOrder))
     formData.set('is_published', isPublished ? 'true' : 'false')
 
@@ -119,6 +124,29 @@ export default function BlogForm({ blog }: BlogFormProps) {
           rows={3}
           style={{ ...styles.input, resize: 'vertical' as const }}
         />
+      </div>
+
+      <div style={styles.field}>
+        <label style={styles.label}>Main Image (optional)</label>
+        <ImageUploader
+          currentUrl={mainImageUrl || null}
+          onUpload={(url) => setMainImageUrl(url)}
+          bucket="blog-media"
+        />
+        <small style={styles.help}>This image will be displayed as the featured image for the blog post</small>
+      </div>
+
+      <div style={styles.field}>
+        <label htmlFor="main_image_alt_text" style={styles.label}>Main Image Alt Text (optional)</label>
+        <input
+          id="main_image_alt_text"
+          type="text"
+          value={mainImageAltText}
+          onChange={(e) => setMainImageAltText(e.target.value)}
+          placeholder="e.g. Dentist examining patient's teeth"
+          style={styles.input}
+        />
+        <small style={styles.help}>Describe the image for accessibility and SEO</small>
       </div>
 
       <div style={styles.row}>

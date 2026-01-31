@@ -300,6 +300,8 @@ export interface BlogInput {
   slug: string
   excerpt: string | null
   content_html: string
+  main_image_url: string | null
+  main_image_alt_text: string | null
   display_order: number
 }
 
@@ -309,6 +311,8 @@ export function validateBlogInput(data: FormData): BlogInput | { error: string }
   const excerpt = sanitizeString((data.get('excerpt') as string) || '', 2000)
   const contentRaw = (data.get('content_html') as string) || ''
   const content_html = sanitizeRichHtml(contentRaw)
+  const main_image_url = sanitizeURL(data.get('main_image_url') as string || '')
+  const main_image_alt_text = sanitizeString((data.get('main_image_alt_text') as string) || '', 200)
   const display_order = validateInteger(data.get('display_order'), 0) ?? 0
 
   if (!title || title.length < 3) {
@@ -334,6 +338,8 @@ export function validateBlogInput(data: FormData): BlogInput | { error: string }
     slug,
     excerpt: excerpt || null,
     content_html,
+    main_image_url: main_image_url || null,
+    main_image_alt_text: main_image_alt_text || null,
     display_order,
   }
 }
