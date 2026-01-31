@@ -3,6 +3,8 @@
  * Prevents XSS and injection attacks
  */
 
+import sanitizeHtml from 'sanitize-html'
+
 /**
  * Sanitize string input by removing potentially dangerous characters
  */
@@ -231,6 +233,107 @@ export function validateServiceInput(data: FormData, requireImage: boolean = tru
     description,
     image_url: image_url || '',
     alt_text: alt_text || '',
+    display_order,
+  }
+}
+
+/**
+ * Create a URL-friendly slug.
+ * Note: keep this conservative (ascii + hyphens) so it works well for URLs and DB unique constraints.
+ */
+export function slugify(input: string): string {
+  return sanitizeString(input, 300)
+    .toLowerCase()
+    .replace(/['"]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .substring(0, 200)
+}
+
+/**
+ * Sanitize rich HTML content.
+ * We allow a small set of tags/attributes needed for a blog post.
+ */
+export function sanitizeRichHtml(input: string): string {
+  const html = input || ''
+
+  return sanitizeHtml(html, {
+    allowedTags: [
+      'p', 'br',
+      'h1', 'h2', 'h3', 'h4',
+      'strong', 'b', 'em', 'i', 'u',
+      'blockquote',
+      'ul', 'ol', 'li',
+      'a',
+      'img',
+      'video', 'source',
+      'hr',
+      'code', 'pre',
+    ],
+    allowedAttributes: {
+      a: ['href', 'name', 'target', 'rel'],
+      img: ['src', 'alt', 'title'],
+      video: ['src', 'controls', 'poster', 'preload'],
+      source: ['src', 'type'],
+    },
+    allowedSchemes: ['http', 'https'],
+    allowProtocolRelative: false,
+    transformTags: {
+      a: (tagName, attribs) => {
+        const href = attribs.href || ''
+        const isExternal = href.startsWith('http://') || href.startsWith('https://')
+
+        return {
+          tagName,
+          attribs: {
+            ...attribs,
+            ...(isExternal ? { rel: 'noopener noreferrer', target: '_blank' } : {}),
+          },
+        }
+      },
+    },
+  })
+}
+
+export interface BlogInput {
+  title: string
+  slug: string
+  excerpt: string | null
+  content_html: string
+  display_order: number
+}
+
+export function validateBlogInput(data: FormData): BlogInput | { error: string } {
+  const title = sanitizeString(data.get('title') as string, 300)
+  const rawSlug = sanitizeString(data.get('slug') as string, 200)
+  const excerpt = sanitizeString((data.get('excerpt') as string) || '', 2000)
+  const contentRaw = (data.get('content_html') as string) || ''
+  const content_html = sanitizeRichHtml(contentRaw)
+  const display_order = validateInteger(data.get('display_order'), 0) ?? 0
+
+  if (!title || title.length < 3) {
+    return { error: 'Title must be at least 3 characters' }
+  }
+
+  const slug = slugify(rawSlug || title)
+  if (!slug || slug.length < 3) {
+    return { error: 'Slug must be at least 3 characters' }
+  }
+
+  if (!content_html || content_html.length < 10) {
+    return { error: 'Content must be at least 10 characters' }
+  }
+
+  // Avoid obvious SQLi patterns in slug (defense-in-depth)
+  if (containsSQLInjection(slug)) {
+    return { error: 'Invalid slug' }
+  }
+
+  return {
+    title,
+    slug,
+    excerpt: excerpt || null,
+    content_html,
     display_order,
   }
 }
