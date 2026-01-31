@@ -18,7 +18,6 @@
     "@tiptap/starter-kit": "^3.18.0",
     "@types/sanitize-html": "^2.16.0",
     "ckeditor5": "^47.4.0",
-    "ckeditor5-premium-features": "^47.4.0",
     "next": "^16.1.6",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",

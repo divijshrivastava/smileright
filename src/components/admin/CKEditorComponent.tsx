@@ -79,6 +79,7 @@ export default function CKEditorComponent({ value, onChange }: CKEditorComponent
         }
 
         const editor = await ClassicEditor.create(editorContainerRef.current, {
+          licenseKey: 'GPL',
           plugins: [
             Essentials, Bold, Italic, Underline, Strikethrough, Font, Paragraph, 
             Heading, Link, List, BlockQuote, Image, ImageCaption, ImageStyle, 

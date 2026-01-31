@@ -327,10 +327,12 @@ nav {
    ======================================== */
 .hero {
     position: relative;
-    min-height: 100svh; /* Use svh for mobile viewport */
+    min-height: 100vh; /* Fallback */
+    min-height: 100svh; /* Modern browsers - accounts for mobile chrome */
     display: flex;
     align-items: flex-end; /* Content at bottom on mobile */
     padding-top: 70px; /* Account for fixed header */
+    background-color: var(--light-gray); /* Fallback if image fails */
 }
 
 /* Hero image container - full bleed */
@@ -340,7 +342,10 @@ nav {
     left: 0;
     right: 0;
     bottom: 0;
+    width: 100%;
+    height: 100%;
     z-index: 0;
+    overflow: hidden;
 }
 
 /* Gradient overlay for text readability */
@@ -350,13 +355,11 @@ nav {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(
-        to top,
-        rgba(0, 0, 0, 0.75) 0%,
-        rgba(0, 0, 0, 0.4) 40%,
-        rgba(0, 0, 0, 0.1) 70%,
-        rgba(0, 0, 0, 0) 100%
-    );
+    background: linear-gradient(to top,
+            rgba(0, 0, 0, 0.75) 0%,
+            rgba(0, 0, 0, 0.4) 40%,
+            rgba(0, 0, 0, 0.1) 70%,
+            rgba(0, 0, 0, 0) 100%);
     z-index: 1;
 }
 
@@ -368,12 +371,12 @@ nav {
 }
 
 .hero-content {
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.92);
     padding: 24px 20px;
     border-radius: 16px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.5);
     max-width: 100%;
 }
@@ -493,21 +496,22 @@ nav {
     .hero-overlay {
         background: linear-gradient(
             to right,
-            rgba(0, 0, 0, 0.5) 0%,
-            rgba(0, 0, 0, 0.2) 50%,
-            rgba(0, 0, 0, 0.1) 100%
+            rgba(0, 0, 0, 0.4) 0%,
+            rgba(0, 0, 0, 0.15) 40%,
+            rgba(0, 0, 0, 0.05) 100%
         );
     }
 
     .hero-content-wrapper {
-        max-width: 1200px;
+        max-width: 1400px;
         margin: 0 auto;
-        padding: 0 32px;
+        padding: 0 40px;
     }
 
     .hero-content {
-        max-width: 500px;
-        padding: 36px 32px;
+        max-width: 480px;
+        padding: 32px 28px;
+        background: rgba(255, 255, 255, 0.88);
     }
 
     .hero-badge {
@@ -562,17 +566,18 @@ nav {
 @media screen and (min-width: 1024px) {
     .hero {
         min-height: 90vh;
-        padding-top: 120px;
+        padding-top: 140px;
     }
 
     .hero-content-wrapper {
         max-width: 1400px;
-        padding: 0 50px;
+        padding: 0 60px;
     }
 
     .hero-content {
-        max-width: 580px;
-        padding: 48px 42px;
+        max-width: 520px;
+        padding: 40px 36px;
+        background: rgba(255, 255, 255, 0.9);
     }
 
     .hero-badge {
@@ -638,12 +643,29 @@ nav {
 /* Large Desktop - 1280px+ */
 @media screen and (min-width: 1280px) {
     .hero h1 {
-        font-size: 4.5rem;
+        font-size: 4rem;
     }
 
     .hero-content {
-        max-width: 620px;
-        padding: 50px 45px;
+        max-width: 540px;
+        padding: 44px 40px;
+    }
+}
+
+/* Extra Large Desktop - 1536px+ */
+@media screen and (min-width: 1536px) {
+    .hero-content-wrapper {
+        max-width: 1600px;
+        padding: 0 80px;
+    }
+
+    .hero-content {
+        max-width: 560px;
+        padding: 48px 44px;
+    }
+
+    .hero h1 {
+        font-size: 4.25rem;
     }
 }
 
@@ -1660,7 +1682,7 @@ footer {
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
 
-.ck.ck-editor__main > .ck-editor__editable {
+.ck.ck-editor__main>.ck-editor__editable {
     min-height: 500px;
     max-height: 800px;
     overflow-y: auto;
@@ -1672,7 +1694,7 @@ footer {
     color: #292828;
 }
 
-.ck.ck-editor__main > .ck-editor__editable:focus {
+.ck.ck-editor__main>.ck-editor__editable:focus {
     border: none;
     box-shadow: none;
 }
