@@ -68,7 +68,7 @@ export default function ClinicInfo() {
 
               <div className="map-container">
                 <iframe
-                  src="https://maps.google.com/maps?q=19.214462,72.868988&t=&z=16&ie=UTF8&iwloc=&output=embed"
+                  src="https://maps.google.com/maps?q=Smile+Right+-+Multispecialty+Dental+Clinic+%26+Implant+Centre,+Kandivali+East,+Mumbai&t=&z=16&ie=UTF8&iwloc=&output=embed"
                   width="600"
                   height="450"
                   style={{ border: 0 }}
@@ -79,7 +79,7 @@ export default function ClinicInfo() {
                 />
               </div>
               <a
-                href="https://www.google.com/maps?q=19.214462,72.868988"
+                href="https://maps.app.goo.gl/7ysQvfSLowxQpwCB8?g_st=ic"
                 className="btn btn-outline"
                 style={{ width: '100%', textAlign: 'center', marginTop: '1rem' }}
                 target="_blank"
