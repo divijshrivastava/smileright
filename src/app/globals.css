@@ -266,6 +266,23 @@ nav {
     box-shadow: 0 2px 8px rgba(37, 211, 102, 0.3);
 }
 
+.btn-instagram {
+    background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+    color: var(--white);
+    box-shadow: 0 2px 8px rgba(225, 48, 108, 0.3);
+}
+
+.btn-instagram:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(225, 48, 108, 0.5);
+    opacity: 0.95;
+}
+
+.btn-instagram:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(225, 48, 108, 0.3);
+}
+
 .btn-outline {
     background: transparent;
     color: var(--primary-blue);
@@ -1675,6 +1692,17 @@ footer {
 }
 
 .footer-section a:hover {
+    color: var(--white);
+}
+
+.footer-instagram-link {
+    display: inline-flex;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.85);
+    transition: var(--transition);
+}
+
+.footer-instagram-link:hover {
     color: var(--white);
 }
 
