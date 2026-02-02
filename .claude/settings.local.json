@@ -27,7 +27,8 @@
       "Bash(git -C /Users/divij/code/ai/smile-right diff --stat)",
       "Bash(git -C /Users/divij/code/ai/smile-right diff)",
       "Bash(git -C /Users/divij/code/ai/smile-right diff --staged --stat)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(git pull:*)"
     ]
   }
 }

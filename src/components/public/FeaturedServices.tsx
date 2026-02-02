@@ -57,10 +57,10 @@ export default function FeaturedServices({ services }: FeaturedServicesProps) {
                     alt={service.alt_text}
                     width={400}
                     height={200}
-                    style={{ 
-                      width: '100%', 
-                      height: '100%', 
-                      objectFit: isExpanded ? 'contain' : 'cover' 
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'contain'
                     }}
                   />
                   {hasImages && (
@@ -78,13 +78,13 @@ export default function FeaturedServices({ services }: FeaturedServicesProps) {
                   )}
                   {hasImages && (
                     <div className="expand-indicator">
-                      <svg 
-                        width="24" 
-                        height="24" 
-                        viewBox="0 0 24 24" 
-                        fill="none" 
-                        stroke="currentColor" 
-                        strokeWidth="2"
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
                         style={{ 
                           transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
                           transition: 'transform 0.3s ease'
@@ -122,7 +122,7 @@ export default function FeaturedServices({ services }: FeaturedServicesProps) {
                             alt={img.alt_text || service.title}
                             width={400}
                             height={300}
-                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                           />
                           {img.caption && (
                             <div className="gallery-caption">{img.caption}</div>
@@ -189,12 +189,12 @@ export default function FeaturedServices({ services }: FeaturedServicesProps) {
 
         .expand-indicator {
           position: absolute;
-          bottom: 12px;
-          right: 12px;
+          bottom: 8px;
+          right: 8px;
           background: rgba(27, 115, 186, 0.9);
           color: white;
-          width: 40px;
-          height: 40px;
+          width: 28px;
+          height: 28px;
           border-radius: 50%;
           display: flex;
           align-items: center;
