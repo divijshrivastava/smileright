@@ -22,13 +22,13 @@ export default function Hero() {
         <div className="hero-content">
           <div className="hero-badge">✨ Trusted by 1000+ Families</div>
           <h1>Smile Right</h1>
-          <p className="hero-subtitle">Premium Dentistry in Kandivali East</p>
+          <p className="hero-subtitle">Multi-Speciality Dental Clinic and Implant Center</p>
           <p className="hero-doctor">Dr. Sneha Kedia, B.D.S</p>
           <p className="hero-specialty">Dental Surgeon & Implantologist</p>
           <div className="hero-features">
             <span className="hero-feature">✓ Same-Day Appointments</span>
-            <span className="hero-feature">✓ Advanced Technology</span>
-            <span className="hero-feature">✓ Painless Treatments</span>
+            <span className="hero-feature">✓ Cost Effective Dentistry</span>
+            <span className="hero-feature">✓ Minimally Invasive Treatments</span>
           </div>
           <div className="hero-buttons">
             <a href="tel:+917977991130" className="btn btn-primary btn-large">

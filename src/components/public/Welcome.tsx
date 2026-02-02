@@ -23,7 +23,7 @@ export default function Welcome() {
         <div className="welcome-highlights">
           <div className="highlight-item">
             <span className="highlight-icon">✓</span>
-            <span className="highlight-text">Comprehensive Family Dental Care</span>
+            <span className="highlight-text">Comprehensive Dental Care for the Whole Family</span>
           </div>
           <div className="highlight-item">
             <span className="highlight-icon">✓</span>
