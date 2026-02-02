@@ -507,6 +507,15 @@ nav {
     font-size: 1rem;
 }
 
+.hero-phone-separator {
+    margin: 0 8px;
+    opacity: 0.6;
+}
+
+.hero-instagram-link {
+    font-weight: 600;
+}
+
 .phone-icon {
     font-size: 0.9rem;
 }
