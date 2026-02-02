@@ -1519,7 +1519,9 @@ nav {
 }
 
 .whatsapp-icon {
-    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     line-height: 1;
 }
 
@@ -1557,8 +1559,9 @@ nav {
         border-radius: 50%;
     }
 
-    .whatsapp-icon {
-        font-size: 1.8rem;
+    .whatsapp-icon svg {
+        width: 32px;
+        height: 32px;
     }
 }
 
