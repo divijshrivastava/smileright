@@ -82,6 +82,7 @@ export default function ClinicInfo() {
                   allowFullScreen
                   allow="fullscreen"
                   loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
                   title="Smile Right Clinic Location"
                 />
               </div>
