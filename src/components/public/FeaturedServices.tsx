@@ -47,7 +47,7 @@ export default function FeaturedServices({ services }: FeaturedServicesProps) {
                           alt={currentImage.alt_text || service.title}
                           width={400}
                           height={300}
-                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                          style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                         />
                         {currentImage.caption && (
                           <div className="carousel-caption">{currentImage.caption}</div>
@@ -90,7 +90,7 @@ export default function FeaturedServices({ services }: FeaturedServicesProps) {
                       alt={service.alt_text}
                       width={400}
                       height={300}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                     />
                   )}
                 </div>
@@ -149,8 +149,8 @@ export default function FeaturedServices({ services }: FeaturedServicesProps) {
           background: rgba(255, 255, 255, 0.9);
           color: #333;
           border: none;
-          width: 36px;
-          height: 36px;
+          width: 28px;
+          height: 28px;
           border-radius: 50%;
           display: flex;
           align-items: center;
@@ -180,17 +180,17 @@ export default function FeaturedServices({ services }: FeaturedServicesProps) {
 
         .carousel-dots {
           position: absolute;
-          bottom: 10px;
+          bottom: 8px;
           left: 50%;
           transform: translateX(-50%);
           display: flex;
-          gap: 6px;
+          gap: 4px;
           z-index: 2;
         }
 
         .carousel-dot {
-          width: 8px;
-          height: 8px;
+          width: 6px;
+          height: 6px;
           border-radius: 50%;
           border: none;
           background: rgba(255, 255, 255, 0.5);
