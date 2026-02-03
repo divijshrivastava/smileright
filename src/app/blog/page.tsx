@@ -17,6 +17,7 @@ export default async function BlogIndexPage() {
     .eq('is_published', true)
     .order('published_at', { ascending: false })
     .order('created_at', { ascending: false })
+    .limit(50)
 
   const items = (blogs as Pick<Blog, 'id' | 'title' | 'slug' | 'excerpt' | 'main_image_url' | 'main_image_alt_text' | 'published_at' | 'created_at'>[]) ?? []
 

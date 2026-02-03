@@ -17,6 +17,7 @@ export default async function TrustImagesPage() {
     .select('*')
     .order('display_order', { ascending: true })
     .order('created_at', { ascending: false })
+    .limit(100)
 
   const trustImages: TrustImage[] = images ?? []
 

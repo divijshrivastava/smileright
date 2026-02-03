@@ -38,6 +38,7 @@ export default async function HomePage() {
     `)
     .eq('is_published', true)
     .order('display_order', { ascending: true })
+    .limit(50)
 
   // Sort service_images by display_order
   const servicesWithSortedImages = (services as Service[])?.map(service => ({

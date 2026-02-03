@@ -11,6 +11,7 @@ export default async function TrustSection() {
     .eq('is_published', true)
     .order('display_order', { ascending: true })
     .order('created_at', { ascending: false })
+    .limit(50)
 
   const images: TrustImage[] = trustImages ?? []
 

@@ -7,15 +7,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "sql": "tsx scripts/run-sql-pg.ts"
+    "sql": "tsx scripts/run-sql-pg.ts",
+    "test": "vitest",
+    "test:run": "vitest run"
   },
   "dependencies": {
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.93.3",
-    "@tiptap/extension-image": "^3.18.0",
-    "@tiptap/extension-link": "^3.18.0",
-    "@tiptap/react": "^3.18.0",
-    "@tiptap/starter-kit": "^3.18.0",
     "@types/sanitize-html": "^2.16.0",
     "ckeditor5": "^47.4.0",
     "next": "^16.1.6",
@@ -34,6 +32,7 @@
     "eslint-config-next": "^16.1.6",
     "pg": "^8.17.2",
     "tsx": "^4.21.0",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "vitest": "^4.0.18"
   }
 }

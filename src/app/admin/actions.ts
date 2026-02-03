@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { logAuditEvent } from '@/lib/security/audit-log'
+import { checkRateLimit, rateLimitConfigs } from '@/lib/security/rate-limit'
 import {
   validateTestimonialInput,
   validateServiceInput,
@@ -11,6 +12,14 @@ import {
   validateInteger,
 } from '@/lib/security/input-validation'
 
+/** Enforce rate limit for an admin action; throws on exceeded. */
+function enforceRateLimit(userId: string, action: string) {
+  const result = checkRateLimit(`admin:${userId}:${action}`, rateLimitConfigs.admin)
+  if (!result.success) {
+    throw new Error('Too many requests. Please try again later.')
+  }
+}
+
 export async function revalidateHomePage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -18,6 +27,7 @@ export async function revalidateHomePage() {
   if (!user) {
     throw new Error('Unauthorized')
   }
+  enforceRateLimit(user.id, 'revalidate')
 
   revalidatePath('/', 'page')
 }
@@ -29,6 +39,7 @@ export async function createTestimonial(formData: FormData) {
   if (!user) {
     throw new Error('Unauthorized')
   }
+  enforceRateLimit(user.id, 'testimonial')
 
   // Validate and sanitize input
   const validatedInput = validateTestimonialInput(formData)
@@ -77,6 +88,7 @@ export async function updateTestimonial(id: string, formData: FormData) {
   if (!user) {
     throw new Error('Unauthorized')
   }
+  enforceRateLimit(user.id, 'testimonial')
 
   // Validate and sanitize input
   const validatedInput = validateTestimonialInput(formData)
@@ -124,6 +136,7 @@ export async function deleteTestimonial(id: string) {
   if (!user) {
     throw new Error('Unauthorized')
   }
+  enforceRateLimit(user.id, 'testimonial')
 
   const { error } = await supabase.from('testimonials').delete().eq('id', id)
 
@@ -150,6 +163,7 @@ export async function togglePublish(id: string, isPublished: boolean) {
   if (!user) {
     throw new Error('Unauthorized')
   }
+  enforceRateLimit(user.id, 'testimonial')
 
   const { error } = await supabase.from('testimonials').update({
     is_published: isPublished,
@@ -184,6 +198,7 @@ export async function createTrustImage(formData: FormData) {
   if (!user) {
     throw new Error('Unauthorized')
   }
+  enforceRateLimit(user.id, 'trust_image')
 
   const imageUrl = sanitizeString(formData.get('image_url') as string, 2000)
   const altText = sanitizeString(formData.get('alt_text') as string || '', 200)
@@ -229,6 +244,7 @@ export async function updateTrustImage(id: string, formData: FormData) {
   if (!user) {
     throw new Error('Unauthorized')
   }
+  enforceRateLimit(user.id, 'trust_image')
 
   const imageUrl = sanitizeString(formData.get('image_url') as string, 2000)
   const altText = sanitizeString(formData.get('alt_text') as string || '', 200)
@@ -273,6 +289,7 @@ export async function deleteTrustImage(id: string) {
   if (!user) {
     throw new Error('Unauthorized')
   }
+  enforceRateLimit(user.id, 'trust_image')
 
   const { error } = await supabase.from('trust_images').delete().eq('id', id)
 
@@ -299,6 +316,7 @@ export async function toggleTrustImagePublish(id: string, isPublished: boolean) 
   if (!user) {
     throw new Error('Unauthorized')
   }
+  enforceRateLimit(user.id, 'trust_image')
 
   const { error } = await supabase.from('trust_images').update({
     is_published: isPublished,
@@ -333,6 +351,7 @@ export async function createService(formData: FormData) {
   if (!user) {
     throw new Error('Unauthorized')
   }
+  enforceRateLimit(user.id, 'service')
 
   // Validate and sanitize input
   const validatedInput = validateServiceInput(formData)
@@ -389,6 +408,7 @@ export async function updateService(id: string, formData: FormData) {
   if (!user) {
     throw new Error('Unauthorized')
   }
+  enforceRateLimit(user.id, 'service')
 
   // Validate and sanitize input (don't require image for updates - managed separately)
   const validatedInput = validateServiceInput(formData, false)
@@ -432,6 +452,7 @@ export async function deleteService(id: string) {
   if (!user) {
     throw new Error('Unauthorized')
   }
+  enforceRateLimit(user.id, 'service')
 
   const { error } = await supabase.from('services').delete().eq('id', id)
 
@@ -458,6 +479,7 @@ export async function toggleServicePublish(id: string, isPublished: boolean) {
   if (!user) {
     throw new Error('Unauthorized')
   }
+  enforceRateLimit(user.id, 'service')
 
   const { error } = await supabase.from('services').update({
     is_published: isPublished,
@@ -492,6 +514,7 @@ export async function createServiceImage(serviceId: string, formData: FormData) 
   if (!user) {
     throw new Error('Unauthorized')
   }
+  enforceRateLimit(user.id, 'service_image')
 
   const imageUrl = sanitizeString(formData.get('image_url') as string, 2000)
   const altText = sanitizeString(formData.get('alt_text') as string || '', 200)
@@ -557,6 +580,7 @@ export async function updateServiceImage(imageId: string, formData: FormData) {
   if (!user) {
     throw new Error('Unauthorized')
   }
+  enforceRateLimit(user.id, 'service_image')
 
   const imageUrl = sanitizeString(formData.get('image_url') as string, 2000)
   const altText = sanitizeString(formData.get('alt_text') as string || '', 200)
@@ -598,6 +622,7 @@ export async function deleteServiceImage(imageId: string) {
   if (!user) {
     throw new Error('Unauthorized')
   }
+  enforceRateLimit(user.id, 'service_image')
 
   // Check if this is the primary image
   const { data: imageToDelete } = await supabase
@@ -659,6 +684,7 @@ export async function setServiceImagePrimary(serviceId: string, imageId: string)
   if (!user) {
     throw new Error('Unauthorized')
   }
+  enforceRateLimit(user.id, 'service_image')
 
   // Get the image details
   const { data: image, error: imageError } = await supabase
@@ -731,6 +757,7 @@ export async function createBlog(formData: FormData) {
   if (!user) {
     throw new Error('Unauthorized')
   }
+  enforceRateLimit(user.id, 'blog')
 
   const validatedInput = validateBlogInput(formData)
   if ('error' in validatedInput) {
@@ -786,6 +813,7 @@ export async function updateBlog(id: string, formData: FormData) {
   if (!user) {
     throw new Error('Unauthorized')
   }
+  enforceRateLimit(user.id, 'blog')
 
   const validatedInput = validateBlogInput(formData)
   if ('error' in validatedInput) {
@@ -859,6 +887,7 @@ export async function deleteBlog(id: string) {
   if (!user) {
     throw new Error('Unauthorized')
   }
+  enforceRateLimit(user.id, 'blog')
 
   const { data: existing } = await supabase
     .from('blogs')
@@ -888,6 +917,47 @@ export async function deleteBlog(id: string) {
   revalidatePath('/admin/blogs')
 }
 
+// ========================================
+// Auth Audit Logging
+// ========================================
+
+export async function logLoginEvent(success: boolean) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (success && user) {
+    await logAuditEvent({
+      action: 'auth.login',
+      user_id: user.id,
+      resource_type: 'auth',
+      details: { email: user.email },
+    })
+  }
+  // Failed logins are logged client-side via logFailedLoginEvent
+}
+
+export async function logFailedLoginEvent(email: string) {
+  await logAuditEvent({
+    action: 'auth.failed_login',
+    user_id: 'anonymous',
+    resource_type: 'auth',
+    details: { email },
+  })
+}
+
+export async function logLogoutEvent() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (user) {
+    await logAuditEvent({
+      action: 'auth.logout',
+      user_id: user.id,
+      resource_type: 'auth',
+    })
+  }
+}
+
 export async function toggleBlogPublish(id: string, isPublished: boolean) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -895,6 +965,7 @@ export async function toggleBlogPublish(id: string, isPublished: boolean) {
   if (!user) {
     throw new Error('Unauthorized')
   }
+  enforceRateLimit(user.id, 'blog')
 
   const { data: existing } = await supabase
     .from('blogs')

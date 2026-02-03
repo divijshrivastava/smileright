@@ -18,6 +18,7 @@ export default async function BlogsPage() {
     .select('*')
     .order('display_order', { ascending: true })
     .order('created_at', { ascending: false })
+    .limit(100)
 
   return (
     <div>

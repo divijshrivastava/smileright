@@ -30,6 +30,7 @@ export default async function ServicesPage() {
       )
     `)
     .order('display_order', { ascending: true })
+    .limit(100)
 
   return (
     <div>

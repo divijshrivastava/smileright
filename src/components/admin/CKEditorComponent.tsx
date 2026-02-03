@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { validateFile, fileValidationConfigs } from '@/lib/security/file-validation'
+import 'ckeditor5/ckeditor5.css'
 
 interface CKEditorComponentProps {
   value: string

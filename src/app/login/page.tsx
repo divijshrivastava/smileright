@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+import { logLoginEvent, logFailedLoginEvent } from '@/app/admin/actions'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -25,9 +26,11 @@ export default function LoginPage() {
     if (authError) {
       setError(authError.message)
       setLoading(false)
+      logFailedLoginEvent(email).catch(() => {})
       return
     }
 
+    logLoginEvent(true).catch(() => {})
     router.push('/admin')
     router.refresh()
   }

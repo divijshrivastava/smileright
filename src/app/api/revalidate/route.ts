@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
+import { checkRateLimit, rateLimitConfigs } from '@/lib/security/rate-limit'
 
 export async function POST() {
   const supabase = await createClient()
@@ -8,6 +9,11 @@ export async function POST() {
 
   if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  const rl = checkRateLimit(`api:revalidate:${user.id}`, rateLimitConfigs.api)
+  if (!rl.success) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
 
   revalidatePath('/', 'page')

@@ -11,16 +11,6 @@ interface RateLimitEntry {
 // In-memory store (use Redis in production for multi-instance deployments)
 const rateLimitStore = new Map<string, RateLimitEntry>()
 
-// Clean up expired entries every 5 minutes
-setInterval(() => {
-  const now = Date.now()
-  for (const [key, entry] of rateLimitStore.entries()) {
-    if (now > entry.resetTime) {
-      rateLimitStore.delete(key)
-    }
-  }
-}, 5 * 60 * 1000)
-
 export interface RateLimitConfig {
   maxRequests: number
   windowMs: number
@@ -34,7 +24,8 @@ export interface RateLimitResult {
 }
 
 /**
- * Check rate limit for a given identifier
+ * Check rate limit for a given identifier.
+ * Expired entries are cleaned up inline (safe for serverless).
  */
 export function checkRateLimit(
   identifier: string,
@@ -42,12 +33,19 @@ export function checkRateLimit(
 ): RateLimitResult {
   const now = Date.now()
   const entry = rateLimitStore.get(identifier)
-  
-  // Create new entry if doesn't exist or expired
-  if (!entry || now > entry.resetTime) {
+
+  // Clean up expired entry inline
+  if (entry && now > entry.resetTime) {
+    rateLimitStore.delete(identifier)
+  }
+
+  const current = rateLimitStore.get(identifier)
+
+  // Create new entry if doesn't exist or was expired
+  if (!current) {
     const resetTime = now + config.windowMs
     rateLimitStore.set(identifier, { count: 1, resetTime })
-    
+
     return {
       success: true,
       limit: config.maxRequests,
@@ -55,24 +53,24 @@ export function checkRateLimit(
       resetTime,
     }
   }
-  
+
   // Increment counter
-  entry.count++
-  
-  if (entry.count > config.maxRequests) {
+  current.count++
+
+  if (current.count > config.maxRequests) {
     return {
       success: false,
       limit: config.maxRequests,
       remaining: 0,
-      resetTime: entry.resetTime,
+      resetTime: current.resetTime,
     }
   }
-  
+
   return {
     success: true,
     limit: config.maxRequests,
-    remaining: config.maxRequests - entry.count,
-    resetTime: entry.resetTime,
+    remaining: config.maxRequests - current.count,
+    resetTime: current.resetTime,
   }
 }
 
@@ -85,19 +83,19 @@ export const rateLimitConfigs = {
     maxRequests: 5,
     windowMs: 15 * 60 * 1000, // 15 minutes
   },
-  
+
   // API endpoints - moderate limits
   api: {
     maxRequests: 100,
     windowMs: 60 * 1000, // 1 minute
   },
-  
+
   // File uploads - restrictive limits
   upload: {
     maxRequests: 10,
     windowMs: 60 * 1000, // 1 minute
   },
-  
+
   // Admin actions - moderate limits
   admin: {
     maxRequests: 30,
@@ -116,6 +114,6 @@ export function getRateLimitIdentifier(
   if (userId) {
     return `user:${userId}`
   }
-  
+
   return `ip:${ip || 'unknown'}`
 }

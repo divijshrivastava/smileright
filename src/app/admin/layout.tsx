@@ -2,7 +2,6 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import AdminSidebar from '@/components/admin/AdminSidebar'
 import type { Profile } from '@/lib/types'
-import 'ckeditor5/ckeditor5.css'
 
 export default async function AdminLayout({
   children,
