@@ -78,7 +78,7 @@ export default function ClinicInfo() {
 
               <div className="map-container">
                 <iframe
-                  src="https://maps.google.com/maps?q=19.2146,72.8683&t=&z=16&ie=UTF8&iwloc=&output=embed"
+                  src="https://maps.google.com/maps?q=Smile+Right+Multispeciality+Dental+Clinic+Kandivali+East+Mumbai&t=&z=16&ie=UTF8&iwloc=B&output=embed"
                   style={{ border: 0 }}
                   allowFullScreen
                   allow="fullscreen"
