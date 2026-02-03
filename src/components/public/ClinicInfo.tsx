@@ -28,18 +28,16 @@ export default function ClinicInfo() {
                 <strong>⚡ Same-Day Emergency Appointments Available</strong>
               </div>
 
-              <div style={{ marginTop: '2rem' }}>
+              <div className="clinic-buttons">
                 <a
                   href="tel:+917977991130"
                   className="btn btn-primary"
-                  style={{ width: '100%', textAlign: 'center' }}
                 >
                   <span className="btn-icon">📞</span> Call: 7977 991 130
                 </a>
                 <a
                   href="https://wa.me/917977991130?text=Hi,%20I%20would%20like%20to%20book%20an%20appointment"
                   className="btn btn-secondary"
-                  style={{ width: '100%', textAlign: 'center', marginTop: '1rem' }}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -68,25 +66,25 @@ export default function ClinicInfo() {
 
               <div className="map-container">
                 <iframe
-                  src="https://maps.google.com/maps?q=19.214462,72.868988&t=&z=16&ie=UTF8&iwloc=&output=embed"
-                  width="600"
-                  height="450"
+                  src="https://www.google.com/maps?q=19.214462,72.868988&z=16&output=embed"
                   style={{ border: 0 }}
                   allowFullScreen
+                  allow="fullscreen"
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
                   title="Smile Right Clinic Location"
                 />
               </div>
-              <a
-                href="https://www.google.com/maps?q=19.214462,72.868988"
-                className="btn btn-outline"
-                style={{ width: '100%', textAlign: 'center', marginTop: '1rem' }}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                🗺️ Get Directions
-              </a>
+              <div className="clinic-buttons">
+                <a
+                  href="https://www.google.com/maps?q=19.214462,72.868988"
+                  className="btn btn-outline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  🗺️ Get Directions
+                </a>
+              </div>
             </div>
           </div>
         </div>

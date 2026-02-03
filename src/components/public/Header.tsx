@@ -16,7 +16,6 @@ export default function Header() {
               width={400}
               height={120}
               priority
-              style={{ height: '120px', width: 'auto', maxWidth: '400px', objectFit: 'contain' }}
             />
           </div>
 
