@@ -18,14 +18,14 @@ export default async function Testimonials() {
     <section id="testimonials" className="testimonials">
       <div className="container">
         <h2 className="section-title">What Our Patients Say</h2>
-        <p className="section-subtitle" style={{ color: 'rgba(255,255,255,0.9)' }}>
+        <p className="section-subtitle">
           Real experiences from families who trust Smile Right for their dental care.
         </p>
 
         {items.length > 0 ? (
           <TestimonialsCarousel testimonials={items} />
         ) : (
-          <p className="section-subtitle" style={{ color: 'rgba(255,255,255,0.7)' }}>
+          <p className="section-subtitle">
             Testimonials coming soon.
           </p>
         )}

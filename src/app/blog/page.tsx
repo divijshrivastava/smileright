@@ -25,7 +25,7 @@ export default async function BlogIndexPage() {
       <FloatingWhatsApp />
       <Header />
 
-      <main style={{ paddingTop: '170px' }}>
+      <main className="blog-page-main">
         <section className="blog-index">
           <div className="container">
             <h1 className="section-title">Blog</h1>

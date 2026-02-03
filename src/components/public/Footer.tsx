@@ -25,7 +25,7 @@ export default function Footer() {
                 Follow us on Instagram
               </a>
             </p>
-            <p style={{ marginTop: '1.5rem' }}>
+            <p className="footer-hours">
               <strong>Hours:</strong><br />
               Mon-Sat: 9AM-2PM, 5PM-9PM<br />
               Sun: By Appointment
@@ -59,16 +59,11 @@ export default function Footer() {
         <div className="footer-bottom">
           <div>
             <p>&copy; {new Date().getFullYear()} Smile Right - Multispecialty Dental Clinic &amp; Implant Centre. All rights reserved.</p>
-            <p style={{ marginTop: '0.5rem', fontSize: '0.85rem', color: 'rgba(255, 255, 255, 0.9)' }}>
-              Created by <a 
-                href="https://divij.tech" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                style={{ 
-                  color: '#fff', 
-                  textDecoration: 'underline',
-                  fontWeight: '600'
-                }}
+            <p className="footer-credit">
+              Created by <a
+                href="https://divij.tech"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 divij.tech
               </a>

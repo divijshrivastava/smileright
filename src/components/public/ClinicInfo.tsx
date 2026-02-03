@@ -28,18 +28,16 @@ export default function ClinicInfo() {
                 <strong>⚡ Same-Day Emergency Appointments Available</strong>
               </div>
 
-              <div style={{ marginTop: '2rem' }}>
+              <div className="clinic-buttons">
                 <a
                   href="tel:+917977991130"
                   className="btn btn-primary"
-                  style={{ width: '100%', textAlign: 'center' }}
                 >
                   <span className="btn-icon">📞</span> Call: 7977 991 130
                 </a>
                 <a
                   href="https://wa.me/917977991130?text=Hi,%20I%20would%20like%20to%20book%20an%20appointment"
                   className="btn btn-secondary"
-                  style={{ width: '100%', textAlign: 'center', marginTop: '1rem' }}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -48,7 +46,6 @@ export default function ClinicInfo() {
                 <a
                   href="https://www.instagram.com/smilerightdentalclinic?igsh=MXRnMnZtNWI3eDgzZg=="
                   className="btn btn-instagram"
-                  style={{ width: '100%', textAlign: 'center', marginTop: '1rem' }}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -82,23 +79,23 @@ export default function ClinicInfo() {
               <div className="map-container">
                 <iframe
                   src="https://maps.google.com/maps?q=19.2146,72.8683&z=16&output=embed"
-                  width="600"
-                  height="450"
                   style={{ border: 0 }}
                   allowFullScreen
+                  allow="fullscreen"
                   loading="lazy"
                   title="Smile Right Clinic Location"
                 />
               </div>
-              <a
-                href="https://maps.app.goo.gl/7ysQvfSLowxQpwCB8?g_st=ic"
-                className="btn btn-outline"
-                style={{ width: '100%', textAlign: 'center', marginTop: '1rem' }}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                🗺️ Get Directions
-              </a>
+              <div className="clinic-buttons">
+                <a
+                  href="https://maps.app.goo.gl/7ysQvfSLowxQpwCB8?g_st=ic"
+                  className="btn btn-outline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  🗺️ Get Directions
+                </a>
+              </div>
             </div>
           </div>
         </div>

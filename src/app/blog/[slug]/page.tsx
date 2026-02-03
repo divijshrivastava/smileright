@@ -33,12 +33,12 @@ export default async function BlogPostPage({
       <FloatingWhatsApp />
       <Header />
 
-      <main style={{ paddingTop: '170px' }}>
+      <main className="blog-page-main">
         <article className="blog-post">
           <div className="container">
             <h1 className="blog-post-title">{(blog as Blog).title}</h1>
             {(blog as Blog).main_image_url && (
-              <div className="blog-post-image" style={{ marginBottom: '2rem' }}>
+              <div className="blog-post-image">
                 <Image
                   src={(blog as Blog).main_image_url!}
                   alt={(blog as Blog).main_image_alt_text || (blog as Blog).title}
