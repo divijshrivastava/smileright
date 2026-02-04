@@ -51,11 +51,6 @@ export default async function TrustSection() {
 
         <div className="trust-grid">
           <div className="trust-item">
-            <div className="trust-icon">🏆</div>
-            <h4>Award-Winning Care</h4>
-            <p>Recognized for excellence in patient care and dental innovation</p>
-          </div>
-          <div className="trust-item">
             <div className="trust-icon">🔬</div>
             <h4>Advanced Technology</h4>
             <p>Latest equipment and techniques for precise, comfortable treatments</p>

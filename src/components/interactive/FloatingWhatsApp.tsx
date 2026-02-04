@@ -1,10 +1,127 @@
 'use client'
 
+import { useEffect, useState, useRef } from 'react'
+
 export default function FloatingWhatsApp() {
+  const [scrollState, setScrollState] = useState<'top' | 'transitioning' | 'floating'>('top')
+  const [heroButtonRect, setHeroButtonRect] = useState<DOMRect | null>(null)
+  const floatingRef = useRef<HTMLAnchorElement>(null)
+  const animationFrameRef = useRef<number | undefined>(undefined)
+
+  useEffect(() => {
+    // Get the hero WhatsApp button position
+    const updateHeroButtonPosition = () => {
+      const heroButtons = document.querySelector('.hero-buttons')
+      const heroWhatsAppButton = heroButtons?.querySelector('a[href*="wa.me"]') as HTMLElement
+
+      if (heroWhatsAppButton) {
+        const rect = heroWhatsAppButton.getBoundingClientRect()
+        setHeroButtonRect(rect)
+      }
+    }
+
+    const handleScroll = () => {
+      // Cancel any pending animation frame
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current)
+      }
+
+      // Use requestAnimationFrame for smooth updates
+      animationFrameRef.current = requestAnimationFrame(() => {
+        // Update hero button position on every scroll for accurate tracking
+        updateHeroButtonPosition()
+
+        const heroSection = document.querySelector('.hero')
+        if (heroSection) {
+          const heroBottom = heroSection.getBoundingClientRect().bottom
+          const scrollProgress = window.scrollY
+          const windowHeight = window.innerHeight
+
+          // Define transition zones with smoother thresholds
+          if (scrollProgress < 10) {
+            // At the very top
+            setScrollState('top')
+          } else if (heroBottom > windowHeight * 0.3) {
+            // In transition zone - button is morphing
+            // This gives more time for the animation to play out
+            setScrollState('transitioning')
+          } else {
+            // Fully scrolled past hero - button is floating
+            setScrollState('floating')
+          }
+        }
+      })
+    }
+
+    // Initial setup
+    updateHeroButtonPosition()
+    handleScroll()
+
+    // Add listeners
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener('resize', updateHeroButtonPosition, { passive: true })
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('resize', updateHeroButtonPosition)
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current)
+      }
+    }
+  }, [])
+
+  // Calculate transform origin based on hero button position
+  const getTransformStyle = () => {
+    if (!heroButtonRect || !floatingRef.current) return {}
+
+    const floatingRect = floatingRef.current.getBoundingClientRect()
+
+    // Calculate the distance from hero button to floating position
+    const deltaX = heroButtonRect.left + heroButtonRect.width / 2 - (floatingRect.left + floatingRect.width / 2)
+    const deltaY = heroButtonRect.top + heroButtonRect.height / 2 - (floatingRect.top + floatingRect.height / 2)
+
+    if (scrollState === 'top') {
+      // At the top - button should be at hero position
+      return {
+        '--morph-x': `${deltaX}px`,
+        '--morph-y': `${deltaY}px`,
+        '--morph-scale': '1.0',
+        '--morph-width': `${heroButtonRect.width}px`,
+      } as React.CSSProperties
+    } else if (scrollState === 'transitioning') {
+      // Transitioning - interpolate between hero and floating position
+      // Calculate progress based on how far we've scrolled
+      const heroSection = document.querySelector('.hero')
+      if (heroSection) {
+        const heroBottom = heroSection.getBoundingClientRect().bottom
+        const windowHeight = window.innerHeight
+        // Progress from 0 (at hero) to 1 (fully transitioned)
+        const progress = Math.max(0, Math.min(1, (windowHeight - heroBottom) / (windowHeight - 50)))
+
+        return {
+          '--morph-x': `${deltaX * (1 - progress)}px`,
+          '--morph-y': `${deltaY * (1 - progress)}px`,
+          '--morph-scale': `${1.0 - (progress * 0.1)}`,
+          '--morph-width': `${heroButtonRect.width - (progress * (heroButtonRect.width - 80))}px`,
+        } as React.CSSProperties
+      }
+    }
+
+    // Floating state - at final position
+    return {
+      '--morph-x': '0px',
+      '--morph-y': '0px',
+      '--morph-scale': '1',
+      '--morph-width': '60px',
+    } as React.CSSProperties
+  }
+
   return (
     <a
+      ref={floatingRef}
       href="https://wa.me/917977991130?text=Hi,%20I%20would%20like%20to%20book%20an%20appointment"
-      className="floating-whatsapp"
+      className={`floating-whatsapp floating-whatsapp--${scrollState}`}
+      style={getTransformStyle()}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat on WhatsApp"
