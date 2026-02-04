@@ -1625,6 +1625,11 @@ nav {
     }
 }
 
+/* Blog post article - offset for fixed header */
+.blog-post {
+    padding-top: 90px;
+}
+
 /* Blog post image */
 .blog-post-image {
     margin-bottom: 2rem;
