@@ -1,15 +1,29 @@
+'use client'
+
 import Image from 'next/image'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import MobileMenu from '@/components/interactive/MobileMenu'
 import HeaderScroll from '@/components/interactive/HeaderScroll'
 
 export default function Header() {
+  const pathname = usePathname()
+
+  const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    // If we're on the home page, scroll to top instead of navigating
+    if (pathname === '/') {
+      e.preventDefault()
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+    // Otherwise, let the Link component handle navigation to home page
+  }
+
   return (
     <>
       <HeaderScroll />
       <header id="header">
         <nav>
-          <Link href="/" className="logo">
+          <Link href="/#home" className="logo" onClick={handleLogoClick}>
             <Image
               src="/images/smile-right.png"
               alt="Smile Right - Multispecialty Dental Clinic"
