@@ -1,6 +1,6 @@
 # SEO Analysis Report: Smile Right Dental Clinic
 
-**Website:** smilerightdental.com
+**Website:** smilerightdental.org
 **Analysis Date:** February 2026
 **Prepared for:** Dr. Sneha Kedia
 

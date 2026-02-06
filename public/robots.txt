@@ -4,4 +4,4 @@ Disallow: /admin
 Disallow: /login
 Disallow: /api
 
-Sitemap: https://www.smilerightdental.com/sitemap.xml
+Sitemap: https://www.smilerightdental.org/sitemap.xml

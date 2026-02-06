@@ -9,7 +9,7 @@ import type { Blog } from '@/lib/types'
 
 export const revalidate = 3600
 
-const BASE_URL = 'https://www.smilerightdental.com'
+const BASE_URL = 'https://www.smilerightdental.org'
 
 export const metadata: Metadata = {
   title: 'Dental Health Blog | Expert Tips & Advice | Smile Right Dental',

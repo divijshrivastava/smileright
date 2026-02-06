@@ -16,7 +16,7 @@ const openSans = Open_Sans({
   display: 'swap',
 })
 
-const BASE_URL = 'https://www.smilerightdental.com'
+const BASE_URL = 'https://www.smilerightdental.org'
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),

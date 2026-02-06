@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: 'Accessibility | Smile Right Dental Clinic',
   description: 'Accessibility statement for Smile Right Multispecialty Dental Clinic & Implant Centre. Learn about our commitment to making our website accessible to everyone.',
   alternates: {
-    canonical: 'https://www.smilerightdental.com/accessibility',
+    canonical: 'https://www.smilerightdental.org/accessibility',
   },
 }
 

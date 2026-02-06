@@ -10,7 +10,7 @@ import { sanitizeRichHtml } from '@/lib/security/input-validation'
 
 export const revalidate = 3600
 
-const BASE_URL = 'https://www.smilerightdental.com'
+const BASE_URL = 'https://www.smilerightdental.org'
 
 type Props = {
   params: Promise<{ slug: string }>

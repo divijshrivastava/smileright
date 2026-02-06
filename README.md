@@ -53,7 +53,7 @@ smile-right/
 ## Customization
 
 To update the domain name throughout the site:
-1. Replace `https://www.smilerightdental.com/` in `sitemap.xml` with your actual domain
+1. Replace `https://www.smilerightdental.org/` in `sitemap.xml` with your actual domain
 2. Update the same in `robots.txt`
 3. Add your actual Google Maps embed URL in `index.html`
 
