@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import Link from 'next/link'
 import { useState } from 'react'
 import type { Service } from '@/lib/types'
 
@@ -21,7 +22,7 @@ export default function FeaturedServices({ services }: FeaturedServicesProps) {
   return (
     <section id="services" className="featured-services">
       <div className="container">
-        <h2 className="section-title">Our Featured Services</h2>
+        <h2 className="section-title">Treatment and Services</h2>
         <p className="section-subtitle">
           Comprehensive dental care tailored to your unique needs, delivered with precision and care.
         </p>
@@ -37,7 +38,11 @@ export default function FeaturedServices({ services }: FeaturedServicesProps) {
             const currentImage = allImages[currentIndex]
 
             return (
-              <div key={service.id} className="service-card">
+              <Link
+                key={service.id}
+                href={`/treatments-and-services/${service.slug}`}
+                className="service-card"
+              >
                 <div className="service-image">
                   {hasImages ? (
                     <div className="carousel">
@@ -97,8 +102,14 @@ export default function FeaturedServices({ services }: FeaturedServicesProps) {
                 <div className="service-info">
                   <h3 className="service-title">{service.title}</h3>
                   <p className="service-description">{service.description}</p>
+                  <span className="learn-more-link">
+                    Learn More
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </span>
                 </div>
-              </div>
+              </Link>
             )
           })}
         </div>
@@ -110,6 +121,15 @@ export default function FeaturedServices({ services }: FeaturedServicesProps) {
           border-radius: 12px;
           overflow: hidden;
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+          text-decoration: none;
+          color: inherit;
+          display: block;
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .service-card:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
         }
 
         .service-image {
@@ -206,6 +226,24 @@ export default function FeaturedServices({ services }: FeaturedServicesProps) {
 
         .carousel-dot:hover:not(.active) {
           background: rgba(255, 255, 255, 0.8);
+        }
+
+        .learn-more-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          margin-top: 12px;
+          color: var(--primary-color, #0066cc);
+          font-weight: 500;
+          font-size: 0.9rem;
+        }
+
+        .learn-more-link svg {
+          transition: transform 0.2s ease;
+        }
+
+        .service-card:hover .learn-more-link svg {
+          transform: translateX(4px);
         }
       `}</style>
     </section>

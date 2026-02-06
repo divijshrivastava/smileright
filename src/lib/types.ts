@@ -31,6 +31,7 @@ export interface TrustImage {
 export interface Service {
   id: string
   title: string
+  slug: string
   description: string
   image_url: string
   alt_text: string

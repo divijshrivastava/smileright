@@ -10,16 +10,16 @@ import sanitizeHtml from 'sanitize-html'
  */
 export function sanitizeString(input: string, maxLength: number = 1000): string {
   if (!input) return ''
-  
+
   // Trim and limit length
   let sanitized = input.trim().substring(0, maxLength)
-  
+
   // Remove null bytes
   sanitized = sanitized.replace(/\0/g, '')
-  
+
   // Remove control characters (except newlines and tabs)
   sanitized = sanitized.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
-  
+
   return sanitized
 }
 
@@ -28,7 +28,7 @@ export function sanitizeString(input: string, maxLength: number = 1000): string 
  */
 export function sanitizeHTML(input: string): string {
   if (!input) return ''
-  
+
   return input
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
     .replace(/<[^>]+>/g, '')
@@ -41,21 +41,21 @@ export function sanitizeHTML(input: string): string {
  */
 export function sanitizeURL(url: string, allowedProtocols: string[] = ['http', 'https']): string | null {
   if (!url) return null
-  
+
   try {
     const parsed = new URL(url)
-    
+
     // Check if protocol is allowed
     const protocol = parsed.protocol.replace(':', '')
     if (!allowedProtocols.includes(protocol)) {
       return null
     }
-    
+
     // Check for dangerous patterns
     if (url.includes('javascript:') || url.includes('data:') || url.includes('vbscript:')) {
       return null
     }
-    
+
     return parsed.toString()
   } catch {
     return null
@@ -75,19 +75,19 @@ export function validateEmail(email: string): boolean {
  */
 export function validateInteger(value: unknown, min?: number, max?: number): number | null {
   const num = typeof value === 'string' ? parseInt(value, 10) : Number(value)
-  
+
   if (isNaN(num) || !Number.isInteger(num)) {
     return null
   }
-  
+
   if (min !== undefined && num < min) {
     return null
   }
-  
+
   if (max !== undefined && num > max) {
     return null
   }
-  
+
   return num
 }
 
@@ -98,11 +98,11 @@ export function validateBoolean(value: unknown): boolean {
   if (typeof value === 'boolean') {
     return value
   }
-  
+
   if (typeof value === 'string') {
     return value.toLowerCase() === 'true'
   }
-  
+
   return false
 }
 
@@ -112,16 +112,16 @@ export function validateBoolean(value: unknown): boolean {
 export function sanitizeFilename(filename: string): string {
   // Remove path traversal attempts
   let sanitized = filename.replace(/\.\./g, '')
-  
+
   // Remove directory separators
   sanitized = sanitized.replace(/[/\\]/g, '')
-  
+
   // Remove special characters except dots, dashes, and underscores
   sanitized = sanitized.replace(/[^a-zA-Z0-9._-]/g, '_')
-  
+
   // Limit length
   sanitized = sanitized.substring(0, 255)
-  
+
   return sanitized
 }
 
@@ -143,7 +143,7 @@ export function containsSQLInjection(input: string): boolean {
     /(\bOR\b.*=.*)/i,
     /(\bAND\b.*=.*)/i,
   ]
-  
+
   return sqlPatterns.some(pattern => pattern.test(input))
 }
 
@@ -168,19 +168,19 @@ export function validateTestimonialInput(data: FormData): TestimonialInput | { e
   const image_url = sanitizeURL(data.get('image_url') as string || '')
   const video_url = sanitizeURL(data.get('video_url') as string || '')
   const alt_text = sanitizeString(data.get('alt_text') as string || '', 200)
-  
+
   if (!name || name.length < 2) {
     return { error: 'Name must be at least 2 characters' }
   }
-  
+
   if (!description || description.length < 10) {
     return { error: 'Description must be at least 10 characters' }
   }
-  
+
   if (rating === null) {
     return { error: 'Invalid rating value' }
   }
-  
+
   return {
     name,
     description,
@@ -197,6 +197,7 @@ export function validateTestimonialInput(data: FormData): TestimonialInput | { e
  */
 export interface ServiceInput {
   title: string
+  slug: string
   description: string
   image_url: string
   alt_text: string
@@ -205,31 +206,44 @@ export interface ServiceInput {
 
 export function validateServiceInput(data: FormData, requireImage: boolean = true): ServiceInput | { error: string } {
   const title = sanitizeString(data.get('title') as string, 200)
+  const rawSlug = sanitizeString(data.get('slug') as string, 200)
   const description = sanitizeString(data.get('description') as string, 5000)
   const image_url = sanitizeURL(data.get('image_url') as string || '')
   const alt_text = sanitizeString(data.get('alt_text') as string, 200)
   const display_order = validateInteger(data.get('display_order'), 0) ?? 0
-  
+
   if (!title || title.length < 3) {
     return { error: 'Title must be at least 3 characters' }
   }
-  
+
+  // Validate slug
+  const slug = slugify(rawSlug || title)
+  if (!slug || slug.length < 3) {
+    return { error: 'Slug must be at least 3 characters' }
+  }
+
+  // Avoid obvious SQLi patterns in slug (defense-in-depth)
+  if (containsSQLInjection(slug)) {
+    return { error: 'Invalid slug' }
+  }
+
   if (!description || description.length < 10) {
     return { error: 'Description must be at least 10 characters' }
   }
-  
+
   if (requireImage) {
     if (!image_url) {
       return { error: 'Invalid image URL' }
     }
-    
+
     if (!alt_text || alt_text.length < 3) {
       return { error: 'Alt text must be at least 3 characters' }
     }
   }
-  
+
   return {
     title,
+    slug,
     description,
     image_url: image_url || '',
     alt_text: alt_text || '',

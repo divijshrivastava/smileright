@@ -363,6 +363,7 @@ export async function createService(formData: FormData) {
 
   const { data: service, error } = await supabase.from('services').insert({
     title: validatedInput.title,
+    slug: validatedInput.slug,
     description: validatedInput.description,
     image_url: validatedInput.image_url,
     alt_text: validatedInput.alt_text,
@@ -422,6 +423,7 @@ export async function updateService(id: string, formData: FormData) {
   // and should not be updated here
   const { error } = await supabase.from('services').update({
     title: validatedInput.title,
+    slug: validatedInput.slug,
     description: validatedInput.description,
     display_order: validatedInput.display_order,
     is_published: isPublished,
