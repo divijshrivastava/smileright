@@ -24,7 +24,7 @@ export default function TestimonialsCarousel({ testimonials }: TestimonialsCarou
             alt={testimonial.alt_text || `${testimonial.name}'s testimonial`}
             width={420}
             height={300}
-            style={{ objectFit: 'cover', width: '100%', height: 'auto', display: 'block' }}
+            style={{ objectFit: 'contain', width: '100%', height: 'auto', display: 'block' }}
           />
         )
       }

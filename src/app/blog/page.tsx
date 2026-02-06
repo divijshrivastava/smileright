@@ -134,7 +134,7 @@ export default async function BlogIndexPage() {
                           alt={post.main_image_alt_text || post.title}
                           width={400}
                           height={250}
-                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+style={{ width: '100%', height: 'auto', borderRadius: '8px', objectFit: 'contain' }}
                         />
                         <div className="blog-card-overlay"></div>
                       </div>
