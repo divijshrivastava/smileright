@@ -115,6 +115,19 @@ const structuredData = {
     name: 'Dr. Sneha Kedia',
     jobTitle: 'Dental Surgeon and Implantologist',
     medicalSpecialty: 'Dentistry',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: 'Shop No. 31, Gokul Nagar 2, CDE Wing, Opp. Gokul Concorde, Thakur Village',
+      addressLocality: 'Kandivali East',
+      addressRegion: 'Mumbai',
+      postalCode: '400101',
+      addressCountry: 'IN',
+    },
+    telephone: '+91-7977991130',
+    worksFor: {
+      '@type': 'Dentist',
+      name: 'Smile Right - Multispecialty Dental Clinic & Implant Centre',
+    },
   },
   sameAs: [
     'https://www.instagram.com/smilerightdentalclinic',
