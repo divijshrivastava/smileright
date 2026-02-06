@@ -13,7 +13,7 @@ export default function DoctorBio() {
               alt="Dr. Sneha Kedia - Dental Surgeon and Implantologist"
               width={800}
               height={500}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
             />
           </div>
 

@@ -45,7 +45,7 @@ export default async function BlogIndexPage() {
                           alt={b.main_image_alt_text || b.title}
                           width={400}
                           height={250}
-                          style={{ width: '100%', height: 'auto', borderRadius: '8px', objectFit: 'cover' }}
+                          style={{ width: '100%', height: 'auto', borderRadius: '8px', objectFit: 'contain' }}
                         />
                       </div>
                     )}
