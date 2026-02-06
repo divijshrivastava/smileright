@@ -11,10 +11,14 @@ interface TrustImagesCarouselProps {
 export default function TrustImagesCarousel({ images }: TrustImagesCarouselProps) {
   const [current, setCurrent] = useState(0)
   const [carouselHeight, setCarouselHeight] = useState('500px')
+  const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
     const updateHeight = () => {
-      if (window.innerWidth < 768) {
+      const mobile = window.innerWidth < 768
+      setIsMobile(mobile)
+
+      if (mobile) {
         setCarouselHeight('320px')
       } else if (window.innerWidth < 1024) {
         setCarouselHeight('400px')
@@ -101,17 +105,35 @@ export default function TrustImagesCarousel({ images }: TrustImagesCarouselProps
           </button>
 
           <div style={styles.dots}>
-            {images.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => goToSlide(index)}
-                style={{
-                  ...styles.dot,
-                  backgroundColor: index === current ? '#1B73BA' : 'rgba(255,255,255,0.5)',
-                }}
-                aria-label={`Go to image ${index + 1}`}
-              />
-            ))}
+            {images.map((_, index) => {
+              const dotSize = isMobile ? '6px' : '8px'
+              const borderWidth = isMobile ? '1px' : '1.5px'
+
+              return (
+                <button
+                  key={index}
+                  onClick={() => goToSlide(index)}
+                  className="carousel-dot"
+                  style={{
+                    width: dotSize,
+                    height: dotSize,
+                    minWidth: dotSize,
+                    minHeight: dotSize,
+                    maxWidth: dotSize,
+                    maxHeight: dotSize,
+                    borderRadius: '50%',
+                    border: `${borderWidth} solid #fff`,
+                    cursor: 'pointer',
+                    transition: 'all 0.3s',
+                    padding: '0',
+                    margin: '0',
+                    backgroundColor: index === current ? '#1B73BA' : 'rgba(255,255,255,0.5)',
+                    flexShrink: 0,
+                  }}
+                  aria-label={`Go to image ${index + 1}`}
+                />
+              )
+            })}
           </div>
         </>
       )}
@@ -189,14 +211,14 @@ const styles: Record<string, React.CSSProperties> = {
     left: '50%',
     transform: 'translateX(-50%)',
     display: 'flex',
-    gap: '10px',
+    gap: '6px',
     zIndex: 10,
   },
   dot: {
-    width: '12px',
-    height: '12px',
+    width: '8px',
+    height: '8px',
     borderRadius: '50%',
-    border: '2px solid #fff',
+    border: '1.5px solid #fff',
     cursor: 'pointer',
     transition: 'all 0.3s',
     padding: 0,
