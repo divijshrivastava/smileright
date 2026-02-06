@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import type { Metadata } from 'next'
 import Header from '@/components/public/Header'
 import Footer from '@/components/public/Footer'
 import FloatingWhatsApp from '@/components/interactive/FloatingWhatsApp'
@@ -7,6 +8,24 @@ import { createClient } from '@/lib/supabase/server'
 import type { Blog } from '@/lib/types'
 
 export const revalidate = 3600
+
+const BASE_URL = 'https://www.smilerightdental.com'
+
+export const metadata: Metadata = {
+  title: 'Dental Health Blog | Expert Tips & Advice | Smile Right Dental',
+  description: 'Read expert dental health articles, tips on oral hygiene, teeth whitening guides, and insights about dental treatments from Dr. Sneha Kedia at Smile Right Dental Clinic, Kandivali East, Mumbai.',
+  keywords: 'dental blog, oral health tips, teeth whitening, dental implants guide, root canal information, dental care Mumbai, dentist blog Kandivali',
+  openGraph: {
+    title: 'Dental Health Blog | Smile Right Dental Clinic',
+    description: 'Expert dental health articles and tips from Dr. Sneha Kedia - your trusted dentist in Kandivali East, Mumbai.',
+    type: 'website',
+    url: `${BASE_URL}/blog`,
+    siteName: 'Smile Right Dental Clinic',
+  },
+  alternates: {
+    canonical: `${BASE_URL}/blog`,
+  },
+}
 
 export default async function BlogIndexPage() {
   const supabase = await createClient()

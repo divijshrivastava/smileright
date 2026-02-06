@@ -6,6 +6,9 @@ import FloatingWhatsApp from '@/components/interactive/FloatingWhatsApp'
 export const metadata: Metadata = {
   title: 'Terms of Service | Smile Right Dental Clinic',
   description: 'Terms of Service for Smile Right Multispecialty Dental Clinic & Implant Centre. Read about our website usage terms, appointment policies, and treatment disclaimers.',
+  alternates: {
+    canonical: 'https://www.smilerightdental.com/terms',
+  },
 }
 
 export default function TermsPage() {

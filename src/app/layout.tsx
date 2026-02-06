@@ -16,12 +16,15 @@ const openSans = Open_Sans({
   display: 'swap',
 })
 
+const BASE_URL = 'https://www.smilerightdental.com'
+
 export const metadata: Metadata = {
+  metadataBase: new URL(BASE_URL),
   title: 'Smile Right - Dr. Sneha Kedia | Best Dentist in Kandivali East, Mumbai',
   description:
     'Smile Right - Dr. Sneha Kedia, Dental Surgeon & Implantologist in Kandivali East, Mumbai. Expert dental care including implants, root canal, braces, cosmetic dentistry & more. Book appointment: 7977991130',
   keywords:
-    'dentist kandivali, dental clinic mumbai, dental implants, root canal treatment, braces, cosmetic dentistry, dr sneha kedia, smile right dental clinic, kandivali east dentist, teeth whitening mumbai',
+    'dentist kandivali, dental clinic mumbai, dental implants, root canal treatment, braces, cosmetic dentistry, dr sneha kedia, smile right dental clinic, kandivali east dentist, teeth whitening mumbai, dentist near me, emergency dentist mumbai, best dentist kandivali, painless root canal, dental clinic thakur village',
   authors: [{ name: 'Dr. Sneha Kedia' }],
   robots: 'index, follow',
   openGraph: {
@@ -29,6 +32,17 @@ export const metadata: Metadata = {
     description:
       'Expert dental care in Kandivali East, Mumbai. Specializing in dental implants, root canal, braces, and cosmetic dentistry.',
     type: 'website',
+    url: BASE_URL,
+    siteName: 'Smile Right Dental Clinic',
+    locale: 'en_IN',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Smile Right - Dr. Sneha Kedia | Best Dentist in Kandivali East',
+    description: 'Expert dental care in Kandivali East, Mumbai. Dental implants, root canal, braces, and cosmetic dentistry.',
+  },
+  alternates: {
+    canonical: BASE_URL,
   },
   formatDetection: {
     telephone: true,
@@ -36,13 +50,20 @@ export const metadata: Metadata = {
   other: {
     'mobile-web-app-capable': 'yes',
   },
+  verification: {
+    // Add your Google Search Console verification code here
+    // google: 'your-google-verification-code',
+  },
 }
 
 const structuredData = {
   '@context': 'https://schema.org',
   '@type': 'Dentist',
+  '@id': `${BASE_URL}/#dentist`,
   name: 'Smile Right - Multispecialty Dental Clinic & Implant Centre',
-  description: 'Multispecialty Dental Clinic & Implant Centre in Kandivali East, Mumbai',
+  description: 'Multispecialty Dental Clinic & Implant Centre in Kandivali East, Mumbai offering dental implants, root canal, braces, teeth whitening, and emergency dental care.',
+  url: BASE_URL,
+  image: `${BASE_URL}/images/PHOTO-2025-12-27-16-54-33.jpg`,
   address: {
     '@type': 'PostalAddress',
     streetAddress:
@@ -58,6 +79,7 @@ const structuredData = {
     longitude: '72.868988',
   },
   telephone: '+91-7977991130',
+  email: 'smilerightdentalclinic@gmail.com',
   openingHoursSpecification: [
     {
       '@type': 'OpeningHoursSpecification',
@@ -73,13 +95,102 @@ const structuredData = {
     },
   ],
   priceRange: '$$',
-  medicalSpecialty: ['Dentistry', 'Oral Surgery', 'Implantology'],
+  currenciesAccepted: 'INR',
+  paymentAccepted: 'Cash, Credit Card, Debit Card, UPI',
+  medicalSpecialty: ['Dentistry', 'Oral Surgery', 'Implantology', 'Orthodontics', 'Cosmetic Dentistry'],
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Dental Services',
+    itemListElement: [
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Dental Implants' } },
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Root Canal Treatment' } },
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Teeth Whitening' } },
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Braces & Orthodontics' } },
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Cosmetic Dentistry' } },
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Emergency Dental Care' } },
+    ],
+  },
   physician: {
     '@type': 'Physician',
     name: 'Dr. Sneha Kedia',
     jobTitle: 'Dental Surgeon and Implantologist',
     medicalSpecialty: 'Dentistry',
   },
+  sameAs: [
+    'https://www.instagram.com/smilerightdentalclinic',
+  ],
+}
+
+// FAQ Schema for rich results
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What are your clinic timings?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'We are open Monday to Saturday from 9:00 AM - 2:00 PM and 5:00 PM - 9:00 PM. Sunday appointments are available by prior booking.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Do you accept insurance?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: "Yes, we work with most major insurance providers. Please bring your insurance card for verification, and we'll help you maximize your benefits.",
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is the dental treatment painful?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'We use advanced painless dentistry techniques and modern anesthesia to ensure maximum comfort. Most patients report minimal to no discomfort during procedures.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How do I book an appointment at Smile Right Dental Clinic?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'You can book an appointment by calling us at 7977991130, sending a WhatsApp message, or visiting our clinic directly. We offer same-day appointments for emergencies.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What dental services do you provide?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'We offer comprehensive dental care including dental implants, root canal treatment, braces, teeth whitening, cosmetic dentistry, pediatric dentistry, and preventive care.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Do you handle dental emergencies?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: "Yes, we provide emergency dental care. Please call us immediately at 7977991130, and we'll arrange to see you as soon as possible.",
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How much do dental treatments cost at Smile Right?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Treatment costs vary based on individual needs. We provide transparent pricing and detailed treatment plans before starting any procedure. Call us for a free consultation.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is parking available at the clinic?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes, convenient parking facilities are available near our clinic at Thakur Village, Kandivali East.',
+      },
+    },
+  ],
 }
 
 export default function RootLayout({
@@ -97,6 +208,10 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
         />
       </head>
       <body>{children}</body>
