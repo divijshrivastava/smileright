@@ -13,12 +13,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .order('published_at', { ascending: false })
     .limit(200)
 
+  // Treatment slugs for sitemap
+  const treatmentSlugs = [
+    'dental-implants',
+    'root-canal-treatment',
+    'teeth-whitening',
+    'braces-and-orthodontics',
+    'cosmetic-dentistry',
+    'emergency-dental-care',
+  ]
+
   const staticPages: MetadataRoute.Sitemap = [
     {
       url: BASE_URL,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 1.0,
+    },
+    {
+      url: `${BASE_URL}/treatments-and-services`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.9,
     },
     {
       url: `${BASE_URL}/blog`,
@@ -46,6 +62,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ]
 
+  const treatmentPages: MetadataRoute.Sitemap = treatmentSlugs.map((slug) => ({
+    url: `${BASE_URL}/treatments-and-services/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.85,
+  }))
+
   const blogPages: MetadataRoute.Sitemap = (blogs ?? []).map((blog) => ({
     url: `${BASE_URL}/blog/${blog.slug}`,
     lastModified: new Date(blog.updated_at || blog.published_at),
@@ -53,5 +76,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }))
 
-  return [...staticPages, ...blogPages]
+  return [...staticPages, ...treatmentPages, ...blogPages]
 }

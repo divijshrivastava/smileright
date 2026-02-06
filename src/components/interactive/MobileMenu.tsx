@@ -22,7 +22,7 @@ export default function MobileMenu() {
       <ul className={`nav-links nav-links-mobile${isOpen ? ' active' : ''}`} id="navLinks">
         <li><a href="/#home" onClick={() => setIsOpen(false)}>Home</a></li>
         <li><a href="/#about" onClick={() => setIsOpen(false)}>About</a></li>
-        <li><a href="/#services" onClick={() => setIsOpen(false)}>Services</a></li>
+        <li><Link href="/treatments-and-services" onClick={() => setIsOpen(false)}>Treatments</Link></li>
         <li><a href="/#gallery" onClick={() => setIsOpen(false)}>Gallery</a></li>
         <li><a href="/#testimonials" onClick={() => setIsOpen(false)}>Reviews</a></li>
         <li><Link href="/blog" onClick={() => setIsOpen(false)}>Blog</Link></li>

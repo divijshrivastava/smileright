@@ -12,7 +12,8 @@
       "Bash(git push:*)",
       "Bash(gh pr create:*)",
       "Bash(gh pr merge:*)",
-      "WebFetch(domain:search.google.com)"
+      "WebFetch(domain:search.google.com)",
+      "Bash(ls:*)"
     ]
   }
 }
