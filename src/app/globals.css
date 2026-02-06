@@ -3545,7 +3545,7 @@ iframe {
 .treatments-hero {
     background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
     color: white;
-    padding: 80px 0 60px;
+    padding: 160px 0 60px;
     text-align: center;
 }
 
@@ -3667,7 +3667,7 @@ iframe {
 .treatment-hero {
     background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
     color: white;
-    padding: 80px 0 60px;
+    padding: 160px 0 60px;
 }
 
 .treatment-hero .breadcrumb {
@@ -3876,7 +3876,7 @@ iframe {
 
 @media (max-width: 768px) {
     .treatments-hero {
-        padding: 60px 0 40px;
+        padding: 100px 0 40px;
     }
 
     .treatments-hero h1 {
@@ -3888,7 +3888,7 @@ iframe {
     }
 
     .treatment-hero {
-        padding: 60px 0 40px;
+        padding: 100px 0 40px;
     }
 
     .treatment-hero h1 {
