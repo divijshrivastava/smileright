@@ -125,8 +125,7 @@ const structuredData = {
     },
     telephone: '+91-7977991130',
     worksFor: {
-      '@type': 'Dentist',
-      name: 'Smile Right - Multispecialty Dental Clinic & Implant Centre',
+      '@id': `${BASE_URL}/#dentist`,
     },
   },
   sameAs: [
