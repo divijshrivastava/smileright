@@ -802,7 +802,7 @@ export async function createBlog(formData: FormData) {
   if (blog?.slug) {
     revalidatePath(`/blog/${blog.slug}`)
   }
-
+  revalidatePath('/sitemap.xml')
   revalidatePath('/admin/blogs')
 }
 
@@ -876,7 +876,7 @@ export async function updateBlog(id: string, formData: FormData) {
   if (newSlug && newSlug !== oldSlug) {
     revalidatePath(`/blog/${newSlug}`)
   }
-
+  revalidatePath('/sitemap.xml')
   revalidatePath('/admin/blogs')
 }
 
@@ -914,6 +914,7 @@ export async function deleteBlog(id: string) {
   if (existing?.slug) {
     revalidatePath(`/blog/${existing.slug}`)
   }
+  revalidatePath('/sitemap.xml')
   revalidatePath('/admin/blogs')
 }
 
@@ -1002,5 +1003,6 @@ export async function toggleBlogPublish(id: string, isPublished: boolean) {
   if (existing?.slug) {
     revalidatePath(`/blog/${existing.slug}`)
   }
+  revalidatePath('/sitemap.xml')
   revalidatePath('/admin/blogs')
 }
