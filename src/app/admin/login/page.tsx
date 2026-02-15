@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
 import { logLoginEvent, logFailedLoginEvent } from '@/app/admin/actions'
 
 export default function AdminLoginPage() {
@@ -10,7 +9,6 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -31,8 +29,8 @@ export default function AdminLoginPage() {
     }
 
     logLoginEvent(true).catch(() => {})
-    router.push('/admin')
-    router.refresh()
+    // Use hard navigation to ensure server-side auth state is properly loaded
+    window.location.href = '/admin'
   }
 
   return (
