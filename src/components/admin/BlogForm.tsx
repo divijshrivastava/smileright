@@ -2,10 +2,29 @@
 
 import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import dynamic from 'next/dynamic'
 import { createBlog, updateBlog } from '@/app/admin/actions'
-import CKEditorComponent from './CKEditorComponent'
 import ImageUploader from './ImageUploader'
 import type { Blog } from '@/lib/types'
+
+// Lazy load the heavy CKEditor component
+const CKEditorComponent = dynamic(() => import('./CKEditorComponent'), {
+  ssr: false,
+  loading: () => (
+    <div style={{
+      minHeight: '300px',
+      background: '#f5f5f5',
+      borderRadius: '4px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      color: '#666',
+      fontFamily: 'var(--font-sans)',
+    }}>
+      Loading editor...
+    </div>
+  ),
+})
 
 interface BlogFormProps {
   blog?: Blog

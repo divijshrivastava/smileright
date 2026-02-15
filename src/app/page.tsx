@@ -1,18 +1,38 @@
+import dynamic from 'next/dynamic'
+import { Suspense } from 'react'
 import Header from '@/components/public/Header'
 import Hero from '@/components/public/Hero'
 import Welcome from '@/components/public/Welcome'
-import FeaturedServices from '@/components/public/FeaturedServices'
 import DoctorBio from '@/components/public/DoctorBio'
 import Testimonials from '@/components/public/Testimonials'
 import ClinicInfo from '@/components/public/ClinicInfo'
 import TrustSection from '@/components/public/TrustSection'
 import BlogPreview from '@/components/public/BlogPreview'
-import FAQ from '@/components/public/FAQ'
 import Footer from '@/components/public/Footer'
 import SmoothScrollLink from '@/components/interactive/SmoothScrollLink'
 import FloatingWhatsApp from '@/components/interactive/FloatingWhatsApp'
 import { createClient } from '@/lib/supabase/server'
 import type { Blog, Service } from '@/lib/types'
+
+// Lazy load heavy below-fold components
+const FeaturedServices = dynamic(() => import('@/components/public/FeaturedServices'), {
+  loading: () => <SectionSkeleton height="600px" />
+})
+
+const FAQ = dynamic(() => import('@/components/public/FAQ'), {
+  loading: () => <SectionSkeleton height="400px" />
+})
+
+function SectionSkeleton({ height }: { height: string }) {
+  return (
+    <div style={{
+      height,
+      background: 'linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)',
+      backgroundSize: '200% 100%',
+      animation: 'shimmer 1.5s infinite',
+    }} />
+  )
+}
 
 export const revalidate = 3600
 

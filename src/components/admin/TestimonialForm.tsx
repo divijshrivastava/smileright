@@ -2,10 +2,18 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import dynamic from 'next/dynamic'
 import { createTestimonial, updateTestimonial } from '@/app/admin/actions'
-import ImageUploader from './ImageUploader'
-import VideoUploader from './VideoUploader'
 import type { Testimonial } from '@/lib/types'
+
+// Lazy load uploaders (only needed when specific media type is selected)
+const ImageUploader = dynamic(() => import('./ImageUploader'), {
+  loading: () => <div style={{ padding: '1rem', color: '#666' }}>Loading uploader...</div>,
+})
+
+const VideoUploader = dynamic(() => import('./VideoUploader'), {
+  loading: () => <div style={{ padding: '1rem', color: '#666' }}>Loading uploader...</div>,
+})
 
 interface TestimonialFormProps {
   testimonial?: Testimonial

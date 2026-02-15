@@ -2,10 +2,26 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import dynamic from 'next/dynamic'
 import { createService, updateService } from '@/app/admin/actions'
 import ImageUploader from './ImageUploader'
-import UnifiedServiceImageManager from './UnifiedServiceImageManager'
 import type { Service } from '@/lib/types'
+
+// Lazy load the image manager (only needed when editing)
+const UnifiedServiceImageManager = dynamic(() => import('./UnifiedServiceImageManager'), {
+  loading: () => (
+    <div style={{
+      padding: '2rem',
+      background: '#f8f9fa',
+      borderRadius: '8px',
+      textAlign: 'center',
+      color: '#666',
+      fontFamily: 'var(--font-sans)',
+    }}>
+      Loading image manager...
+    </div>
+  ),
+})
 
 interface ServiceFormProps {
   service?: Service
