@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { updateUserRole } from '@/app/admin/actions'
 import type { Profile, AppRole } from '@/lib/types'
 import { getRoleLabel, getRoleDescription } from '@/lib/permissions'
@@ -12,7 +11,6 @@ interface UserListProps {
 }
 
 export default function UserList({ users, currentUserId }: UserListProps) {
-  const router = useRouter()
   const [updating, setUpdating] = useState<string | null>(null)
 
   const handleRoleChange = async (userId: string, newRole: AppRole) => {
@@ -24,10 +22,10 @@ export default function UserList({ users, currentUserId }: UserListProps) {
     setUpdating(userId)
     try {
       await updateUserRole(userId, newRole)
-      router.refresh()
+      // Use hard refresh to avoid hydration mismatch
+      window.location.reload()
     } catch (error) {
       alert(error instanceof Error ? error.message : 'Failed to update role')
-    } finally {
       setUpdating(null)
     }
   }
