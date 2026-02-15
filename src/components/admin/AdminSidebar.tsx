@@ -82,11 +82,11 @@ export default function AdminSidebar({ profile }: AdminSidebarProps) {
           )}
 
           <Link href="/admin/services" style={styles.navLink} onClick={() => setIsOpen(false)}>
-            <Stethoscope size={18} /> Services
+            <Stethoscope size={18} /> Treatments & Services
           </Link>
           {isEditor && (
             <Link href="/admin/services/new" style={styles.subLink} onClick={() => setIsOpen(false)}>
-              + Add Service
+              + Add Treatment/Service
             </Link>
           )}
 

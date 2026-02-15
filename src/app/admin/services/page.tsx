@@ -44,10 +44,10 @@ export default async function ServicesPage() {
   return (
     <div>
       <div style={styles.header} className="admin-page-header">
-        <h1 style={styles.title}>Featured Services</h1>
+        <h1 style={styles.title}>Treatments & Services</h1>
         {canEditContent(role) && (
           <Link href="/admin/services/new" style={styles.addBtn} className="admin-add-btn">
-            + Add Service
+            + Add Treatment/Service
           </Link>
         )}
       </div>
