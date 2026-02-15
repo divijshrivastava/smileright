@@ -14,6 +14,7 @@ import {
   FileText,
   ExternalLink,
   Menu,
+  Users,
 } from 'lucide-react'
 
 interface AdminSidebarProps {
@@ -66,6 +67,13 @@ export default function AdminSidebar({ profile }: AdminSidebarProps) {
           {isAdmin && (
             <Link href="/admin/approvals" style={{ ...styles.navLink, ...styles.approvalLink }} onClick={() => setIsOpen(false)}>
               <ClipboardCheck size={18} /> Approvals
+            </Link>
+          )}
+
+          {/* User management - Admin only */}
+          {isAdmin && (
+            <Link href="/admin/users" style={styles.navLink} onClick={() => setIsOpen(false)}>
+              <Users size={18} /> Users
             </Link>
           )}
 

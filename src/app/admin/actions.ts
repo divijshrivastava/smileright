@@ -1447,3 +1447,73 @@ export async function logLogoutEvent() {
     })
   }
 }
+
+// ========================================
+// User Management Actions (Admin Only)
+// ========================================
+
+export async function getUsers() {
+  const { supabase, role } = await getAuthenticatedUser()
+  assertAdmin(role)
+
+  const { data: profiles, error } = await supabase
+    .from('profiles')
+    .select('id, email, role, full_name, created_at, updated_at')
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  return profiles || []
+}
+
+export async function updateUserRole(userId: string, newRole: AppRole) {
+  const { supabase, user, role } = await getAuthenticatedUser()
+  assertAdmin(role)
+  enforceRateLimit(user.id, 'user_role')
+
+  // Prevent admin from changing their own role
+  if (userId === user.id) {
+    throw new Error('You cannot change your own role')
+  }
+
+  // Validate role
+  if (!['admin', 'editor', 'viewer'].includes(newRole)) {
+    throw new Error('Invalid role')
+  }
+
+  // Get current role for audit log
+  const { data: currentProfile } = await supabase
+    .from('profiles')
+    .select('role, email')
+    .eq('id', userId)
+    .single()
+
+  if (!currentProfile) {
+    throw new Error('User not found')
+  }
+
+  const { error } = await supabase
+    .from('profiles')
+    .update({ role: newRole, updated_at: new Date().toISOString() })
+    .eq('id', userId)
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  await logAuditEvent({
+    action: 'user.role_change',
+    user_id: user.id,
+    resource_type: 'user',
+    resource_id: userId,
+    details: {
+      target_email: currentProfile.email,
+      old_role: currentProfile.role,
+      new_role: newRole,
+    },
+  })
+
+  revalidatePath('/admin/users')
+}

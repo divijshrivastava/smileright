@@ -37,6 +37,7 @@ export type AuditAction =
   | 'pending_change.submit'
   | 'pending_change.approve'
   | 'pending_change.reject'
+  | 'user.role_change'
   | 'auth.login'
   | 'auth.logout'
   | 'auth.failed_login'
