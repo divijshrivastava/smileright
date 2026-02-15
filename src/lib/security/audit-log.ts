@@ -10,6 +10,7 @@ export type AuditAction =
   | 'testimonial.update'
   | 'testimonial.delete'
   | 'testimonial.publish'
+  | 'testimonial.publish_request'
   | 'service.create'
   | 'service.update'
   | 'service.delete'
@@ -26,6 +27,9 @@ export type AuditAction =
   | 'blog.update'
   | 'blog.delete'
   | 'blog.publish'
+  | 'pending_change.submit'
+  | 'pending_change.approve'
+  | 'pending_change.reject'
   | 'auth.login'
   | 'auth.logout'
   | 'auth.failed_login'
@@ -47,7 +51,7 @@ export interface AuditLogEntry {
 export async function logAuditEvent(entry: Omit<AuditLogEntry, 'timestamp'>): Promise<void> {
   try {
     const supabase = await createClient()
-    
+
     // Insert audit log entry
     await supabase.from('audit_logs').insert({
       action: entry.action,
@@ -59,7 +63,7 @@ export async function logAuditEvent(entry: Omit<AuditLogEntry, 'timestamp'>): Pr
       user_agent: entry.user_agent,
       created_at: new Date().toISOString(),
     })
-    
+
     // Also log to console in development
     if (process.env.NODE_ENV === 'development') {
       console.log('[AUDIT]', {
@@ -78,10 +82,10 @@ export async function logAuditEvent(entry: Omit<AuditLogEntry, 'timestamp'>): Pr
  */
 export function getClientIP(request?: Request): string | undefined {
   if (!request) return undefined
-  
+
   // Check various headers for IP address
   const headers = request.headers
-  
+
   return (
     headers.get('x-forwarded-for')?.split(',')[0].trim() ||
     headers.get('x-real-ip') ||

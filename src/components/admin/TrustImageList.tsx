@@ -3,14 +3,19 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { deleteTrustImage, toggleTrustImagePublish } from '@/app/admin/actions'
-import type { TrustImage } from '@/lib/types'
+import type { TrustImage, AppRole } from '@/lib/types'
 import Image from 'next/image'
+import { canEditContent, canDeleteContent, canPublishDirectly } from '@/lib/permissions'
 
 interface TrustImageListProps {
   images: TrustImage[]
+  userRole: AppRole
 }
 
-export default function TrustImageList({ images }: TrustImageListProps) {
+export default function TrustImageList({ images, userRole }: TrustImageListProps) {
+  const isEditor = canEditContent(userRole)
+  const isAdmin = canDeleteContent(userRole)
+  const canPublish = canPublishDirectly(userRole)
   const router = useRouter()
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
@@ -30,7 +35,10 @@ export default function TrustImageList({ images }: TrustImageListProps) {
 
   const handleTogglePublish = async (id: string, isPublished: boolean) => {
     try {
-      await toggleTrustImagePublish(id, !isPublished)
+      const result = await toggleTrustImagePublish(id, !isPublished)
+      if (result && 'pending' in result) {
+        alert('Your publish request has been submitted for admin approval.')
+      }
       router.refresh()
     } catch (error) {
       alert('Failed to update image')
@@ -65,44 +73,52 @@ export default function TrustImageList({ images }: TrustImageListProps) {
                 style={{ objectFit: 'cover', borderRadius: '4px' }}
               />
             </div>
-            
+
             <div style={styles.content} className="trust-image-content">
               <div style={styles.info}>
                 <p style={styles.caption}>
                   {image.caption || <em style={{ color: '#999' }}>No caption</em>}
                 </p>
                 <p style={styles.meta}>
-                  Order: {image.display_order} · {image.is_published ? '✓ Published' : '✗ Draft'}
+                  Order: {image.display_order} · {image.is_published ? 'Published' : 'Draft'}
                 </p>
               </div>
 
               <div style={styles.actions} className="trust-image-actions">
-                <button
-                  onClick={() => handleTogglePublish(image.id, image.is_published)}
-                  style={{
-                    ...styles.actionBtn,
-                    background: image.is_published ? '#f5f5f5' : '#1B73BA',
-                    color: image.is_published ? '#292828' : '#fff',
-                  }}
-                  className="trust-action-btn"
-                >
-                  {image.is_published ? 'Unpublish' : 'Publish'}
-                </button>
-                <button
-                  onClick={() => router.push(`/admin/trust-images/${image.id}/edit`)}
-                  style={styles.actionBtn}
-                  className="trust-action-btn"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDelete(image.id)}
-                  disabled={deletingId === image.id}
-                  style={{ ...styles.actionBtn, ...styles.deleteBtn }}
-                  className="trust-action-btn"
-                >
-                  {deletingId === image.id ? 'Deleting...' : 'Delete'}
-                </button>
+                {isEditor && (
+                  <button
+                    onClick={() => handleTogglePublish(image.id, image.is_published)}
+                    style={{
+                      ...styles.actionBtn,
+                      background: image.is_published ? '#f5f5f5' : '#1B73BA',
+                      color: image.is_published ? '#292828' : '#fff',
+                    }}
+                    className="trust-action-btn"
+                  >
+                    {canPublish
+                      ? (image.is_published ? 'Unpublish' : 'Publish')
+                      : (image.is_published ? 'Request Unpublish' : 'Request Publish')}
+                  </button>
+                )}
+                {isEditor && (
+                  <button
+                    onClick={() => router.push(`/admin/trust-images/${image.id}/edit`)}
+                    style={styles.actionBtn}
+                    className="trust-action-btn"
+                  >
+                    Edit
+                  </button>
+                )}
+                {isAdmin && (
+                  <button
+                    onClick={() => handleDelete(image.id)}
+                    disabled={deletingId === image.id}
+                    style={{ ...styles.actionBtn, ...styles.deleteBtn }}
+                    className="trust-action-btn"
+                  >
+                    {deletingId === image.id ? 'Deleting...' : 'Delete'}
+                  </button>
+                )}
               </div>
             </div>
           </div>

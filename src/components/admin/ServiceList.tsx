@@ -3,13 +3,18 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { deleteService, toggleServicePublish } from '@/app/admin/actions'
-import type { Service } from '@/lib/types'
+import type { Service, AppRole } from '@/lib/types'
+import { canEditContent, canDeleteContent, canPublishDirectly } from '@/lib/permissions'
 
 interface ServiceListProps {
   services: Service[]
+  userRole: AppRole
 }
 
-export default function ServiceList({ services }: ServiceListProps) {
+export default function ServiceList({ services, userRole }: ServiceListProps) {
+  const isEditor = canEditContent(userRole)
+  const isAdmin = canDeleteContent(userRole)
+  const canPublish = canPublishDirectly(userRole)
   const router = useRouter()
   const [deleting, setDeleting] = useState<string | null>(null)
 
@@ -30,7 +35,10 @@ export default function ServiceList({ services }: ServiceListProps) {
 
   const handleTogglePublish = async (id: string, currentStatus: boolean) => {
     try {
-      await toggleServicePublish(id, !currentStatus)
+      const result = await toggleServicePublish(id, !currentStatus)
+      if (result && 'pending' in result) {
+        alert('Your publish request has been submitted for admin approval.')
+      }
       router.refresh()
     } catch (error) {
       alert(error instanceof Error ? error.message : 'Failed to update service')
@@ -79,31 +87,39 @@ export default function ServiceList({ services }: ServiceListProps) {
                 )}
               </div>
               <div style={styles.actions} className="service-actions">
-                <button
-                  onClick={() => router.push(`/admin/services/${service.id}/edit`)}
-                  style={styles.editBtn}
-                  className="action-btn-mobile"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleTogglePublish(service.id, service.is_published)}
-                  style={styles.toggleBtn}
-                  className="action-btn-mobile"
-                >
-                  {service.is_published ? 'Unpublish' : 'Publish'}
-                </button>
-                <button
-                  onClick={() => handleDelete(service.id, service.title)}
-                  disabled={deleting === service.id}
-                  style={{
-                    ...styles.deleteBtn,
-                    opacity: deleting === service.id ? 0.5 : 1,
-                  }}
-                  className="action-btn-mobile"
-                >
-                  {deleting === service.id ? 'Deleting...' : 'Delete'}
-                </button>
+                {isEditor && (
+                  <button
+                    onClick={() => router.push(`/admin/services/${service.id}/edit`)}
+                    style={styles.editBtn}
+                    className="action-btn-mobile"
+                  >
+                    Edit
+                  </button>
+                )}
+                {isEditor && (
+                  <button
+                    onClick={() => handleTogglePublish(service.id, service.is_published)}
+                    style={styles.toggleBtn}
+                    className="action-btn-mobile"
+                  >
+                    {canPublish
+                      ? (service.is_published ? 'Unpublish' : 'Publish')
+                      : (service.is_published ? 'Request Unpublish' : 'Request Publish')}
+                  </button>
+                )}
+                {isAdmin && (
+                  <button
+                    onClick={() => handleDelete(service.id, service.title)}
+                    disabled={deleting === service.id}
+                    style={{
+                      ...styles.deleteBtn,
+                      opacity: deleting === service.id ? 0.5 : 1,
+                    }}
+                    className="action-btn-mobile"
+                  >
+                    {deleting === service.id ? 'Deleting...' : 'Delete'}
+                  </button>
+                )}
               </div>
             </div>
           </div>

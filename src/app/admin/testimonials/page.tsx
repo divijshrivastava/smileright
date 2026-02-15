@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import TestimonialList from '@/components/admin/TestimonialList'
 import type { Testimonial, Profile } from '@/lib/types'
+import { canEditContent } from '@/lib/permissions'
 
 export default async function TestimonialsPage() {
   const supabase = await createClient()
@@ -12,6 +13,8 @@ export default async function TestimonialsPage() {
     .select('role')
     .eq('id', user!.id)
     .single()
+
+  const role = (profile as Pick<Profile, 'role'>)?.role ?? 'viewer'
 
   const { data: testimonials } = await supabase
     .from('testimonials')
@@ -38,28 +41,30 @@ export default async function TestimonialsPage() {
         }}>
           Testimonials
         </h1>
-        <Link
-          href="/admin/testimonials/new"
-          style={{
-            padding: '10px 20px',
-            background: '#1B73BA',
-            color: '#fff',
-            borderRadius: '4px',
-            textDecoration: 'none',
-            fontFamily: 'var(--font-sans)',
-            fontSize: '0.9rem',
-            fontWeight: 600,
-            whiteSpace: 'nowrap',
-          }}
-          className="admin-add-btn"
-        >
-          Add Testimonial
-        </Link>
+        {canEditContent(role) && (
+          <Link
+            href="/admin/testimonials/new"
+            style={{
+              padding: '10px 20px',
+              background: '#1B73BA',
+              color: '#fff',
+              borderRadius: '4px',
+              textDecoration: 'none',
+              fontFamily: 'var(--font-sans)',
+              fontSize: '0.9rem',
+              fontWeight: 600,
+              whiteSpace: 'nowrap',
+            }}
+            className="admin-add-btn"
+          >
+            Add Testimonial
+          </Link>
+        )}
       </div>
 
       <TestimonialList
         testimonials={(testimonials as Testimonial[]) ?? []}
-        userRole={(profile as Pick<Profile, 'role'>)?.role ?? 'editor'}
+        userRole={role}
       />
     </div>
   )

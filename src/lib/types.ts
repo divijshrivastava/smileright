@@ -58,13 +58,31 @@ export interface ServiceImage {
   updated_by: string | null
 }
 
+export type AppRole = 'admin' | 'editor' | 'viewer'
+
 export interface Profile {
   id: string
   email: string
-  role: 'admin' | 'editor'
+  role: AppRole
   full_name: string | null
   created_at: string
   updated_at: string
+}
+
+export interface PendingChange {
+  id: string
+  resource_type: 'testimonial' | 'service' | 'trust_image' | 'blog'
+  resource_id: string | null
+  action: 'create' | 'update' | 'publish' | 'unpublish'
+  payload: Record<string, unknown>
+  status: 'pending' | 'approved' | 'rejected'
+  submitted_by: string
+  reviewed_by: string | null
+  review_note: string | null
+  created_at: string
+  updated_at: string
+  // Joined fields
+  submitter_profile?: Pick<Profile, 'email' | 'full_name'>
 }
 
 export interface Blog {

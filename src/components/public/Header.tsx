@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import MobileMenu from '@/components/interactive/MobileMenu'
 import HeaderScroll from '@/components/interactive/HeaderScroll'
+import TreatmentsDropdown from '@/components/interactive/TreatmentsDropdown'
 
 export default function Header() {
   const pathname = usePathname()
@@ -36,7 +37,7 @@ export default function Header() {
           <ul className="nav-links nav-links-desktop">
             <li><a href="/#home">Home</a></li>
             <li><a href="/#about">About</a></li>
-            <li><Link href="/treatments-and-services">Treatments</Link></li>
+            <TreatmentsDropdown />
             <li><a href="/#gallery">Gallery</a></li>
             <li><a href="/#testimonials">Reviews</a></li>
             <li><Link href="/blog">Blog</Link></li>

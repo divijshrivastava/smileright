@@ -2,7 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import TrustImageList from '@/components/admin/TrustImageList'
-import type { TrustImage } from '@/lib/types'
+import type { TrustImage, Profile } from '@/lib/types'
+import { canEditContent } from '@/lib/permissions'
 
 export default async function TrustImagesPage() {
   const supabase = await createClient()
@@ -11,6 +12,14 @@ export default async function TrustImagesPage() {
   if (!user) {
     redirect('/admin/login')
   }
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+
+  const role = (profile as Pick<Profile, 'role'>)?.role ?? 'viewer'
 
   const { data: images } = await supabase
     .from('trust_images')
@@ -25,12 +34,14 @@ export default async function TrustImagesPage() {
     <div>
       <div style={styles.header} className="admin-page-header">
         <h1 style={styles.title}>Trust Section Images</h1>
-        <Link href="/admin/trust-images/new" style={styles.createBtn} className="admin-add-btn">
-          + New Image
-        </Link>
+        {canEditContent(role) && (
+          <Link href="/admin/trust-images/new" style={styles.createBtn} className="admin-add-btn">
+            + New Image
+          </Link>
+        )}
       </div>
 
-      <TrustImageList images={trustImages} />
+      <TrustImageList images={trustImages} userRole={role} />
     </div>
   )
 }

@@ -4,21 +4,28 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { deleteTestimonial, togglePublish } from '@/app/admin/actions'
-import type { Testimonial } from '@/lib/types'
+import type { Testimonial, AppRole } from '@/lib/types'
+import { canEditContent, canDeleteContent, canPublishDirectly } from '@/lib/permissions'
 
 interface TestimonialListProps {
   testimonials: Testimonial[]
-  userRole: 'admin' | 'editor'
+  userRole: AppRole
 }
 
 export default function TestimonialList({ testimonials, userRole }: TestimonialListProps) {
+  const isEditor = canEditContent(userRole)
+  const isAdmin = canDeleteContent(userRole)
+  const canPublish = canPublishDirectly(userRole)
   const router = useRouter()
   const [actionId, setActionId] = useState<string | null>(null)
 
   const handleTogglePublish = async (id: string, currentStatus: boolean) => {
     setActionId(id)
     try {
-      await togglePublish(id, !currentStatus)
+      const result = await togglePublish(id, !currentStatus)
+      if (result && 'pending' in result) {
+        alert('Your publish request has been submitted for admin approval.')
+      }
       router.refresh()
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Failed to update')
@@ -85,17 +92,23 @@ export default function TestimonialList({ testimonials, userRole }: TestimonialL
               </span>
             </span>
             <span style={{ ...styles.cell, flex: 2, display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-              <button
-                onClick={() => handleTogglePublish(t.id, t.is_published)}
-                disabled={actionId === t.id}
-                style={styles.actionBtn}
-              >
-                {t.is_published ? 'Unpublish' : 'Publish'}
-              </button>
-              <Link href={`/admin/testimonials/${t.id}/edit`} style={styles.editLink}>
-                Edit
-              </Link>
-              {userRole === 'admin' && (
+              {isEditor && (
+                <button
+                  onClick={() => handleTogglePublish(t.id, t.is_published)}
+                  disabled={actionId === t.id}
+                  style={styles.actionBtn}
+                >
+                  {canPublish
+                    ? (t.is_published ? 'Unpublish' : 'Publish')
+                    : (t.is_published ? 'Request Unpublish' : 'Request Publish')}
+                </button>
+              )}
+              {isEditor && (
+                <Link href={`/admin/testimonials/${t.id}/edit`} style={styles.editLink}>
+                  Edit
+                </Link>
+              )}
+              {isAdmin && (
                 <button
                   onClick={() => handleDelete(t.id)}
                   disabled={actionId === t.id}
@@ -133,23 +146,29 @@ export default function TestimonialList({ testimonials, userRole }: TestimonialL
                 {t.is_published ? 'Published' : 'Draft'}
               </span>
             </div>
-            
+
             <p style={styles.mobileText}>
               {t.description.length > 150 ? t.description.substring(0, 150) + '...' : t.description}
             </p>
-            
+
             <div style={styles.mobileActions}>
-              <button
-                onClick={() => handleTogglePublish(t.id, t.is_published)}
-                disabled={actionId === t.id}
-                style={styles.mobileActionBtn}
-              >
-                {t.is_published ? 'Unpublish' : 'Publish'}
-              </button>
-              <Link href={`/admin/testimonials/${t.id}/edit`} style={styles.mobileEditLink}>
-                Edit
-              </Link>
-              {userRole === 'admin' && (
+              {isEditor && (
+                <button
+                  onClick={() => handleTogglePublish(t.id, t.is_published)}
+                  disabled={actionId === t.id}
+                  style={styles.mobileActionBtn}
+                >
+                  {canPublish
+                    ? (t.is_published ? 'Unpublish' : 'Publish')
+                    : (t.is_published ? 'Request Unpublish' : 'Request Publish')}
+                </button>
+              )}
+              {isEditor && (
+                <Link href={`/admin/testimonials/${t.id}/edit`} style={styles.mobileEditLink}>
+                  Edit
+                </Link>
+              )}
+              {isAdmin && (
                 <button
                   onClick={() => handleDelete(t.id)}
                   disabled={actionId === t.id}

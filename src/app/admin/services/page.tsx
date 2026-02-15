@@ -2,7 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import ServiceList from '@/components/admin/ServiceList'
-import type { Service } from '@/lib/types'
+import type { Service, Profile } from '@/lib/types'
+import { canEditContent } from '@/lib/permissions'
 
 export default async function ServicesPage() {
   const supabase = await createClient()
@@ -11,6 +12,14 @@ export default async function ServicesPage() {
   if (!user) {
     redirect('/admin/login')
   }
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+
+  const role = (profile as Pick<Profile, 'role'>)?.role ?? 'viewer'
 
   const { data: services } = await supabase
     .from('services')
@@ -36,11 +45,13 @@ export default async function ServicesPage() {
     <div>
       <div style={styles.header} className="admin-page-header">
         <h1 style={styles.title}>Featured Services</h1>
-        <Link href="/admin/services/new" style={styles.addBtn} className="admin-add-btn">
-          + Add Service
-        </Link>
+        {canEditContent(role) && (
+          <Link href="/admin/services/new" style={styles.addBtn} className="admin-add-btn">
+            + Add Service
+          </Link>
+        )}
       </div>
-      <ServiceList services={(services as Service[]) || []} />
+      <ServiceList services={(services as Service[]) || []} userRole={role} />
     </div>
   )
 }

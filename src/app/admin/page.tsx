@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
+import { MessageSquareQuote, Stethoscope, ImageIcon, Plus, ArrowUpRight } from 'lucide-react'
 
 export default async function AdminDashboard() {
   const supabase = await createClient()
@@ -53,10 +54,10 @@ export default async function AdminDashboard() {
 
       {/* Statistics Overview */}
       <div style={styles.section}>
-        <h2 style={styles.sectionHeading}>📊 Content Overview</h2>
+        <h2 style={styles.sectionHeading}>Content Overview</h2>
         <div style={styles.statsGrid} className="admin-stats-grid">
           <div style={styles.statCard}>
-            <div style={styles.statIcon}>💬</div>
+            <div style={styles.statIcon}><MessageSquareQuote size={24} color="#1B73BA" /></div>
             <p style={styles.statNumber}>{totalTestimonials ?? 0}</p>
             <p style={styles.statLabel}>Total Testimonials</p>
             <p style={styles.statSubtext}>
@@ -64,7 +65,7 @@ export default async function AdminDashboard() {
             </p>
           </div>
           <div style={styles.statCard}>
-            <div style={styles.statIcon}>🦷</div>
+            <div style={styles.statIcon}><Stethoscope size={24} color="#1B73BA" /></div>
             <p style={styles.statNumber}>{totalServices ?? 0}</p>
             <p style={styles.statLabel}>Total Services</p>
             <p style={styles.statSubtext}>
@@ -72,7 +73,7 @@ export default async function AdminDashboard() {
             </p>
           </div>
           <div style={styles.statCard}>
-            <div style={styles.statIcon}>📸</div>
+            <div style={styles.statIcon}><ImageIcon size={24} color="#1B73BA" /></div>
             <p style={styles.statNumber}>{totalTrustImages ?? 0}</p>
             <p style={styles.statLabel}>Trust Images</p>
             <p style={styles.statSubtext}>
@@ -84,27 +85,27 @@ export default async function AdminDashboard() {
 
       {/* Quick Actions */}
       <div style={styles.section}>
-        <h2 style={styles.sectionHeading}>⚡ Quick Actions</h2>
+        <h2 style={styles.sectionHeading}>Quick Actions</h2>
         <div style={styles.linkGrid} className="admin-link-grid">
           <Link href="/admin/testimonials/new" style={styles.actionCard}>
-            <div style={styles.actionIcon}>➕</div>
+            <div style={styles.actionIcon}><Plus size={24} /></div>
             <p style={styles.actionTitle}>Add Testimonial</p>
             <p style={styles.actionDesc}>Create a new patient testimonial</p>
           </Link>
           <Link href="/admin/services/new" style={styles.actionCard}>
-            <div style={styles.actionIcon}>➕</div>
+            <div style={styles.actionIcon}><Plus size={24} /></div>
             <p style={styles.actionTitle}>Add Service</p>
             <p style={styles.actionDesc}>Create a new dental service</p>
           </Link>
           <Link href="/admin/trust-images/new" style={styles.actionCard}>
-            <div style={styles.actionIcon}>➕</div>
+            <div style={styles.actionIcon}><Plus size={24} /></div>
             <p style={styles.actionTitle}>Add Trust Image</p>
             <p style={styles.actionDesc}>Upload trust section image</p>
           </Link>
-          <Link href="/" target="_blank" style={{...styles.actionCard, ...styles.viewSiteCard}}>
-            <div style={styles.actionIcon}>🌐</div>
-            <p style={{...styles.actionTitle, color: '#fff'}}>View Live Site</p>
-            <p style={{...styles.actionDesc, color: 'rgba(255,255,255,0.9)'}}>See your changes on the website</p>
+          <Link href="/" target="_blank" style={{ ...styles.actionCard, ...styles.viewSiteCard }}>
+            <div style={{ ...styles.actionIcon, color: 'rgba(255,255,255,0.8)' }}><ArrowUpRight size={24} /></div>
+            <p style={{ ...styles.actionTitle, color: '#fff' }}>View Live Site</p>
+            <p style={{ ...styles.actionDesc, color: 'rgba(255,255,255,0.9)' }}>See your changes on the website</p>
           </Link>
         </div>
       </div>
@@ -112,7 +113,7 @@ export default async function AdminDashboard() {
       {/* Recent Activity */}
       <div style={styles.recentSection} className="admin-recent-section">
         <div style={styles.recentColumn}>
-          <h2 style={styles.sectionHeading}>📝 Recent Testimonials</h2>
+          <h2 style={styles.sectionHeading}>Recent Testimonials</h2>
           {recentTestimonials && recentTestimonials.length > 0 ? (
             <div style={styles.recentList}>
               {recentTestimonials.map((t) => (
@@ -138,7 +139,7 @@ export default async function AdminDashboard() {
         </div>
 
         <div style={styles.recentColumn}>
-          <h2 style={styles.sectionHeading}>🦷 Recent Services</h2>
+          <h2 style={styles.sectionHeading}>Recent Services</h2>
           {recentServices && recentServices.length > 0 ? (
             <div style={styles.recentList}>
               {recentServices.map((s) => (
@@ -206,8 +207,10 @@ const styles: Record<string, React.CSSProperties> = {
     border: '1px solid #e0e0e0',
   },
   statIcon: {
-    fontSize: '2.5rem',
-    marginBottom: '0.5rem',
+    marginBottom: '0.75rem',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   statNumber: {
     fontFamily: 'var(--font-serif)',

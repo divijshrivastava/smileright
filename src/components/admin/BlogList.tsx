@@ -4,21 +4,28 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { deleteBlog, toggleBlogPublish } from '@/app/admin/actions'
-import type { Blog } from '@/lib/types'
+import type { Blog, AppRole } from '@/lib/types'
+import { canEditContent, canDeleteContent, canPublishDirectly } from '@/lib/permissions'
 
 interface BlogListProps {
   blogs: Blog[]
-  userRole: 'admin' | 'editor'
+  userRole: AppRole
 }
 
 export default function BlogList({ blogs, userRole }: BlogListProps) {
+  const isEditor = canEditContent(userRole)
+  const isAdmin = canDeleteContent(userRole)
+  const canPublish = canPublishDirectly(userRole)
   const router = useRouter()
   const [actionId, setActionId] = useState<string | null>(null)
 
   const handleTogglePublish = async (id: string, currentStatus: boolean) => {
     setActionId(id)
     try {
-      await toggleBlogPublish(id, !currentStatus)
+      const result = await toggleBlogPublish(id, !currentStatus)
+      if (result && 'pending' in result) {
+        alert('Your publish request has been submitted for admin approval.')
+      }
       router.refresh()
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Failed to update')
@@ -78,17 +85,23 @@ export default function BlogList({ blogs, userRole }: BlogListProps) {
               </span>
             </span>
             <span style={{ ...styles.cell, flex: 2, display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-              <button
-                onClick={() => handleTogglePublish(b.id, b.is_published)}
-                disabled={actionId === b.id}
-                style={styles.actionBtn}
-              >
-                {b.is_published ? 'Unpublish' : 'Publish'}
-              </button>
-              <Link href={`/admin/blogs/${b.id}/edit`} style={styles.editLink}>
-                Edit
-              </Link>
-              {userRole === 'admin' && (
+              {isEditor && (
+                <button
+                  onClick={() => handleTogglePublish(b.id, b.is_published)}
+                  disabled={actionId === b.id}
+                  style={styles.actionBtn}
+                >
+                  {canPublish
+                    ? (b.is_published ? 'Unpublish' : 'Publish')
+                    : (b.is_published ? 'Request Unpublish' : 'Request Publish')}
+                </button>
+              )}
+              {isEditor && (
+                <Link href={`/admin/blogs/${b.id}/edit`} style={styles.editLink}>
+                  Edit
+                </Link>
+              )}
+              {isAdmin && (
                 <button
                   onClick={() => handleDelete(b.id)}
                   disabled={actionId === b.id}
@@ -126,17 +139,23 @@ export default function BlogList({ blogs, userRole }: BlogListProps) {
             </div>
 
             <div style={styles.mobileActions}>
-              <button
-                onClick={() => handleTogglePublish(b.id, b.is_published)}
-                disabled={actionId === b.id}
-                style={styles.mobileActionBtn}
-              >
-                {b.is_published ? 'Unpublish' : 'Publish'}
-              </button>
-              <Link href={`/admin/blogs/${b.id}/edit`} style={styles.mobileEditLink}>
-                Edit
-              </Link>
-              {userRole === 'admin' && (
+              {isEditor && (
+                <button
+                  onClick={() => handleTogglePublish(b.id, b.is_published)}
+                  disabled={actionId === b.id}
+                  style={styles.mobileActionBtn}
+                >
+                  {canPublish
+                    ? (b.is_published ? 'Unpublish' : 'Publish')
+                    : (b.is_published ? 'Request Unpublish' : 'Request Publish')}
+                </button>
+              )}
+              {isEditor && (
+                <Link href={`/admin/blogs/${b.id}/edit`} style={styles.mobileEditLink}>
+                  Edit
+                </Link>
+              )}
+              {isAdmin && (
                 <button
                   onClick={() => handleDelete(b.id)}
                   disabled={actionId === b.id}

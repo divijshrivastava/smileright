@@ -210,6 +210,192 @@ nav {
     text-decoration: none;
 }
 
+/* ========================================
+   MEGA DROPDOWN - CUTIS STYLE
+   ======================================== */
+.nav-dropdown-wrapper {
+    position: relative;
+    padding: 10px 0;
+}
+
+.nav-dropdown-trigger {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.nav-dropdown-chevron {
+    transition: transform 0.3s ease;
+}
+
+.nav-dropdown-chevron.open {
+    transform: rotate(180deg);
+}
+
+.nav-mega-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+    border-radius: 8px;
+    padding: 20px;
+    width: 540px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    z-index: 1001;
+    border-top: 3px solid var(--primary-blue);
+}
+
+.nav-mega-dropdown.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+.nav-mega-dropdown-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.nav-mega-dropdown-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px 30px;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-mega-dropdown-list li {
+    margin: 0;
+    padding: 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.nav-mega-dropdown-list li:last-child {
+    border-bottom: none;
+}
+
+.nav-mega-dropdown-list a {
+    font-size: 0.9rem;
+    color: var(--medium-gray);
+    text-transform: none;
+    letter-spacing: normal;
+    font-weight: 500;
+    padding: 10px 8px;
+    border-radius: 4px;
+    display: block;
+    transition: all 0.2s ease;
+    width: 100%;
+}
+
+.nav-mega-dropdown-list a:hover {
+    background-color: rgba(27, 115, 186, 0.05);
+    color: var(--primary-blue);
+    text-decoration: none;
+    padding-left: 14px;
+}
+
+.nav-mega-dropdown-footer {
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    padding-top: 12px;
+    text-align: right;
+}
+
+.nav-mega-dropdown-view-all {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 6px 12px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.nav-mega-dropdown-view-all:hover {
+    background: var(--primary-blue);
+    color: var(--white);
+    text-decoration: none;
+}
+
+/* ========================================
+   MOBILE ACCORDION
+   ======================================== */
+.mobile-dropdown-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.mobile-dropdown-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding-right: 10px;
+}
+
+.mobile-dropdown-toggle {
+    background: none;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    color: var(--dark-charcoal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+.mobile-dropdown-toggle.open {
+    transform: rotate(180deg);
+}
+
+.mobile-dropdown-submenu {
+    list-style: none;
+    padding-left: 16px;
+    margin: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out;
+    border-left: 2px solid var(--light-gray);
+    margin-left: 10px;
+    background: rgba(0, 0, 0, 0.02);
+}
+
+.mobile-dropdown-submenu.expanded {
+    max-height: 800px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    padding-top: 8px;
+}
+
+.mobile-dropdown-submenu li {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+}
+
+.mobile-dropdown-submenu li a {
+    font-size: 0.95rem !important;
+    padding: 12px 10px !important;
+    color: var(--medium-gray) !important;
+    text-transform: none !important;
+    font-weight: 500 !important;
+}
+
+.mobile-view-all a {
+    color: var(--primary-blue) !important;
+    font-weight: 700 !important;
+}
+
 .nav-cta {
     display: flex;
     gap: 1rem;
@@ -3694,7 +3880,7 @@ iframe {
     font-family: var(--font-serif);
 }
 
-.treatment-hero > .container > p {
+.treatment-hero>.container>p {
     font-size: 1.2rem;
     opacity: 0.9;
     max-width: 700px;
@@ -3770,7 +3956,7 @@ iframe {
     background: white;
     padding: 16px;
     border-radius: 8px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
 .benefit-icon {
@@ -3835,7 +4021,7 @@ iframe {
     background: white;
     padding: 24px;
     border-radius: 8px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
 .treatment-faq .faq-item h3 {

@@ -70,10 +70,14 @@ export default function UnifiedServiceImageManager({ serviceId, images }: Unifie
   const handleSetPrimary = async (imageId: string) => {
     setSettingPrimary(imageId)
     try {
-      await setServiceImagePrimary(serviceId, imageId)
+      const result = await setServiceImagePrimary(serviceId, imageId)
+      if (result && 'pending' in result) {
+        alert('Your request to set this as the primary image has been submitted for admin approval.')
+      }
       router.refresh()
     } catch (error) {
       alert(error instanceof Error ? error.message : 'Failed to set primary image')
+    } finally {
       setSettingPrimary(null)
     }
   }

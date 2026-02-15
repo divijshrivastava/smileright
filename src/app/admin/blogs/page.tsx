@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import BlogList from '@/components/admin/BlogList'
 import type { Blog, Profile } from '@/lib/types'
+import { canEditContent } from '@/lib/permissions'
 
 export default async function BlogsPage() {
   const supabase = await createClient()
@@ -12,6 +13,8 @@ export default async function BlogsPage() {
     .select('role')
     .eq('id', user!.id)
     .single()
+
+  const role = (profile as Pick<Profile, 'role'>)?.role ?? 'viewer'
 
   const { data: blogs } = await supabase
     .from('blogs')
@@ -38,28 +41,30 @@ export default async function BlogsPage() {
         }}>
           Blogs
         </h1>
-        <Link
-          href="/admin/blogs/new"
-          style={{
-            padding: '10px 20px',
-            background: '#1B73BA',
-            color: '#fff',
-            borderRadius: '4px',
-            textDecoration: 'none',
-            fontFamily: 'var(--font-sans)',
-            fontSize: '0.9rem',
-            fontWeight: 600,
-            whiteSpace: 'nowrap',
-          }}
-          className="admin-add-btn"
-        >
-          Add Blog
-        </Link>
+        {canEditContent(role) && (
+          <Link
+            href="/admin/blogs/new"
+            style={{
+              padding: '10px 20px',
+              background: '#1B73BA',
+              color: '#fff',
+              borderRadius: '4px',
+              textDecoration: 'none',
+              fontFamily: 'var(--font-sans)',
+              fontSize: '0.9rem',
+              fontWeight: 600,
+              whiteSpace: 'nowrap',
+            }}
+            className="admin-add-btn"
+          >
+            Add Blog
+          </Link>
+        )}
       </div>
 
       <BlogList
         blogs={(blogs as Blog[]) ?? []}
-        userRole={(profile as Pick<Profile, 'role'>)?.role ?? 'editor'}
+        userRole={role}
       />
     </div>
   )
