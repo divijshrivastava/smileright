@@ -31,7 +31,7 @@ export default async function UsersPage() {
     <div>
       <div style={styles.header}>
         <h1 style={styles.title}>User Management</h1>
-        <p style={styles.subtitle}>Manage user roles and permissions</p>
+        <p style={styles.subtitle}>Invite new users and manage roles and permissions</p>
       </div>
       <UserList users={users as Profile[]} currentUserId={user.id} />
     </div>

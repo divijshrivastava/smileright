@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { updateUserRole } from '@/app/admin/actions'
+import { inviteUser, updateUserRole } from '@/app/admin/actions'
 import type { Profile, AppRole } from '@/lib/types'
 import { getRoleLabel, getRoleDescription } from '@/lib/permissions'
 
@@ -12,6 +12,10 @@ interface UserListProps {
 
 export default function UserList({ users, currentUserId }: UserListProps) {
   const [updating, setUpdating] = useState<string | null>(null)
+  const [inviting, setInviting] = useState(false)
+  const [inviteEmail, setInviteEmail] = useState('')
+  const [inviteName, setInviteName] = useState('')
+  const [inviteRole, setInviteRole] = useState<AppRole>('viewer')
 
   const handleRoleChange = async (userId: string, newRole: AppRole) => {
     if (userId === currentUserId) {
@@ -30,6 +34,23 @@ export default function UserList({ users, currentUserId }: UserListProps) {
     }
   }
 
+  const handleInviteUser = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    setInviting(true)
+    try {
+      await inviteUser(inviteEmail, inviteRole, inviteName)
+      alert('Invitation sent. The user will receive an email to set their password.')
+      setInviteEmail('')
+      setInviteName('')
+      setInviteRole('viewer')
+      window.location.reload()
+    } catch (error) {
+      alert(error instanceof Error ? error.message : 'Failed to invite user')
+      setInviting(false)
+    }
+  }
+
   if (users.length === 0) {
     return (
       <div style={styles.emptyState}>
@@ -40,6 +61,54 @@ export default function UserList({ users, currentUserId }: UserListProps) {
 
   return (
     <div style={styles.container}>
+      <div style={styles.inviteCard}>
+        <h3 style={styles.inviteTitle}>Add User</h3>
+        <p style={styles.inviteSubtitle}>
+          Send an invitation email from Supabase. The user can then set their password and sign in.
+        </p>
+
+        <form onSubmit={handleInviteUser} style={styles.inviteForm}>
+          <div style={styles.inviteFields}>
+            <input
+              type="email"
+              placeholder="Email address"
+              required
+              value={inviteEmail}
+              onChange={(e) => setInviteEmail(e.target.value)}
+              style={styles.input}
+            />
+            <input
+              type="text"
+              placeholder="Full name (optional)"
+              value={inviteName}
+              onChange={(e) => setInviteName(e.target.value)}
+              style={styles.input}
+              maxLength={150}
+            />
+            <select
+              value={inviteRole}
+              onChange={(e) => setInviteRole(e.target.value as AppRole)}
+              style={styles.select}
+            >
+              <option value="viewer">Viewer</option>
+              <option value="editor">Editor</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+
+          <button
+            type="submit"
+            disabled={inviting}
+            style={{
+              ...styles.inviteButton,
+              opacity: inviting ? 0.7 : 1,
+            }}
+          >
+            {inviting ? 'Sending...' : 'Send Invite'}
+          </button>
+        </form>
+      </div>
+
       <div style={styles.table}>
         <div style={styles.tableHeader}>
           <div style={{ ...styles.cell, flex: 2 }}>User</div>
@@ -125,6 +194,45 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'flex',
     flexDirection: 'column',
     gap: '2rem',
+  },
+  inviteCard: {
+    background: '#fff',
+    borderRadius: '8px',
+    border: '1px solid #ddd',
+    padding: '20px',
+  },
+  inviteTitle: {
+    margin: 0,
+    fontFamily: 'var(--font-serif)',
+    fontSize: '1.2rem',
+    color: '#292828',
+  },
+  inviteSubtitle: {
+    margin: '8px 0 14px',
+    fontFamily: 'var(--font-sans)',
+    fontSize: '0.9rem',
+    color: '#666',
+  },
+  inviteForm: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    flexWrap: 'wrap',
+  },
+  inviteFields: {
+    display: 'flex',
+    gap: '10px',
+    flex: 1,
+    flexWrap: 'wrap',
+  },
+  input: {
+    padding: '10px 12px',
+    border: '1px solid #d5d7db',
+    borderRadius: '6px',
+    fontSize: '0.95rem',
+    fontFamily: 'var(--font-sans)',
+    minWidth: '220px',
+    flex: 1,
   },
   table: {
     background: '#fff',
@@ -212,6 +320,20 @@ const styles: Record<string, React.CSSProperties> = {
     outline: 'none',
     width: '100%',
     maxWidth: '180px',
+  },
+  inviteButton: {
+    padding: '10px 16px',
+    background: '#1B73BA',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '6px',
+    fontSize: '0.9rem',
+    fontWeight: 700,
+    fontFamily: 'var(--font-sans)',
+    cursor: 'pointer',
+    textTransform: 'uppercase',
+    letterSpacing: '0.04em',
+    minHeight: '42px',
   },
   updating: {
     fontFamily: 'var(--font-sans)',

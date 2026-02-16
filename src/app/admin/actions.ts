@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { logAuditEvent } from '@/lib/security/audit-log'
 import { checkRateLimit, rateLimitConfigs } from '@/lib/security/rate-limit'
 import {
@@ -10,6 +11,7 @@ import {
   validateBlogInput,
   sanitizeString,
   validateInteger,
+  validateEmail,
 } from '@/lib/security/input-validation'
 import type { AppRole } from '@/lib/types'
 
@@ -1451,6 +1453,80 @@ export async function logLogoutEvent() {
 // ========================================
 // User Management Actions (Admin Only)
 // ========================================
+
+export async function inviteUser(emailInput: string, roleInput: AppRole, fullNameInput?: string) {
+  const { supabase, user, role } = await getAuthenticatedUser()
+  assertAdmin(role)
+  enforceRateLimit(user.id, 'user_invite')
+
+  const email = sanitizeString(emailInput || '', 320).toLowerCase()
+  const fullName = sanitizeString(fullNameInput || '', 150)
+
+  if (!validateEmail(email)) {
+    throw new Error('Please enter a valid email address')
+  }
+
+  if (!['admin', 'editor', 'viewer'].includes(roleInput)) {
+    throw new Error('Invalid role')
+  }
+
+  // Prevent duplicate invites/users by email.
+  const { data: existingProfile } = await supabase
+    .from('profiles')
+    .select('id')
+    .eq('email', email)
+    .limit(1)
+    .maybeSingle()
+
+  if (existingProfile) {
+    throw new Error('A user with this email already exists')
+  }
+
+  const adminClient = createAdminClient()
+
+  const { data: inviteData, error: inviteError } = await adminClient.auth.admin.inviteUserByEmail(email, {
+    data: {
+      full_name: fullName || undefined,
+    },
+  })
+
+  if (inviteError) {
+    throw new Error(inviteError.message)
+  }
+
+  const invitedUserId = inviteData.user?.id
+  if (!invitedUserId) {
+    throw new Error('Invitation was created but user record is missing')
+  }
+
+  // Ensure invited user has the intended profile + role.
+  const { error: profileError } = await adminClient
+    .from('profiles')
+    .upsert({
+      id: invitedUserId,
+      email,
+      full_name: fullName || null,
+      role: roleInput,
+      updated_at: new Date().toISOString(),
+    })
+
+  if (profileError) {
+    throw new Error(profileError.message)
+  }
+
+  await logAuditEvent({
+    action: 'user.invite',
+    user_id: user.id,
+    resource_type: 'user',
+    resource_id: invitedUserId,
+    details: {
+      invited_email: email,
+      invited_role: roleInput,
+    },
+  })
+
+  revalidatePath('/admin/users')
+}
 
 export async function getUsers() {
   const { supabase, role } = await getAuthenticatedUser()
