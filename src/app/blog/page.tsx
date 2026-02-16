@@ -4,6 +4,7 @@ import type { Metadata } from 'next'
 import Header from '@/components/public/Header'
 import Footer from '@/components/public/Footer'
 import FloatingWhatsApp from '@/components/interactive/FloatingWhatsApp'
+import ContactSection from '@/components/public/ContactSection'
 import { createClient } from '@/lib/supabase/server'
 import type { Blog } from '@/lib/types'
 
@@ -196,6 +197,13 @@ style={{ width: '100%', height: 'auto', borderRadius: '8px', objectFit: 'contain
             </div>
           </section>
         )}
+
+        <ContactSection
+          sourcePage="/blog"
+          formLocation="blog_index_bottom"
+          heading="Contact Me"
+          subheading="Need personalized dental advice after reading our blogs? Send us your query."
+        />
       </main>
 
       <Footer />

@@ -101,3 +101,33 @@ export interface Blog {
   created_by: string | null
   updated_by: string | null
 }
+
+export interface ContactMessage {
+  id: string
+  name: string
+  email: string
+  phone: string | null
+  preferred_contact: 'email' | 'phone' | 'whatsapp'
+  service_interest: string | null
+  appointment_preference: string | null
+  message: string
+  consent: boolean
+  status: 'new' | 'read' | 'resolved' | 'spam'
+  source_page: string | null
+  form_location: string | null
+  landing_page: string | null
+  page_title: string | null
+  referrer: string | null
+  user_agent: string | null
+  ip_address: string | null
+  utm_source: string | null
+  utm_medium: string | null
+  utm_campaign: string | null
+  utm_term: string | null
+  utm_content: string | null
+  gclid: string | null
+  fbclid: string | null
+  created_at: string
+  updated_at: string
+  viewed_at: string | null
+}

@@ -12,6 +12,7 @@ import {
   Stethoscope,
   ImageIcon,
   FileText,
+  Mail,
   ExternalLink,
   Menu,
   Users,
@@ -19,9 +20,10 @@ import {
 
 interface AdminSidebarProps {
   profile: Profile
+  unreadContactCount: number
 }
 
-export default function AdminSidebar({ profile }: AdminSidebarProps) {
+export default function AdminSidebar({ profile, unreadContactCount }: AdminSidebarProps) {
   const [isOpen, setIsOpen] = useState(false)
   const isEditor = canEditContent(profile.role)
   const isAdmin = canApproveChanges(profile.role)
@@ -115,6 +117,14 @@ export default function AdminSidebar({ profile }: AdminSidebarProps) {
               + Add Blog
             </Link>
           )}
+
+          <Link href="/admin/contact-messages" style={styles.navLink} onClick={() => setIsOpen(false)}>
+            <Mail size={18} />
+            <span>Contact Messages</span>
+            {unreadContactCount > 0 && (
+              <span style={styles.unreadBadge}>{unreadContactCount > 99 ? '99+' : unreadContactCount}</span>
+            )}
+          </Link>
 
           <div style={styles.divider} />
 
@@ -219,6 +229,22 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '0.9rem',
     fontWeight: 500,
     transition: 'background 0.2s, color 0.2s',
+  },
+  unreadBadge: {
+    marginLeft: 'auto',
+    minWidth: '22px',
+    height: '22px',
+    borderRadius: '999px',
+    background: '#dc3545',
+    color: '#fff',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '0 7px',
+    fontSize: '0.72rem',
+    fontWeight: 700,
+    lineHeight: 1,
+    fontFamily: 'var(--font-sans)',
   },
   subLink: {
     display: 'block',

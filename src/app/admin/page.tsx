@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { MessageSquareQuote, Stethoscope, ImageIcon, Plus, ArrowUpRight } from 'lucide-react'
+import { MessageSquareQuote, Stethoscope, ImageIcon, Mail, Plus, ArrowUpRight } from 'lucide-react'
 
 export default async function AdminDashboard() {
   const supabase = await createClient()
@@ -32,6 +32,15 @@ export default async function AdminDashboard() {
     .from('trust_images')
     .select('*', { count: 'exact', head: true })
     .eq('is_published', true)
+
+  const { count: totalContactMessages } = await supabase
+    .from('contact_messages')
+    .select('*', { count: 'exact', head: true })
+
+  const { count: newContactMessages } = await supabase
+    .from('contact_messages')
+    .select('*', { count: 'exact', head: true })
+    .eq('status', 'new')
 
   // Fetch recent testimonials
   const { data: recentTestimonials } = await supabase
@@ -80,6 +89,14 @@ export default async function AdminDashboard() {
               {publishedTrustImages ?? 0} published
             </p>
           </div>
+          <div style={styles.statCard}>
+            <div style={styles.statIcon}><Mail size={24} color="#1B73BA" /></div>
+            <p style={styles.statNumber}>{totalContactMessages ?? 0}</p>
+            <p style={styles.statLabel}>Contact Messages</p>
+            <p style={styles.statSubtext}>
+              {newContactMessages ?? 0} new
+            </p>
+          </div>
         </div>
       </div>
 
@@ -101,6 +118,11 @@ export default async function AdminDashboard() {
             <div style={styles.actionIcon}><Plus size={24} /></div>
             <p style={styles.actionTitle}>Add Trust Image</p>
             <p style={styles.actionDesc}>Upload trust section image</p>
+          </Link>
+          <Link href="/admin/contact-messages" style={styles.actionCard}>
+            <div style={styles.actionIcon}><Mail size={24} /></div>
+            <p style={styles.actionTitle}>View Messages</p>
+            <p style={styles.actionDesc}>Check contact form submissions</p>
           </Link>
           <Link href="/" target="_blank" style={{ ...styles.actionCard, ...styles.viewSiteCard }}>
             <div style={{ ...styles.actionIcon, color: 'rgba(255,255,255,0.8)' }}><ArrowUpRight size={24} /></div>

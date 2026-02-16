@@ -1,3 +1,5 @@
+import ContactSection from './ContactSection'
+
 export default function ClinicInfo() {
   return (
     <section id="contact" className="clinic-info">
@@ -98,6 +100,16 @@ export default function ClinicInfo() {
               </div>
             </div>
           </div>
+        </div>
+
+        <div className="clinic-contact-form-wrap">
+          <ContactSection
+            sourcePage="/"
+            formLocation="home_contact_section"
+            heading="Contact Me"
+            subheading="Tell us your concern and preferred time. We will get back to you soon."
+            embedded
+          />
         </div>
       </div>
     </section>

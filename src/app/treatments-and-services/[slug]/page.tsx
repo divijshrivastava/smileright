@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Header from '@/components/public/Header'
 import Footer from '@/components/public/Footer'
 import FloatingWhatsApp from '@/components/interactive/FloatingWhatsApp'
+import ContactSection from '@/components/public/ContactSection'
 import { createClient } from '@/lib/supabase/server'
 import type { Service } from '@/lib/types'
 
@@ -232,6 +233,14 @@ export default async function TreatmentPage({ params }: Props) {
             </div>
           </div>
         </section>
+
+        <ContactSection
+          sourcePage={`/treatments-and-services/${slug}`}
+          formLocation="treatment_detail_page_bottom"
+          serviceInterest={service.title}
+          heading="Contact Me"
+          subheading={`Have questions about ${service.title}? Send a message and we will contact you soon.`}
+        />
       </main>
 
       <Footer />

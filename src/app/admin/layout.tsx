@@ -27,9 +27,14 @@ export default async function AdminLayout({
     redirect('/admin/login')
   }
 
+  const { count: unreadContactCount } = await supabase
+    .from('contact_messages')
+    .select('*', { count: 'exact', head: true })
+    .eq('status', 'new')
+
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
-      <AdminSidebar profile={profile as Profile} />
+      <AdminSidebar profile={profile as Profile} unreadContactCount={unreadContactCount ?? 0} />
       <main style={{
         flex: 1,
         marginLeft: '260px',

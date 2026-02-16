@@ -319,6 +319,111 @@ export interface BlogInput {
   display_order: number
 }
 
+export interface ContactMessageInput {
+  name: string
+  email: string
+  phone: string | null
+  preferred_contact: 'email' | 'phone' | 'whatsapp'
+  service_interest: string | null
+  appointment_preference: string | null
+  message: string
+  consent: boolean
+  source_page: string | null
+  form_location: string | null
+  landing_page: string | null
+  page_title: string | null
+  referrer: string | null
+  user_agent: string | null
+  utm_source: string | null
+  utm_medium: string | null
+  utm_campaign: string | null
+  utm_term: string | null
+  utm_content: string | null
+  gclid: string | null
+  fbclid: string | null
+}
+
+export function validateContactInput(raw: Record<string, unknown>): ContactMessageInput | { error: string } {
+  const name = sanitizeString(String(raw.name || ''), 150)
+  const email = sanitizeString(String(raw.email || ''), 320).toLowerCase()
+  const phoneRaw = sanitizeString(String(raw.phone || ''), 30)
+  const preferredContactRaw = sanitizeString(String(raw.preferred_contact || 'email'), 20).toLowerCase()
+  const serviceInterestRaw = sanitizeString(String(raw.service_interest || ''), 200)
+  const appointmentPreferenceRaw = sanitizeString(String(raw.appointment_preference || ''), 200)
+  const message = sanitizeString(String(raw.message || ''), 5000)
+  const consent = Boolean(raw.consent)
+
+  const sourcePageRaw = sanitizeString(String(raw.source_page || ''), 300)
+  const formLocationRaw = sanitizeString(String(raw.form_location || ''), 100)
+  const landingPageRaw = sanitizeString(String(raw.landing_page || ''), 600)
+  const pageTitleRaw = sanitizeString(String(raw.page_title || ''), 250)
+  const referrerRaw = sanitizeString(String(raw.referrer || ''), 600)
+  const userAgentRaw = sanitizeString(String(raw.user_agent || ''), 800)
+  const utmSourceRaw = sanitizeString(String(raw.utm_source || ''), 120)
+  const utmMediumRaw = sanitizeString(String(raw.utm_medium || ''), 120)
+  const utmCampaignRaw = sanitizeString(String(raw.utm_campaign || ''), 200)
+  const utmTermRaw = sanitizeString(String(raw.utm_term || ''), 200)
+  const utmContentRaw = sanitizeString(String(raw.utm_content || ''), 200)
+  const gclidRaw = sanitizeString(String(raw.gclid || ''), 200)
+  const fbclidRaw = sanitizeString(String(raw.fbclid || ''), 200)
+
+  if (!name || name.length < 2) {
+    return { error: 'Name must be at least 2 characters' }
+  }
+
+  if (!validateEmail(email)) {
+    return { error: 'Please enter a valid email address' }
+  }
+
+  if (phoneRaw && !/^[0-9+\-\s()]{7,30}$/.test(phoneRaw)) {
+    return { error: 'Please enter a valid phone number' }
+  }
+
+  if (!message || message.length < 10) {
+    return { error: 'Message must be at least 10 characters' }
+  }
+
+  if (!consent) {
+    return { error: 'Please consent to being contacted' }
+  }
+
+  if (containsSQLInjection(name) || containsSQLInjection(message)) {
+    return { error: 'Invalid input detected' }
+  }
+
+  const preferred_contact: ContactMessageInput['preferred_contact'] =
+    preferredContactRaw === 'phone' || preferredContactRaw === 'whatsapp'
+      ? preferredContactRaw
+      : 'email'
+
+  const landingPage = sanitizeURL(landingPageRaw)
+  const referrer = sanitizeURL(referrerRaw)
+
+  return {
+    name,
+    email,
+    phone: phoneRaw || null,
+    preferred_contact,
+    service_interest: serviceInterestRaw || null,
+    appointment_preference: appointmentPreferenceRaw || null,
+    message,
+    consent,
+    source_page: sourcePageRaw || null,
+    form_location: formLocationRaw || null,
+    landing_page: landingPage || null,
+    page_title: pageTitleRaw || null,
+    referrer: referrer || null,
+    user_agent: userAgentRaw || null,
+    utm_source: utmSourceRaw || null,
+    utm_medium: utmMediumRaw || null,
+    utm_campaign: utmCampaignRaw || null,
+    utm_term: utmTermRaw || null,
+    utm_content: utmContentRaw || null,
+    gclid: gclidRaw || null,
+    fbclid: fbclidRaw || null,
+  }
+}
+
 export function validateBlogInput(data: FormData): BlogInput | { error: string } {
   const title = sanitizeString(data.get('title') as string, 300)
   const rawSlug = sanitizeString(data.get('slug') as string, 200)

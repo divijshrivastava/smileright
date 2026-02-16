@@ -4,6 +4,7 @@ import type { Metadata } from 'next'
 import Header from '@/components/public/Header'
 import Footer from '@/components/public/Footer'
 import FloatingWhatsApp from '@/components/interactive/FloatingWhatsApp'
+import ContactSection from '@/components/public/ContactSection'
 import { createClient } from '@/lib/supabase/server'
 import type { Blog } from '@/lib/types'
 import { sanitizeRichHtml } from '@/lib/security/input-validation'
@@ -177,6 +178,13 @@ export default async function BlogPostPage({ params }: Props) {
             />
           </div>
         </article>
+
+        <ContactSection
+          sourcePage={`/blog/${typedBlog.slug}`}
+          formLocation="blog_post_bottom"
+          heading="Contact Me"
+          subheading="Have a question about this topic or your treatment options? Share it with us."
+        />
       </main>
 
       <Footer />

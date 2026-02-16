@@ -3,6 +3,7 @@ import Link from 'next/link'
 import Header from '@/components/public/Header'
 import Footer from '@/components/public/Footer'
 import FloatingWhatsApp from '@/components/interactive/FloatingWhatsApp'
+import ContactSection from '@/components/public/ContactSection'
 
 const BASE_URL = 'https://www.smilerightdental.org'
 
@@ -157,6 +158,13 @@ export default function TreatmentsAndServicesPage() {
             </div>
           </div>
         </section>
+
+        <ContactSection
+          sourcePage="/treatments-and-services"
+          formLocation="treatments_services_page_bottom"
+          heading="Contact Me"
+          subheading="Tell us what treatment you are looking for and our team will reach out quickly."
+        />
       </main>
 
       <Footer />
