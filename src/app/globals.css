@@ -400,6 +400,7 @@ nav {
     display: flex;
     gap: 1rem;
     align-items: center;
+    margin-left: clamp(1.5rem, 2vw, 2.5rem);
 }
 
 .btn {
