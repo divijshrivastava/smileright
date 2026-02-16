@@ -6,7 +6,7 @@ export default function ClinicInfo() {
       <div className="container">
         <h2 className="section-title">Visit Our Clinic</h2>
         <p className="section-subtitle">
-          Conveniently located in Kandivali East - Easy to reach, plenty of parking
+          Conveniently located in Kandivali East - easily reachable from Malad and Borivali, with plenty of parking
         </p>
 
         <div className="info-grid">
@@ -75,6 +75,7 @@ export default function ClinicInfo() {
               <div className="location-features">
                 <span className="location-feature">🚗 Parking Available</span>
                 <span className="location-feature">🚇 Near Kandivali Station</span>
+                <span className="location-feature">📍 Serving Malad & Borivali</span>
                 <span className="location-feature">♿ Wheelchair Accessible</span>
               </div>
 

@@ -20,17 +20,17 @@ const BASE_URL = 'https://www.smilerightdental.org'
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
-  title: 'Smile Right - Dr. Sneha Kedia | Best Dentist in Kandivali East, Mumbai',
+  title: 'Smile Right - Dr. Sneha Kedia | Best Dentist in Kandivali, Malad & Borivali',
   description:
-    'Smile Right - Dr. Sneha Kedia, Dental Surgeon & Implantologist in Kandivali East, Mumbai. Expert dental care including implants, root canal, braces, cosmetic dentistry & more. Book appointment: 7977991130',
+    'Smile Right - Dr. Sneha Kedia, Dental Surgeon & Implantologist in Kandivali East, Mumbai, serving nearby Malad and Borivali. Expert dental care including implants, root canal, braces, cosmetic dentistry & more. Book appointment: 7977991130',
   keywords:
-    'dentist kandivali, dental clinic mumbai, dental implants, root canal treatment, braces, cosmetic dentistry, dr sneha kedia, smile right dental clinic, kandivali east dentist, teeth whitening mumbai, dentist near me, emergency dentist mumbai, best dentist kandivali, painless root canal, dental clinic thakur village',
+    'dentist kandivali, dentist malad, dentist borivali, dentist near me, dental clinic mumbai, dental implants, root canal treatment, braces, cosmetic dentistry, dr sneha kedia, smile right dental clinic, kandivali east dentist, teeth whitening mumbai, emergency dentist mumbai, best dentist kandivali, best dentist malad, best dentist borivali, painless root canal, dental clinic thakur village',
   authors: [{ name: 'Dr. Sneha Kedia' }],
   robots: 'index, follow',
   openGraph: {
     title: 'Smile Right - Dr. Sneha Kedia | Dental Surgeon & Implantologist',
     description:
-      'Expert dental care in Kandivali East, Mumbai. Specializing in dental implants, root canal, braces, and cosmetic dentistry.',
+      'Expert dental care in Kandivali East, Mumbai, serving patients from Malad and Borivali. Specializing in dental implants, root canal, braces, and cosmetic dentistry.',
     type: 'website',
     url: BASE_URL,
     siteName: 'Smile Right Dental Clinic',
@@ -38,8 +38,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Smile Right - Dr. Sneha Kedia | Best Dentist in Kandivali East',
-    description: 'Expert dental care in Kandivali East, Mumbai. Dental implants, root canal, braces, and cosmetic dentistry.',
+    title: 'Smile Right - Dr. Sneha Kedia | Dentist in Kandivali, Malad & Borivali',
+    description: 'Expert dental care in Kandivali East, Mumbai, serving Malad and Borivali. Dental implants, root canal, braces, and cosmetic dentistry.',
   },
   alternates: {
     canonical: BASE_URL,
@@ -61,7 +61,7 @@ const structuredData = {
   '@type': 'Dentist',
   '@id': `${BASE_URL}/#dentist`,
   name: 'Smile Right - Multispecialty Dental Clinic & Implant Centre',
-  description: 'Multispecialty Dental Clinic & Implant Centre in Kandivali East, Mumbai offering dental implants, root canal, braces, teeth whitening, and emergency dental care.',
+  description: 'Multispecialty Dental Clinic & Implant Centre in Kandivali East, Mumbai, serving nearby Malad and Borivali with dental implants, root canal, braces, teeth whitening, and emergency dental care.',
   url: BASE_URL,
   image: `${BASE_URL}/images/PHOTO-2025-12-27-16-54-33.jpg`,
   address: {
@@ -98,6 +98,12 @@ const structuredData = {
   currenciesAccepted: 'INR',
   paymentAccepted: 'Cash, Credit Card, Debit Card, UPI',
   medicalSpecialty: ['Dentistry', 'Oral Surgery', 'Implantology', 'Orthodontics', 'Cosmetic Dentistry'],
+  areaServed: [
+    { '@type': 'City', name: 'Kandivali East' },
+    { '@type': 'City', name: 'Malad' },
+    { '@type': 'City', name: 'Borivali' },
+    { '@type': 'City', name: 'Mumbai' },
+  ],
   hasOfferCatalog: {
     '@type': 'OfferCatalog',
     name: 'Dental Services',

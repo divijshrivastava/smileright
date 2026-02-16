@@ -14,11 +14,11 @@ const BASE_URL = 'https://www.smilerightdental.org'
 
 export const metadata: Metadata = {
   title: 'Dental Health Blog | Expert Tips & Advice | Smile Right Dental',
-  description: 'Read expert dental health articles, tips on oral hygiene, teeth whitening guides, and insights about dental treatments from Dr. Sneha Kedia at Smile Right Dental Clinic, Kandivali East, Mumbai.',
-  keywords: 'dental blog, oral health tips, teeth whitening, dental implants guide, root canal information, dental care Mumbai, dentist blog Kandivali',
+  description: 'Read expert dental health articles, oral hygiene tips, teeth whitening guides, and treatment insights from Dr. Sneha Kedia at Smile Right Dental Clinic in Kandivali East, serving Malad and Borivali.',
+  keywords: 'dental blog, oral health tips, teeth whitening, dental implants guide, root canal information, dental care Mumbai, dentist blog Kandivali, dentist blog Malad, dentist blog Borivali, dentist near me',
   openGraph: {
     title: 'Dental Health Blog | Smile Right Dental Clinic',
-    description: 'Expert dental health articles and tips from Dr. Sneha Kedia - your trusted dentist in Kandivali East, Mumbai.',
+    description: 'Expert dental health articles and tips from Dr. Sneha Kedia - your trusted dentist in Kandivali East, serving Malad and Borivali.',
     type: 'website',
     url: `${BASE_URL}/blog`,
     siteName: 'Smile Right Dental Clinic',

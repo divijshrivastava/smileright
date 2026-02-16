@@ -35,12 +35,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const title = `${blog.title} | Smile Right Dental Blog`
-  const description = blog.excerpt || `Read about ${blog.title} - Expert dental insights from Dr. Sneha Kedia at Smile Right Dental Clinic, Kandivali East, Mumbai.`
+  const description = blog.excerpt || `Read about ${blog.title} - Expert dental insights from Dr. Sneha Kedia at Smile Right Dental Clinic, Kandivali East, serving Malad and Borivali.`
 
   return {
     title,
     description,
-    keywords: `${blog.title}, dental blog, dental tips, oral health, Smile Right, Dr. Sneha Kedia, dentist Kandivali`,
+    keywords: `${blog.title}, dental blog, dental tips, oral health, Smile Right, Dr. Sneha Kedia, dentist Kandivali, dentist Malad, dentist Borivali, dentist near me`,
     authors: [{ name: 'Dr. Sneha Kedia' }],
     openGraph: {
       title: blog.title,

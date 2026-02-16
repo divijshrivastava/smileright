@@ -8,12 +8,12 @@ import ContactSection from '@/components/public/ContactSection'
 const BASE_URL = 'https://www.smilerightdental.org'
 
 export const metadata: Metadata = {
-  title: 'Dental Treatments & Services | Smile Right Dental Clinic Kandivali',
-  description: 'Comprehensive dental treatments in Kandivali East, Mumbai. Dental implants, root canal, teeth whitening, braces, cosmetic dentistry & emergency care by Dr. Sneha Kedia.',
-  keywords: 'dental treatments Mumbai, dental services Kandivali, dentist services, dental implants, root canal treatment, teeth whitening, braces orthodontics, cosmetic dentistry, emergency dentist',
+  title: 'Dental Treatments & Services | Smile Right Dental Clinic Kandivali, Malad & Borivali',
+  description: 'Comprehensive dental treatments in Kandivali East, Mumbai, for patients from Kandivali, Malad and Borivali. Dental implants, root canal, teeth whitening, braces, cosmetic dentistry & emergency care by Dr. Sneha Kedia.',
+  keywords: 'dental treatments Mumbai, dental services Kandivali, dental services Malad, dental services Borivali, dentist near me, dentist services, dental implants, root canal treatment, teeth whitening, braces orthodontics, cosmetic dentistry, emergency dentist',
   openGraph: {
     title: 'Dental Treatments & Services | Smile Right Dental Clinic',
-    description: 'Complete range of dental treatments in Kandivali East. Expert care by Dr. Sneha Kedia.',
+    description: 'Complete range of dental treatments in Kandivali East, serving Malad and Borivali. Expert care by Dr. Sneha Kedia.',
     type: 'website',
     url: `${BASE_URL}/treatments-and-services`,
   },

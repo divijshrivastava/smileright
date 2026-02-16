@@ -11,6 +11,7 @@ export default function Footer() {
               Shop No. 31, Gokul Nagar 2, CDE Wing<br />
               Kandivali (E), Mumbai 400 101
             </p>
+            <p>Serving patients from Kandivali, Malad &amp; Borivali</p>
             <p>Phone: <a href="tel:+917977991130">7977991130</a></p>
             <p style={{ marginTop: '0.75rem' }}>
               <a
