@@ -39,7 +39,12 @@ export default function UserList({ users, currentUserId }: UserListProps) {
 
     setInviting(true)
     try {
-      await inviteUser(inviteEmail, inviteRole, inviteName)
+      const result = await inviteUser(inviteEmail, inviteRole, inviteName)
+      if (!result.success) {
+        alert(result.error || 'Failed to invite user')
+        setInviting(false)
+        return
+      }
       alert('Invitation sent. The user will receive an email to set their password.')
       setInviteEmail('')
       setInviteName('')
@@ -49,6 +54,18 @@ export default function UserList({ users, currentUserId }: UserListProps) {
       alert(error instanceof Error ? error.message : 'Failed to invite user')
       setInviting(false)
     }
+  }
+
+  const formatJoinedDate = (isoDate: string) => {
+    const parsed = new Date(isoDate)
+    if (Number.isNaN(parsed.getTime())) return 'Unknown'
+    // Use an explicit locale + UTC so SSR and client render identical text.
+    return new Intl.DateTimeFormat('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      timeZone: 'UTC',
+    }).format(parsed)
   }
 
   if (users.length === 0) {
@@ -65,6 +82,9 @@ export default function UserList({ users, currentUserId }: UserListProps) {
         <h3 style={styles.inviteTitle}>Add User</h3>
         <p style={styles.inviteSubtitle}>
           Send an invitation email from Supabase. The user can then set their password and sign in.
+        </p>
+        <p style={styles.inviteHint}>
+          If invite links do not open the password setup screen, add `/auth/set-password` to Supabase Auth Redirect URLs.
         </p>
 
         <form onSubmit={handleInviteUser} style={styles.inviteForm}>
@@ -122,7 +142,7 @@ export default function UserList({ users, currentUserId }: UserListProps) {
                 <p style={styles.userName}>{user.full_name || 'No name'}</p>
                 <p style={styles.userEmail}>{user.email}</p>
                 <p style={styles.userDate}>
-                  Joined: {new Date(user.created_at).toLocaleDateString()}
+                  Joined: {formatJoinedDate(user.created_at)}
                 </p>
               </div>
             </div>
@@ -212,6 +232,12 @@ const styles: Record<string, React.CSSProperties> = {
     fontFamily: 'var(--font-sans)',
     fontSize: '0.9rem',
     color: '#666',
+  },
+  inviteHint: {
+    margin: '0 0 14px',
+    fontFamily: 'var(--font-sans)',
+    fontSize: '0.82rem',
+    color: '#7a7a7a',
   },
   inviteForm: {
     display: 'flex',

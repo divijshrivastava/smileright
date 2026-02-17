@@ -1455,77 +1455,101 @@ export async function logLogoutEvent() {
 // ========================================
 
 export async function inviteUser(emailInput: string, roleInput: AppRole, fullNameInput?: string) {
-  const { supabase, user, role } = await getAuthenticatedUser()
-  assertAdmin(role)
-  enforceRateLimit(user.id, 'user_invite')
+  try {
+    const { supabase, user, role } = await getAuthenticatedUser()
+    assertAdmin(role)
+    enforceRateLimit(user.id, 'user_invite')
 
-  const email = sanitizeString(emailInput || '', 320).toLowerCase()
-  const fullName = sanitizeString(fullNameInput || '', 150)
+    const email = sanitizeString(emailInput || '', 320).toLowerCase()
+    const fullName = sanitizeString(fullNameInput || '', 150)
 
-  if (!validateEmail(email)) {
-    throw new Error('Please enter a valid email address')
-  }
+    if (!validateEmail(email)) {
+      return { success: false, error: 'Please enter a valid email address.' }
+    }
 
-  if (!['admin', 'editor', 'viewer'].includes(roleInput)) {
-    throw new Error('Invalid role')
-  }
+    if (!['admin', 'editor', 'viewer'].includes(roleInput)) {
+      return { success: false, error: 'Invalid role selected.' }
+    }
 
-  // Prevent duplicate invites/users by email.
-  const { data: existingProfile } = await supabase
-    .from('profiles')
-    .select('id')
-    .eq('email', email)
-    .limit(1)
-    .maybeSingle()
+    // Prevent duplicate invites/users by email.
+    const { data: existingProfile } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('email', email)
+      .limit(1)
+      .maybeSingle()
 
-  if (existingProfile) {
-    throw new Error('A user with this email already exists')
-  }
+    if (existingProfile) {
+      return { success: false, error: 'A user with this email already exists.' }
+    }
 
-  const adminClient = createAdminClient()
+    const adminClient = createAdminClient()
+    const baseUrl = (
+      process.env.NEXT_PUBLIC_SITE_URL ||
+      process.env.NEXT_PUBLIC_APP_URL ||
+      process.env.SITE_URL ||
+      'https://www.smilerightdental.org'
+    ).replace(/\/$/, '')
+    const redirectTo = `${baseUrl}/auth/set-password`
 
-  const { data: inviteData, error: inviteError } = await adminClient.auth.admin.inviteUserByEmail(email, {
-    data: {
-      full_name: fullName || undefined,
-    },
-  })
-
-  if (inviteError) {
-    throw new Error(inviteError.message)
-  }
-
-  const invitedUserId = inviteData.user?.id
-  if (!invitedUserId) {
-    throw new Error('Invitation was created but user record is missing')
-  }
-
-  // Ensure invited user has the intended profile + role.
-  const { error: profileError } = await adminClient
-    .from('profiles')
-    .upsert({
-      id: invitedUserId,
-      email,
-      full_name: fullName || null,
-      role: roleInput,
-      updated_at: new Date().toISOString(),
+    const { data: inviteData, error: inviteError } = await adminClient.auth.admin.inviteUserByEmail(email, {
+      redirectTo,
+      data: {
+        full_name: fullName || undefined,
+      },
     })
 
-  if (profileError) {
-    throw new Error(profileError.message)
+    if (inviteError) {
+      const message = inviteError.message || 'Failed to send invite email.'
+      const redirectConfigIssue = /redirect|invalid.*url|not allowed/i.test(message)
+      if (redirectConfigIssue) {
+        return {
+          success: false,
+          error: `Supabase blocked the invite redirect URL. Add ${redirectTo} in Supabase Auth -> URL Configuration -> Redirect URLs.`,
+        }
+      }
+      return { success: false, error: message }
+    }
+
+    const invitedUserId = inviteData.user?.id
+    if (!invitedUserId) {
+      return { success: false, error: 'Invitation was created but user record is missing.' }
+    }
+
+    // Ensure invited user has the intended profile + role.
+    const { error: profileError } = await adminClient
+      .from('profiles')
+      .upsert({
+        id: invitedUserId,
+        email,
+        full_name: fullName || null,
+        role: roleInput,
+        updated_at: new Date().toISOString(),
+      })
+
+    if (profileError) {
+      return { success: false, error: profileError.message }
+    }
+
+    await logAuditEvent({
+      action: 'user.invite',
+      user_id: user.id,
+      resource_type: 'user',
+      resource_id: invitedUserId,
+      details: {
+        invited_email: email,
+        invited_role: roleInput,
+      },
+    })
+
+    revalidatePath('/admin/users')
+    return { success: true }
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to send invitation.',
+    }
   }
-
-  await logAuditEvent({
-    action: 'user.invite',
-    user_id: user.id,
-    resource_type: 'user',
-    resource_id: invitedUserId,
-    details: {
-      invited_email: email,
-      invited_role: roleInput,
-    },
-  })
-
-  revalidatePath('/admin/users')
 }
 
 export async function getUsers() {
