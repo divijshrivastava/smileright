@@ -89,6 +89,21 @@ export default function ApprovalList({ pendingChanges, recentlyReviewed }: Appro
         return 'Unknown user'
     }
 
+    const formatDateTime = (isoDate: string) => {
+        const parsed = new Date(isoDate)
+        if (Number.isNaN(parsed.getTime())) return 'Unknown date'
+        // Keep SSR/client output identical to avoid hydration mismatch.
+        return new Intl.DateTimeFormat('en-GB', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+            timeZone: 'UTC',
+        }).format(parsed)
+    }
+
     return (
         <div>
             {/* Pending Changes */}
@@ -127,7 +142,7 @@ export default function ApprovalList({ pendingChanges, recentlyReviewed }: Appro
                                                 Submitted by <strong>{getSubmitterName(change)}</strong>
                                             </p>
                                             <p style={styles.date}>
-                                                {new Date(change.created_at).toLocaleString()}
+                                                {formatDateTime(change.created_at)}
                                             </p>
                                         </div>
 
@@ -229,7 +244,7 @@ export default function ApprovalList({ pendingChanges, recentlyReviewed }: Appro
                                                 By <strong>{getSubmitterName(change)}</strong>
                                             </p>
                                             <p style={styles.date}>
-                                                {new Date(change.updated_at).toLocaleString()}
+                                                {formatDateTime(change.updated_at)}
                                             </p>
                                             {change.review_note && (
                                                 <p style={styles.reviewNote}>
