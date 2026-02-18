@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { getGoogleAnalyticsDashboard } from '@/lib/analytics/google-analytics'
+import { getEventDisplay } from '@/lib/analytics/event-labels'
 import { MessageSquareQuote, Stethoscope, ImageIcon, Mail, Plus, ArrowUpRight, Activity } from 'lucide-react'
 
 export default async function AdminDashboard() {
@@ -110,17 +111,24 @@ export default async function AdminDashboard() {
 
             <div style={styles.analyticsTables}>
               <div style={styles.analyticsTableCard}>
-                <h3 style={styles.analyticsTableHeading}>Top Events</h3>
-                {ga.events.length === 0 ? (
-                  <p style={styles.analyticsEmpty}>No events found.</p>
+                <h3 style={styles.analyticsTableHeading}>Conversion Events</h3>
+                {ga.conversionEvents.length === 0 ? (
+                  <p style={styles.analyticsEmpty}>No conversion events found.</p>
                 ) : (
                   <div style={styles.analyticsList}>
-                    {ga.events.map((event) => (
-                      <div key={event.eventName} style={styles.analyticsRow}>
-                        <span style={styles.analyticsRowLabel}>{event.eventName}</span>
-                        <span style={styles.analyticsRowValue}>{event.count.toLocaleString()}</span>
-                      </div>
-                    ))}
+                    {ga.conversionEvents.map((event) => {
+                      const eventDisplay = getEventDisplay(event.eventName)
+
+                      return (
+                        <div key={event.eventName} style={styles.analyticsRow}>
+                          <div style={styles.analyticsRowMain}>
+                            <span style={styles.analyticsRowLabel}>{eventDisplay.label}</span>
+                            <span style={styles.analyticsRowHint}>{eventDisplay.description}</span>
+                          </div>
+                          <span style={styles.analyticsRowValue}>{event.count.toLocaleString()}</span>
+                        </div>
+                      )
+                    })}
                   </div>
                 )}
               </div>
@@ -458,15 +466,31 @@ const styles: Record<string, React.CSSProperties> = {
   },
   analyticsRow: {
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'space-between',
     gap: '10px',
     padding: '8px 0',
     borderBottom: '1px solid #f0f0f0',
   },
+  analyticsRowMain: {
+    minWidth: 0,
+    flex: 1,
+  },
   analyticsRowLabel: {
-    fontSize: '0.88rem',
+    display: 'block',
+    fontSize: '0.9rem',
+    fontWeight: 600,
     color: '#3f3f3f',
+    fontFamily: 'var(--font-sans)',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap' as const,
+  },
+  analyticsRowHint: {
+    display: 'block',
+    marginTop: '3px',
+    fontSize: '0.78rem',
+    color: '#7a7a7a',
     fontFamily: 'var(--font-sans)',
     overflow: 'hidden',
     textOverflow: 'ellipsis',

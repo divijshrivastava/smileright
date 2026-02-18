@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 
 declare global {
   interface Window {
-    dataLayer?: Array<Record<string, unknown>>
+    dataLayer?: unknown[]
     gtag?: (...args: unknown[]) => void
   }
 }
@@ -38,13 +38,25 @@ export default function TrackCtaClicks() {
     const firedBlogReadMilestones = new Set<number>()
     let engagementTimer: number | null = null
 
+    if (!window.dataLayer) {
+      window.dataLayer = []
+    }
+    if (!window.gtag) {
+      window.gtag = (...args: unknown[]) => {
+        window.dataLayer?.push(args)
+      }
+    }
+
     const trackEvent = (eventName: string, payload: Record<string, unknown>) => {
       window.dataLayer?.push({
         event: eventName,
         ...payload,
       })
 
-      window.gtag?.('event', eventName, payload)
+      window.gtag?.('event', eventName, {
+        ...payload,
+        transport_type: 'beacon',
+      })
     }
 
     const normalizeHref = (anchor: HTMLAnchorElement) => {

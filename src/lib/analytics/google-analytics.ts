@@ -31,9 +31,28 @@ export type GaDashboardData = {
   configured: boolean
   overview: GaOverview
   events: GaEventMetric[]
+  conversionEvents: GaEventMetric[]
   pages: GaPageMetric[]
   error?: string
 }
+
+const CONVERSION_EVENT_NAMES = [
+  'contact_form_submit',
+  'book_appointment_click',
+  'whatsapp_click',
+  'instagram_click',
+  'cta_click',
+  'blog_click',
+  'blog_read_progress',
+  'treatment_click',
+  'section_nav_click',
+  'section_view',
+  'internal_link_click',
+  'location_directions_click',
+  'faq_interaction',
+  'engaged_30s',
+  'scroll_depth',
+]
 
 function base64UrlEncode(input: string) {
   return Buffer.from(input)
@@ -148,6 +167,7 @@ export async function getGoogleAnalyticsDashboard(): Promise<GaDashboardData> {
       configured: false,
       overview: emptyOverview,
       events: [],
+      conversionEvents: [],
       pages: [],
       error: 'GA4_PROPERTY_ID, GA4_CLIENT_EMAIL, and GA4_PRIVATE_KEY are required.',
     }
@@ -173,7 +193,7 @@ export async function getGoogleAnalyticsDashboard(): Promise<GaDashboardData> {
         dimensions: [{ name: 'eventName' }],
         metrics: [{ name: 'eventCount' }],
         orderBys: [{ metric: { metricName: 'eventCount' }, desc: true }],
-        limit: 12,
+        limit: 200,
       }),
       runReport(config.propertyId, accessToken, {
         dateRanges,
@@ -199,10 +219,14 @@ export async function getGoogleAnalyticsDashboard(): Promise<GaDashboardData> {
       eventCount: toInt(overviewMetricValues[4]?.value),
     }
 
-    const events: GaEventMetric[] = eventRows.map((row) => ({
+    const allEvents: GaEventMetric[] = eventRows.map((row) => ({
       eventName: row.dimensionValues?.[0]?.value || 'unknown',
       count: toInt(row.metricValues?.[0]?.value),
     }))
+
+    const conversionEventSet = new Set(CONVERSION_EVENT_NAMES)
+    const conversionEvents: GaEventMetric[] = allEvents.filter((event) => conversionEventSet.has(event.eventName))
+    const events: GaEventMetric[] = allEvents.slice(0, 12)
 
     const pages: GaPageMetric[] = pageRows.map((row) => ({
       path: row.dimensionValues?.[0]?.value || '/',
@@ -213,6 +237,7 @@ export async function getGoogleAnalyticsDashboard(): Promise<GaDashboardData> {
       configured: true,
       overview,
       events,
+      conversionEvents,
       pages,
     }
   } catch (error) {
@@ -220,6 +245,7 @@ export async function getGoogleAnalyticsDashboard(): Promise<GaDashboardData> {
       configured: true,
       overview: emptyOverview,
       events: [],
+      conversionEvents: [],
       pages: [],
       error: error instanceof Error ? error.message : 'Failed to fetch GA data',
     }

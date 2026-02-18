@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { Activity, Users, UserPlus, Gauge, Eye, MousePointerClick } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { getGoogleAnalyticsDashboard } from '@/lib/analytics/google-analytics'
+import { getEventDisplay } from '@/lib/analytics/event-labels'
 import type { AppRole } from '@/lib/types'
 import { canViewDashboard } from '@/lib/permissions'
 
@@ -24,101 +25,188 @@ export default async function AnalyticsPage() {
     redirect('/admin')
   }
 
-  const ga = await getGoogleAnalyticsDashboard()
-  const maxEventCount = Math.max(1, ...ga.events.map((item) => item.count))
-  const maxPageViews = Math.max(1, ...ga.pages.map((item) => item.views))
+  let gaData
+  try {
+    gaData = await getGoogleAnalyticsDashboard()
+  } catch (error) {
+    console.error('Failed to fetch GA data:', error)
+    gaData = {
+      configured: false,
+      error: 'Failed to load analytics data',
+      overview: { activeUsers: 0, newUsers: 0, sessions: 0, pageViews: 0, eventCount: 0 },
+      pages: [],
+      events: [],
+      conversionEvents: [],
+    }
+  }
+
+  const { configured, error, overview, pages, events, conversionEvents } = gaData
+
+  const maxEventCount = Math.max(1, ...events.map((item) => item.count))
+  const maxConversionEventCount = Math.max(1, ...conversionEvents.map((item) => item.count))
+  const maxPageViews = Math.max(1, ...pages.map((item) => item.views))
+
   const statCards = [
-    { label: 'Active Users', value: ga.overview.activeUsers, icon: <Users size={18} color="#1B73BA" /> },
-    { label: 'New Users', value: ga.overview.newUsers, icon: <UserPlus size={18} color="#1B73BA" /> },
-    { label: 'Sessions', value: ga.overview.sessions, icon: <Gauge size={18} color="#1B73BA" /> },
-    { label: 'Page Views', value: ga.overview.pageViews, icon: <Eye size={18} color="#1B73BA" /> },
-    { label: 'Event Count', value: ga.overview.eventCount, icon: <MousePointerClick size={18} color="#1B73BA" /> },
+    { label: 'Active Users', value: overview.activeUsers, icon: Users, color: '#3b82f6', bg: '#eff6ff' },
+    { label: 'New Users', value: overview.newUsers, icon: UserPlus, color: '#10b981', bg: '#ecfdf5' },
+    { label: 'Sessions', value: overview.sessions, icon: Gauge, color: '#8b5cf6', bg: '#f5f3ff' },
+    { label: 'Page Views', value: overview.pageViews, icon: Eye, color: '#f59e0b', bg: '#fffbeb' },
+    { label: 'Total Events', value: overview.eventCount, icon: MousePointerClick, color: '#ec4899', bg: '#fdf2f8' },
   ]
 
   return (
-    <div>
-      <div style={styles.header}>
+    <div style={styles.container}>
+      <header style={styles.header}>
         <div>
-          <h1 style={styles.title}>Google Analytics</h1>
-          <p style={styles.subtitle}>Last 30 days performance and event tracking overview.</p>
+          <h1 style={styles.title}>Analytics Dashboard</h1>
+          <p style={styles.subtitle}>Overview of your website's performance for the last 30 days.</p>
         </div>
-        <div style={styles.badge}>
+        <div style={{ ...styles.badge, backgroundColor: configured ? '#ecfdf5' : '#fef2f2', color: configured ? '#059669' : '#dc2626' }}>
           <Activity size={14} />
-          {ga.configured ? 'Connected' : 'Not Configured'}
+          {configured ? 'Live Data' : 'Not Configured'}
         </div>
-      </div>
+      </header>
 
-      {!ga.configured ? (
+      {!configured ? (
         <div style={styles.errorCard}>
           <p style={styles.errorText}>
-            Add `NEXT_PUBLIC_GA_MEASUREMENT_ID`, `GA4_PROPERTY_ID`, `GA4_CLIENT_EMAIL`, and `GA4_PRIVATE_KEY` in environment variables.
+            Analytics is not configured. Please add `NEXT_PUBLIC_GA_MEASUREMENT_ID`, `GA4_PROPERTY_ID`, `GA4_CLIENT_EMAIL`, and `GA4_PRIVATE_KEY` to your environment variables.
           </p>
         </div>
-      ) : ga.error ? (
+      ) : error ? (
         <div style={styles.errorCard}>
-          <p style={styles.errorText}>{ga.error}</p>
+          <p style={styles.errorText}>{error}</p>
         </div>
       ) : (
         <>
           <div style={styles.statsGrid}>
             {statCards.map((stat) => (
               <div key={stat.label} style={styles.statCard}>
-                <div style={styles.statIconWrap}>{stat.icon}</div>
-                <p style={styles.statNumber}>{stat.value.toLocaleString()}</p>
-                <p style={styles.statLabel}>{stat.label}</p>
+                <div style={{ ...styles.statIconWrap, backgroundColor: stat.bg, color: stat.color }}>
+                  <stat.icon size={20} />
+                </div>
+                <div>
+                  <p style={styles.statNumber}>{stat.value.toLocaleString()}</p>
+                  <p style={styles.statLabel}>{stat.label}</p>
+                </div>
               </div>
             ))}
           </div>
 
-          <div style={styles.tablesGrid}>
-            <section style={styles.tableCard}>
-              <h2 style={styles.tableTitle}>Top Events</h2>
-              {ga.events.length === 0 ? (
-                <p style={styles.empty}>No events available.</p>
+          <div style={styles.grid}>
+            {/* Top Pages Section */}
+            <section style={styles.card}>
+              <div style={styles.cardHeader}>
+                <h2 style={styles.cardTitle}>Top Viewed Pages</h2>
+                <span style={styles.cardBadge}>Most Popular</span>
+              </div>
+
+              {pages.length === 0 ? (
+                <p style={styles.empty}>No page views recorded yet.</p>
               ) : (
                 <div style={styles.list}>
-                  {ga.events.map((event) => (
-                    <div key={event.eventName} style={styles.row}>
-                      <div style={styles.rowMain}>
-                        <span style={styles.rowLabel}>{event.eventName}</span>
-                        <div style={styles.rowBarTrack}>
+                  {pages.map((page, idx) => (
+                    <div key={page.path} style={styles.row}>
+                      <div style={styles.rank}>{idx + 1}</div>
+                      <div style={styles.rowContent}>
+                        <div style={styles.rowHeader}>
+                          <span style={styles.rowLabel} title={page.path}>{page.path}</span>
+                          <span style={styles.rowValue}>{page.views.toLocaleString()}</span>
+                        </div>
+                        <div style={styles.progressBarBg}>
                           <div
                             style={{
-                              ...styles.rowBarFill,
-                              width: `${Math.max(8, (event.count / maxEventCount) * 100)}%`,
+                              ...styles.progressBarFill,
+                              width: `${(page.views / maxPageViews) * 100}%`,
+                              backgroundColor: '#f59e0b'
                             }}
                           />
                         </div>
                       </div>
-                      <span style={styles.rowValue}>{event.count.toLocaleString()}</span>
                     </div>
                   ))}
                 </div>
               )}
             </section>
 
-            <section style={styles.tableCard}>
-              <h2 style={styles.tableTitle}>Top Pages</h2>
-              {ga.pages.length === 0 ? (
-                <p style={styles.empty}>No page data available.</p>
+            {/* Conversion Events Section */}
+            <section style={styles.card}>
+              <div style={styles.cardHeader}>
+                <h2 style={styles.cardTitle}>Key Conversions</h2>
+                <span style={styles.cardBadge}>Actions</span>
+              </div>
+
+              {conversionEvents.length === 0 ? (
+                <p style={styles.empty}>No conversion events recorded yet.</p>
               ) : (
                 <div style={styles.list}>
-                  {ga.pages.map((page) => (
-                    <div key={page.path} style={styles.row}>
-                      <div style={styles.rowMain}>
-                        <span style={styles.rowLabel}>{page.path}</span>
-                        <div style={styles.rowBarTrack}>
-                          <div
-                            style={{
-                              ...styles.rowBarFill,
-                              width: `${Math.max(8, (page.views / maxPageViews) * 100)}%`,
-                            }}
-                          />
+                  {conversionEvents.map((event, idx) => {
+                    const eventDisplay = getEventDisplay(event.eventName)
+                    return (
+                      <div key={event.eventName} style={styles.row}>
+                        <div style={styles.rank}>{idx + 1}</div>
+                        <div style={styles.rowContent}>
+                          <div style={styles.rowHeader}>
+                            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                              <span style={styles.rowLabel}>{eventDisplay.label}</span>
+                              <span style={styles.rowHint}>{eventDisplay.description}</span>
+                            </div>
+                            <span style={styles.rowValue}>{event.count.toLocaleString()}</span>
+                          </div>
+                          <div style={styles.progressBarBg}>
+                            <div
+                              style={{
+                                ...styles.progressBarFill,
+                                width: `${(event.count / maxConversionEventCount) * 100}%`,
+                                backgroundColor: '#10b981'
+                              }}
+                            />
+                          </div>
                         </div>
                       </div>
-                      <span style={styles.rowValue}>{page.views.toLocaleString()}</span>
-                    </div>
-                  ))}
+                    )
+                  })}
+                </div>
+              )}
+            </section>
+
+            {/* All Events Section */}
+            <section style={styles.card}>
+              <div style={styles.cardHeader}>
+                <h2 style={styles.cardTitle}>All Events</h2>
+                <span style={styles.cardBadge}>Interactions</span>
+              </div>
+
+              {events.length === 0 ? (
+                <p style={styles.empty}>No events recorded yet.</p>
+              ) : (
+                <div style={styles.list}>
+                  {events.map((event, idx) => {
+                    const eventDisplay = getEventDisplay(event.eventName)
+                    return (
+                      <div key={event.eventName} style={styles.row}>
+                        <div style={styles.rank}>{idx + 1}</div>
+                        <div style={styles.rowContent}>
+                          <div style={styles.rowHeader}>
+                            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                              <span style={styles.rowLabel}>{eventDisplay.label}</span>
+                              <span style={styles.rowHint}>{eventDisplay.description}</span>
+                            </div>
+                            <span style={styles.rowValue}>{event.count.toLocaleString()}</span>
+                          </div>
+                          <div style={styles.progressBarBg}>
+                            <div
+                              style={{
+                                ...styles.progressBarFill,
+                                width: `${(event.count / maxEventCount) * 100}%`,
+                                backgroundColor: '#3b82f6'
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
                 </div>
               )}
             </section>
@@ -130,161 +218,203 @@ export default async function AnalyticsPage() {
 }
 
 const styles: Record<string, React.CSSProperties> = {
+  container: {
+    padding: '2rem',
+    maxWidth: '1600px',
+    margin: '0 auto',
+    fontFamily: 'var(--font-sans)',
+    color: '#1e293b',
+  },
   header: {
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    gap: '12px',
-    marginBottom: '1.5rem',
+    alignItems: 'flex-start',
+    marginBottom: '2.5rem',
   },
   title: {
-    margin: 0,
-    fontFamily: 'var(--font-serif)',
     fontSize: '2rem',
-    color: '#292828',
+    fontWeight: 700,
+    color: '#0f172a',
+    letterSpacing: '-0.025em',
+    marginBottom: '0.5rem',
+    marginTop: 0,
+    fontFamily: 'var(--font-serif)',
   },
   subtitle: {
-    margin: '8px 0 0',
-    color: '#666',
-    fontFamily: 'var(--font-sans)',
-    fontSize: '0.95rem',
+    fontSize: '1rem',
+    color: '#64748b',
+    maxWidth: '600px',
+    margin: 0,
   },
   badge: {
     display: 'inline-flex',
     alignItems: 'center',
-    gap: '6px',
-    background: '#e8f1fb',
-    color: '#1B73BA',
-    borderRadius: '999px',
-    padding: '8px 14px',
-    fontSize: '0.78rem',
-    fontWeight: 700,
-    fontFamily: 'var(--font-sans)',
-    textTransform: 'uppercase' as const,
-    letterSpacing: '0.06em',
-    whiteSpace: 'nowrap' as const,
+    gap: '0.5rem',
+    padding: '0.5rem 1rem',
+    borderRadius: '9999px',
+    fontSize: '0.875rem',
+    fontWeight: 600,
+    backgroundColor: '#eff6ff',
+    color: '#3b82f6',
   },
   statsGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-    gap: '12px',
-    marginBottom: '18px',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+    gap: '1.5rem',
+    marginBottom: '2.5rem',
   },
   statCard: {
-    background: '#fff',
-    border: '1px solid #d9e7f6',
-    borderRadius: '12px',
-    padding: '16px 18px',
-    textAlign: 'center' as const,
-    boxShadow: '0 3px 10px rgba(27,115,186,0.08)',
+    backgroundColor: '#ffffff',
+    borderRadius: '1rem',
+    padding: '1.5rem',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '1rem',
+    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
+    border: '1px solid #f1f5f9',
+    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
   },
   statIconWrap: {
-    width: '34px',
-    height: '34px',
-    margin: '0 auto 8px',
-    borderRadius: '50%',
-    background: '#edf4fb',
+    padding: '0.75rem',
+    borderRadius: '0.75rem',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
   },
   statNumber: {
-    margin: 0,
-    color: '#1B73BA',
-    fontFamily: 'var(--font-serif)',
-    fontSize: '1.7rem',
+    fontSize: '1.5rem',
     fontWeight: 700,
+    color: '#0f172a',
+    lineHeight: 1,
+    marginBottom: '0.25rem',
+    marginTop: 0,
+    fontFamily: 'var(--font-serif)',
   },
   statLabel: {
-    margin: '6px 0 0',
-    color: '#666',
-    fontFamily: 'var(--font-sans)',
-    fontSize: '0.8rem',
-    fontWeight: 600,
-    textTransform: 'uppercase' as const,
-    letterSpacing: '0.06em',
+    fontSize: '0.875rem',
+    color: '#64748b',
+    fontWeight: 500,
+    margin: 0,
   },
-  tablesGrid: {
+  grid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-    gap: '16px',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+    gap: '2rem',
   },
-  tableCard: {
-    background: '#fff',
-    border: '1px solid #e0e0e0',
-    borderRadius: '10px',
-    padding: '16px',
-    boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
+  card: {
+    backgroundColor: '#ffffff',
+    borderRadius: '1rem',
+    padding: '1.5rem',
+    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
+    border: '1px solid #f1f5f9',
+    display: 'flex',
+    flexDirection: 'column',
   },
-  tableTitle: {
-    margin: '0 0 12px',
-    fontSize: '1rem',
-    color: '#292828',
+  cardHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '1.5rem',
+    paddingBottom: '1rem',
+    borderBottom: '1px solid #f1f5f9',
+  },
+  cardTitle: {
+    fontSize: '1.125rem',
+    fontWeight: 600,
+    color: '#0f172a',
+    margin: 0,
     fontFamily: 'var(--font-serif)',
+  },
+  cardBadge: {
+    fontSize: '0.75rem',
+    fontWeight: 600,
+    color: '#64748b',
+    backgroundColor: '#f8fafc',
+    padding: '0.25rem 0.75rem',
+    borderRadius: '9999px',
+    textTransform: 'uppercase',
+    letterSpacing: '0.05em',
   },
   list: {
     display: 'flex',
-    flexDirection: 'column' as const,
-    gap: '10px',
+    flexDirection: 'column',
+    gap: '1rem',
   },
   row: {
     display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    gap: '10px',
-    borderBottom: '1px solid #edf0f4',
-    padding: '8px 0 10px',
+    alignItems: 'center',
+    gap: '1rem',
   },
-  rowMain: {
-    minWidth: 0,
+  rank: {
+    width: '1.5rem',
+    height: '1.5rem',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '0.75rem',
+    fontWeight: 600,
+    color: '#94a3b8',
+    backgroundColor: '#f8fafc',
+    borderRadius: '50%',
+    flexShrink: 0,
+  },
+  rowContent: {
     flex: 1,
+    minWidth: 0,
+  },
+  rowHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'baseline',
+    marginBottom: '0.375rem',
   },
   rowLabel: {
-    display: 'block',
-    color: '#3f3f3f',
-    fontFamily: 'var(--font-sans)',
-    fontSize: '0.88rem',
+    fontSize: '0.875rem',
+    fontWeight: 500,
+    color: '#334155',
+    whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap' as const,
+    maxWidth: '200px',
   },
-  rowBarTrack: {
-    width: '100%',
-    height: '7px',
-    marginTop: '7px',
-    background: '#e8eef6',
-    borderRadius: '999px',
-    overflow: 'hidden',
-  },
-  rowBarFill: {
-    height: '100%',
-    background: 'linear-gradient(90deg, #1B73BA, #4a9fe3)',
-    borderRadius: '999px',
+  rowHint: {
+    display: 'block',
+    fontSize: '0.75rem',
+    color: '#94a3b8',
+    marginTop: '0.125rem',
   },
   rowValue: {
-    color: '#1B73BA',
-    fontFamily: 'var(--font-sans)',
-    fontSize: '0.86rem',
-    fontWeight: 700,
-    whiteSpace: 'nowrap' as const,
+    fontSize: '0.875rem',
+    fontWeight: 600,
+    color: '#0f172a',
+  },
+  progressBarBg: {
+    height: '6px',
+    backgroundColor: '#f1f5f9',
+    borderRadius: '9999px',
+    overflow: 'hidden',
+  },
+  progressBarFill: {
+    height: '100%',
+    borderRadius: '9999px',
+    transition: 'width 1s ease-in-out',
   },
   empty: {
+    textAlign: 'center',
+    padding: '2rem',
+    color: '#64748b',
+    fontSize: '0.875rem',
     margin: 0,
-    color: '#777',
-    fontFamily: 'var(--font-sans)',
-    fontSize: '0.9rem',
   },
   errorCard: {
-    background: '#fff5f5',
-    border: '1px solid #ffc9c9',
-    borderRadius: '10px',
-    padding: '14px 16px',
+    backgroundColor: '#fef2f2',
+    border: '1px solid #fee2e2',
+    borderRadius: '0.75rem',
+    padding: '1.5rem',
+    color: '#b91c1c',
   },
   errorText: {
     margin: 0,
-    color: '#9b2c2c',
-    fontFamily: 'var(--font-sans)',
-    fontSize: '0.88rem',
-    lineHeight: 1.5,
+    fontSize: '0.875rem',
   },
 }

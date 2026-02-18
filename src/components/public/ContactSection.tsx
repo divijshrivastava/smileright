@@ -41,7 +41,7 @@ type AnalyticsState = {
 
 declare global {
   interface Window {
-    dataLayer?: Array<Record<string, unknown>>
+    dataLayer?: unknown[]
     gtag?: (...args: unknown[]) => void
   }
 }
