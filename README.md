@@ -37,6 +37,14 @@ smile-right/
 2. For deployment, upload all files to your web hosting service
 3. Update the domain name in `sitemap.xml` and `robots.txt` to match your actual domain
 
+## Environment Variables
+
+For distributed rate limiting in production (recommended), configure one of these Redis REST pairs:
+
+- `RATE_LIMIT_REDIS_REST_URL` and `RATE_LIMIT_REDIS_REST_TOKEN`
+- or `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`
+- or `KV_REST_API_URL` and `KV_REST_API_TOKEN` (Vercel KV)
+
 ## SEO Checklist
 
 - [x] Meta descriptions and keywords

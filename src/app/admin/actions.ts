@@ -16,7 +16,7 @@ import {
 import type { AppRole } from '@/lib/types'
 
 /** Enforce rate limit for an admin action; throws on exceeded. */
-function enforceRateLimit(userId: string, action: string) {
+async function enforceRateLimit(userId: string, action: string) {
   const result = checkRateLimit(`admin:${userId}:${action}`, rateLimitConfigs.admin)
   if (!result.success) {
     throw new Error('Too many requests. Please try again later.')
@@ -93,7 +93,7 @@ export async function submitPendingChange(
     throw new Error('Only editors submit pending changes')
   }
 
-  enforceRateLimit(user.id, 'pending_change')
+  await enforceRateLimit(user.id, 'pending_change')
 
   const { error } = await supabase.from('pending_changes').insert({
     resource_type: resourceType,
@@ -123,7 +123,7 @@ export async function submitPendingChange(
 export async function approvePendingChange(changeId: string) {
   const { supabase, user, role } = await getAuthenticatedUser()
   assertAdmin(role)
-  enforceRateLimit(user.id, 'approval')
+  await enforceRateLimit(user.id, 'approval')
 
   // Fetch the pending change
   const { data: change, error: fetchErr } = await supabase
@@ -264,7 +264,7 @@ export async function approvePendingChange(changeId: string) {
 export async function rejectPendingChange(changeId: string, reviewNote?: string) {
   const { supabase, user, role } = await getAuthenticatedUser()
   assertAdmin(role)
-  enforceRateLimit(user.id, 'approval')
+  await enforceRateLimit(user.id, 'approval')
 
   const { data: change, error: fetchErr } = await supabase
     .from('pending_changes')
@@ -322,7 +322,7 @@ function getTableName(resourceType: string): string {
 
 export async function revalidateHomePage() {
   const { user } = await getAuthenticatedUser()
-  enforceRateLimit(user.id, 'revalidate')
+  await enforceRateLimit(user.id, 'revalidate')
   revalidatePath('/', 'page')
 }
 
@@ -333,7 +333,7 @@ export async function revalidateHomePage() {
 export async function createTestimonial(formData: FormData) {
   const { supabase, user, role } = await getAuthenticatedUser()
   assertNotViewer(role)
-  enforceRateLimit(user.id, 'testimonial')
+  await enforceRateLimit(user.id, 'testimonial')
 
   const validatedInput = validateTestimonialInput(formData)
   if ('error' in validatedInput) {
@@ -411,7 +411,7 @@ export async function createTestimonial(formData: FormData) {
 export async function updateTestimonial(id: string, formData: FormData) {
   const { supabase, user, role } = await getAuthenticatedUser()
   assertNotViewer(role)
-  enforceRateLimit(user.id, 'testimonial')
+  await enforceRateLimit(user.id, 'testimonial')
 
   const validatedInput = validateTestimonialInput(formData)
   if ('error' in validatedInput) {
@@ -487,7 +487,7 @@ export async function updateTestimonial(id: string, formData: FormData) {
 export async function deleteTestimonial(id: string) {
   const { supabase, user, role } = await getAuthenticatedUser()
   assertAdmin(role)
-  enforceRateLimit(user.id, 'testimonial')
+  await enforceRateLimit(user.id, 'testimonial')
 
   const { error } = await supabase.from('testimonials').delete().eq('id', id)
 
@@ -507,7 +507,7 @@ export async function deleteTestimonial(id: string) {
 export async function togglePublish(id: string, isPublished: boolean) {
   const { supabase, user, role } = await getAuthenticatedUser()
   assertNotViewer(role)
-  enforceRateLimit(user.id, 'testimonial')
+  await enforceRateLimit(user.id, 'testimonial')
 
   if (role === 'editor') {
     // Editor: submit pending change instead
@@ -559,7 +559,7 @@ export async function togglePublish(id: string, isPublished: boolean) {
 export async function createTrustImage(formData: FormData) {
   const { supabase, user, role } = await getAuthenticatedUser()
   assertNotViewer(role)
-  enforceRateLimit(user.id, 'trust_image')
+  await enforceRateLimit(user.id, 'trust_image')
 
   const imageUrl = sanitizeString(formData.get('image_url') as string, 2000)
   const altText = sanitizeString(formData.get('alt_text') as string || '', 200)
@@ -606,7 +606,7 @@ export async function createTrustImage(formData: FormData) {
 export async function updateTrustImage(id: string, formData: FormData) {
   const { supabase, user, role } = await getAuthenticatedUser()
   assertNotViewer(role)
-  enforceRateLimit(user.id, 'trust_image')
+  await enforceRateLimit(user.id, 'trust_image')
 
   const imageUrl = sanitizeString(formData.get('image_url') as string, 2000)
   const altText = sanitizeString(formData.get('alt_text') as string || '', 200)
@@ -672,7 +672,7 @@ export async function updateTrustImage(id: string, formData: FormData) {
 export async function deleteTrustImage(id: string) {
   const { supabase, user, role } = await getAuthenticatedUser()
   assertAdmin(role)
-  enforceRateLimit(user.id, 'trust_image')
+  await enforceRateLimit(user.id, 'trust_image')
 
   const { error } = await supabase.from('trust_images').delete().eq('id', id)
   if (error) throw new Error(error.message)
@@ -691,7 +691,7 @@ export async function deleteTrustImage(id: string) {
 export async function toggleTrustImagePublish(id: string, isPublished: boolean) {
   const { supabase, user, role } = await getAuthenticatedUser()
   assertNotViewer(role)
-  enforceRateLimit(user.id, 'trust_image')
+  await enforceRateLimit(user.id, 'trust_image')
 
   if (role === 'editor') {
     await insertPendingChange(supabase, {
@@ -732,7 +732,7 @@ export async function toggleTrustImagePublish(id: string, isPublished: boolean) 
 export async function createService(formData: FormData) {
   const { supabase, user, role } = await getAuthenticatedUser()
   assertNotViewer(role)
-  enforceRateLimit(user.id, 'service')
+  await enforceRateLimit(user.id, 'service')
 
   const validatedInput = validateServiceInput(formData)
   if ('error' in validatedInput) throw new Error(validatedInput.error)
@@ -790,7 +790,7 @@ export async function createService(formData: FormData) {
 export async function updateService(id: string, formData: FormData) {
   const { supabase, user, role } = await getAuthenticatedUser()
   assertNotViewer(role)
-  enforceRateLimit(user.id, 'service')
+  await enforceRateLimit(user.id, 'service')
 
   const validatedInput = validateServiceInput(formData, false)
   if ('error' in validatedInput) throw new Error(validatedInput.error)
@@ -853,7 +853,7 @@ export async function updateService(id: string, formData: FormData) {
 export async function deleteService(id: string) {
   const { supabase, user, role } = await getAuthenticatedUser()
   assertAdmin(role)
-  enforceRateLimit(user.id, 'service')
+  await enforceRateLimit(user.id, 'service')
 
   const { error } = await supabase.from('services').delete().eq('id', id)
   if (error) throw new Error(error.message)
@@ -872,7 +872,7 @@ export async function deleteService(id: string) {
 export async function toggleServicePublish(id: string, isPublished: boolean) {
   const { supabase, user, role } = await getAuthenticatedUser()
   assertNotViewer(role)
-  enforceRateLimit(user.id, 'service')
+  await enforceRateLimit(user.id, 'service')
 
   if (role === 'editor') {
     await insertPendingChange(supabase, {
@@ -913,7 +913,7 @@ export async function toggleServicePublish(id: string, isPublished: boolean) {
 export async function createServiceImage(serviceId: string, formData: FormData) {
   const { supabase, user, role } = await getAuthenticatedUser()
   assertNotViewer(role)
-  enforceRateLimit(user.id, 'service_image')
+  await enforceRateLimit(user.id, 'service_image')
 
   const imageUrl = sanitizeString(formData.get('image_url') as string, 2000)
   const altText = sanitizeString(formData.get('alt_text') as string || '', 200)
@@ -995,7 +995,7 @@ export async function createServiceImage(serviceId: string, formData: FormData) 
 export async function updateServiceImage(imageId: string, formData: FormData) {
   const { supabase, user, role } = await getAuthenticatedUser()
   assertNotViewer(role)
-  enforceRateLimit(user.id, 'service_image')
+  await enforceRateLimit(user.id, 'service_image')
 
   const imageUrl = sanitizeString(formData.get('image_url') as string, 2000)
   const altText = sanitizeString(formData.get('alt_text') as string || '', 200)
@@ -1056,7 +1056,7 @@ export async function updateServiceImage(imageId: string, formData: FormData) {
 export async function deleteServiceImage(imageId: string) {
   const { supabase, user, role } = await getAuthenticatedUser()
   assertAdmin(role)
-  enforceRateLimit(user.id, 'service_image')
+  await enforceRateLimit(user.id, 'service_image')
 
   const { data: imageToDelete } = await supabase
     .from('service_images')
@@ -1107,7 +1107,7 @@ export async function deleteServiceImage(imageId: string) {
 export async function setServiceImagePrimary(serviceId: string, imageId: string) {
   const { supabase, user, role } = await getAuthenticatedUser()
   assertNotViewer(role)
-  enforceRateLimit(user.id, 'service_image')
+  await enforceRateLimit(user.id, 'service_image')
 
   if (role === 'editor') {
     await insertPendingChange(supabase, {
@@ -1181,7 +1181,7 @@ export async function setServiceImagePrimary(serviceId: string, imageId: string)
 export async function createBlog(formData: FormData) {
   const { supabase, user, role } = await getAuthenticatedUser()
   assertNotViewer(role)
-  enforceRateLimit(user.id, 'blog')
+  await enforceRateLimit(user.id, 'blog')
 
   const validatedInput = validateBlogInput(formData)
   if ('error' in validatedInput) throw new Error(validatedInput.error)
@@ -1238,7 +1238,7 @@ export async function createBlog(formData: FormData) {
 export async function updateBlog(id: string, formData: FormData) {
   const { supabase, user, role } = await getAuthenticatedUser()
   assertNotViewer(role)
-  enforceRateLimit(user.id, 'blog')
+  await enforceRateLimit(user.id, 'blog')
 
   const validatedInput = validateBlogInput(formData)
   if ('error' in validatedInput) throw new Error(validatedInput.error)
@@ -1331,7 +1331,7 @@ export async function updateBlog(id: string, formData: FormData) {
 export async function deleteBlog(id: string) {
   const { supabase, user, role } = await getAuthenticatedUser()
   assertAdmin(role)
-  enforceRateLimit(user.id, 'blog')
+  await enforceRateLimit(user.id, 'blog')
 
   const { data: existing } = await supabase
     .from('blogs')
@@ -1360,7 +1360,7 @@ export async function deleteBlog(id: string) {
 export async function toggleBlogPublish(id: string, isPublished: boolean) {
   const { supabase, user, role } = await getAuthenticatedUser()
   assertNotViewer(role)
-  enforceRateLimit(user.id, 'blog')
+  await enforceRateLimit(user.id, 'blog')
 
   if (role === 'editor') {
     await insertPendingChange(supabase, {
@@ -1458,7 +1458,7 @@ export async function inviteUser(emailInput: string, roleInput: AppRole, fullNam
   try {
     const { supabase, user, role } = await getAuthenticatedUser()
     assertAdmin(role)
-    enforceRateLimit(user.id, 'user_invite')
+    await enforceRateLimit(user.id, 'user_invite')
 
     const email = sanitizeString(emailInput || '', 320).toLowerCase()
     const fullName = sanitizeString(fullNameInput || '', 150)
@@ -1571,7 +1571,7 @@ export async function getUsers() {
 export async function updateUserRole(userId: string, newRole: AppRole) {
   const { supabase, user, role } = await getAuthenticatedUser()
   assertAdmin(role)
-  enforceRateLimit(user.id, 'user_role')
+  await enforceRateLimit(user.id, 'user_role')
 
   // Prevent admin from changing their own role
   if (userId === user.id) {
@@ -1625,7 +1625,7 @@ export async function updateUserRole(userId: string, newRole: AppRole) {
 export async function markContactMessageViewed(messageId: string) {
   const { supabase, user, role } = await getAuthenticatedUser()
   assertAdmin(role)
-  enforceRateLimit(user.id, 'contact_message')
+  await enforceRateLimit(user.id, 'contact_message')
 
   const viewedAt = new Date().toISOString()
 

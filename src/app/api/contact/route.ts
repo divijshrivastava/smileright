@@ -12,8 +12,8 @@ function getClientIp(request: NextRequest): string {
   return request.headers.get('x-real-ip')?.trim() || 'unknown'
 }
 
-function checkSubmissionLimit(identifier: string, maxRequests: number, windowMs: number): NextResponse | null {
-  const result = checkRateLimit(identifier, { maxRequests, windowMs })
+async function checkSubmissionLimit(identifier: string, maxRequests: number, windowMs: number): Promise<NextResponse | null> {
+  const result = await checkRateLimit(identifier, { maxRequests, windowMs })
   if (!result.success) {
     return NextResponse.json(
       { error: 'Too many submissions. Please try again shortly.' },
@@ -37,12 +37,12 @@ export async function POST(request: NextRequest) {
   }
 
   // Layered IP throttles: burst + sustained.
-  const ipBurst = checkSubmissionLimit(`api:contact:ip:burst:${ip}`, 5, 60 * 1000)
+  const ipBurst = await checkSubmissionLimit(`api:contact:ip:burst:${ip}`, 5, 60 * 1000)
   if (ipBurst) {
     return ipBurst
   }
 
-  const ipHourly = checkSubmissionLimit(`api:contact:ip:hour:${ip}`, 40, 60 * 60 * 1000)
+  const ipHourly = await checkSubmissionLimit(`api:contact:ip:hour:${ip}`, 40, 60 * 60 * 1000)
   if (ipHourly) {
     return ipHourly
   }
@@ -63,12 +63,12 @@ export async function POST(request: NextRequest) {
     const normalizedEmail = validated.email.toLowerCase()
 
     // Per-email throttles to limit abuse with rotating IPs.
-    const emailBurst = checkSubmissionLimit(`api:contact:email:burst:${normalizedEmail}`, 3, 10 * 60 * 1000)
+    const emailBurst = await checkSubmissionLimit(`api:contact:email:burst:${normalizedEmail}`, 3, 10 * 60 * 1000)
     if (emailBurst) {
       return emailBurst
     }
 
-    const emailHourly = checkSubmissionLimit(`api:contact:email:hour:${normalizedEmail}`, 8, 60 * 60 * 1000)
+    const emailHourly = await checkSubmissionLimit(`api:contact:email:hour:${normalizedEmail}`, 8, 60 * 60 * 1000)
     if (emailHourly) {
       return emailHourly
     }
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
       .replace(/\s+/g, ' ')
       .trim()
       .slice(0, 120)
-    const duplicateBlock = checkSubmissionLimit(
+    const duplicateBlock = await checkSubmissionLimit(
       `api:contact:dupe:${ip}:${normalizedEmail}:${messageSignature}`,
       1,
       5 * 60 * 1000

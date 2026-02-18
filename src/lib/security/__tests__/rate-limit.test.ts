@@ -12,75 +12,75 @@ describe('checkRateLimit', () => {
     // Use unique identifiers per test to avoid cross-test contamination
   })
 
-  it('allows requests within limit', () => {
+  it('allows requests within limit', async () => {
     const id = `test-within-${Date.now()}`
-    const r1 = checkRateLimit(id, testConfig)
+    const r1 = await checkRateLimit(id, testConfig)
     expect(r1.success).toBe(true)
     expect(r1.remaining).toBe(2)
 
-    const r2 = checkRateLimit(id, testConfig)
+    const r2 = await checkRateLimit(id, testConfig)
     expect(r2.success).toBe(true)
     expect(r2.remaining).toBe(1)
 
-    const r3 = checkRateLimit(id, testConfig)
+    const r3 = await checkRateLimit(id, testConfig)
     expect(r3.success).toBe(true)
     expect(r3.remaining).toBe(0)
   })
 
-  it('blocks requests over limit', () => {
+  it('blocks requests over limit', async () => {
     const id = `test-over-${Date.now()}`
 
-    checkRateLimit(id, testConfig)
-    checkRateLimit(id, testConfig)
-    checkRateLimit(id, testConfig)
+    await checkRateLimit(id, testConfig)
+    await checkRateLimit(id, testConfig)
+    await checkRateLimit(id, testConfig)
 
-    const r4 = checkRateLimit(id, testConfig)
+    const r4 = await checkRateLimit(id, testConfig)
     expect(r4.success).toBe(false)
     expect(r4.remaining).toBe(0)
   })
 
-  it('resets after window expires', () => {
+  it('resets after window expires', async () => {
     const id = `test-expire-${Date.now()}`
     const shortConfig: RateLimitConfig = { maxRequests: 1, windowMs: 50 }
 
-    const r1 = checkRateLimit(id, shortConfig)
+    const r1 = await checkRateLimit(id, shortConfig)
     expect(r1.success).toBe(true)
 
-    const r2 = checkRateLimit(id, shortConfig)
+    const r2 = await checkRateLimit(id, shortConfig)
     expect(r2.success).toBe(false)
 
     // Simulate time passing by manipulating the entry
     vi.useFakeTimers()
     vi.advanceTimersByTime(100)
 
-    const r3 = checkRateLimit(id, shortConfig)
+    const r3 = await checkRateLimit(id, shortConfig)
     expect(r3.success).toBe(true)
     expect(r3.remaining).toBe(0) // maxRequests is 1, so remaining = 1-1=0
 
     vi.useRealTimers()
   })
 
-  it('tracks different identifiers separately', () => {
+  it('tracks different identifiers separately', async () => {
     const id1 = `test-sep-a-${Date.now()}`
     const id2 = `test-sep-b-${Date.now()}`
 
-    checkRateLimit(id1, testConfig)
-    checkRateLimit(id1, testConfig)
-    checkRateLimit(id1, testConfig)
+    await checkRateLimit(id1, testConfig)
+    await checkRateLimit(id1, testConfig)
+    await checkRateLimit(id1, testConfig)
 
     // id1 is now at limit
-    const r1 = checkRateLimit(id1, testConfig)
+    const r1 = await checkRateLimit(id1, testConfig)
     expect(r1.success).toBe(false)
 
     // id2 should still be allowed
-    const r2 = checkRateLimit(id2, testConfig)
+    const r2 = await checkRateLimit(id2, testConfig)
     expect(r2.success).toBe(true)
     expect(r2.remaining).toBe(2)
   })
 
-  it('returns correct limit metadata', () => {
+  it('returns correct limit metadata', async () => {
     const id = `test-meta-${Date.now()}`
-    const result = checkRateLimit(id, testConfig)
+    const result = await checkRateLimit(id, testConfig)
 
     expect(result.limit).toBe(3)
     expect(result.resetTime).toBeGreaterThan(Date.now())

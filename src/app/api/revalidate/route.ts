@@ -11,7 +11,7 @@ export async function POST() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const rl = checkRateLimit(`api:revalidate:${user.id}`, rateLimitConfigs.api)
+  const rl = await checkRateLimit(`api:revalidate:${user.id}`, rateLimitConfigs.api)
   if (!rl.success) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
