@@ -10,9 +10,40 @@ interface CKEditorComponentProps {
   onChange: (value: string) => void
 }
 
+interface UploadLoader {
+  file: Promise<File>
+}
+
+interface UploadResult {
+  default: string
+}
+
+interface UploadAdapter {
+  upload: () => Promise<UploadResult>
+  abort: () => void
+}
+
+interface FileRepositoryPlugin {
+  createUploadAdapter?: (loader: UploadLoader) => UploadAdapter
+}
+
+interface EditorInstance {
+  destroy: () => Promise<void>
+  getData: () => string
+  setData: (data: string) => void
+  model: {
+    document: {
+      on: (event: string, callback: () => void) => void
+    }
+  }
+  plugins: {
+    get: (name: 'FileRepository') => FileRepositoryPlugin
+  }
+}
+
 export default function CKEditorComponent({ value, onChange }: CKEditorComponentProps) {
   const editorContainerRef = useRef<HTMLDivElement>(null)
-  const editorRef = useRef<any>(null)
+  const editorRef = useRef<EditorInstance | null>(null)
   const [isLayoutReady, setIsLayoutReady] = useState(false)
   const [error, setError] = useState<string>('')
 
@@ -41,7 +72,7 @@ export default function CKEditorComponent({ value, onChange }: CKEditorComponent
         if (!mounted || !editorContainerRef.current) return
 
         // Custom upload adapter
-        function uploadAdapter(loader: any) {
+        function uploadAdapter(loader: UploadLoader): UploadAdapter {
           return {
             upload: async () => {
               const file = await loader.file
@@ -73,8 +104,8 @@ export default function CKEditorComponent({ value, onChange }: CKEditorComponent
           }
         }
 
-        function uploadPlugin(editor: any) {
-          editor.plugins.get('FileRepository').createUploadAdapter = (loader: any) => {
+        function uploadPlugin(editor: EditorInstance) {
+          editor.plugins.get('FileRepository').createUploadAdapter = (loader: UploadLoader) => {
             return uploadAdapter(loader)
           }
         }
@@ -155,7 +186,7 @@ export default function CKEditorComponent({ value, onChange }: CKEditorComponent
     return () => {
       mounted = false
       if (editorRef.current) {
-        editorRef.current.destroy().catch((err: any) => {
+        editorRef.current.destroy().catch((err: unknown) => {
           console.error('Error destroying editor:', err)
         })
         editorRef.current = null

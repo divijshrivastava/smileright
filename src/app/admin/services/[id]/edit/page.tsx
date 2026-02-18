@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import ServiceForm from '@/components/admin/ServiceForm'
-import type { Service } from '@/lib/types'
+import type { Service, ServiceImage } from '@/lib/types'
 
 export default async function EditServicePage({
   params,
@@ -45,7 +45,9 @@ export default async function EditServicePage({
   // Sort service_images by display_order
   const serviceWithSortedImages = {
     ...service,
-    service_images: service.service_images?.sort((a: any, b: any) => a.display_order - b.display_order) || []
+    service_images: (service.service_images || [])
+      .slice()
+      .sort((a: ServiceImage, b: ServiceImage) => a.display_order - b.display_order),
   }
 
   return (

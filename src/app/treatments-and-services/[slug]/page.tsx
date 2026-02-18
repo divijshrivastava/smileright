@@ -8,7 +8,7 @@ import FloatingWhatsApp from '@/components/interactive/FloatingWhatsApp'
 import ContactSection from '@/components/public/ContactSection'
 import { createClient } from '@/lib/supabase/server'
 import { createStaticClient } from '@/lib/supabase/static'
-import type { Service } from '@/lib/types'
+import type { Service, ServiceImage } from '@/lib/types'
 
 const BASE_URL = 'https://www.smilerightdental.org'
 
@@ -84,7 +84,9 @@ export default async function TreatmentPage({ params }: Props) {
   }
 
   // Sort service images by display_order
-  const sortedImages = (service.service_images || []).sort((a: any, b: any) => a.display_order - b.display_order)
+  const sortedImages = (service.service_images || [])
+    .slice()
+    .sort((a: ServiceImage, b: ServiceImage) => a.display_order - b.display_order)
 
   // Service schema
   const serviceSchema = {
@@ -187,7 +189,7 @@ export default async function TreatmentPage({ params }: Props) {
             <div className="container">
               <h2>Gallery</h2>
               <div className="gallery-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px', maxWidth: '1000px', margin: '0 auto' }}>
-                {sortedImages.map((img: any) => (
+                {sortedImages.map((img: ServiceImage) => (
                   <div key={img.id} className="gallery-item">
                     <Image
                       src={img.image_url}

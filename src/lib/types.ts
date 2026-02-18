@@ -71,9 +71,9 @@ export interface Profile {
 
 export interface PendingChange {
   id: string
-  resource_type: 'testimonial' | 'service' | 'trust_image' | 'blog'
+  resource_type: 'testimonial' | 'service' | 'service_image' | 'trust_image' | 'blog'
   resource_id: string | null
-  action: 'create' | 'update' | 'publish' | 'unpublish'
+  action: 'create' | 'update' | 'publish' | 'unpublish' | 'set_primary'
   payload: Record<string, unknown>
   status: 'pending' | 'approved' | 'rejected'
   submitted_by: string
