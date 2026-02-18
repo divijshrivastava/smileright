@@ -4,6 +4,7 @@ import type { Metadata } from 'next'
 import Header from '@/components/public/Header'
 import Footer from '@/components/public/Footer'
 import FloatingWhatsApp from '@/components/interactive/FloatingWhatsApp'
+import BlogRouteScrollReset from '@/components/interactive/BlogRouteScrollReset'
 import ContactSection from '@/components/public/ContactSection'
 import { createClient } from '@/lib/supabase/server'
 import type { Blog } from '@/lib/types'
@@ -47,6 +48,7 @@ export default async function BlogIndexPage() {
 
   return (
     <>
+      <BlogRouteScrollReset />
       <FloatingWhatsApp />
       <Header />
 
