@@ -63,77 +63,6 @@ export default async function AdminDashboard() {
       <h1 style={styles.heading}>Dashboard</h1>
       <p style={styles.welcome}>Welcome to the Smile Right Admin Panel</p>
 
-      {/* Statistics Overview */}
-      <div style={styles.section}>
-        <h2 style={styles.sectionHeading}>Content Overview</h2>
-        <div style={styles.statsGrid} className="admin-stats-grid">
-          <div style={styles.statCard}>
-            <div style={styles.statIcon}><MessageSquareQuote size={24} color="#1B73BA" /></div>
-            <p style={styles.statNumber}>{totalTestimonials ?? 0}</p>
-            <p style={styles.statLabel}>Total Testimonials</p>
-            <p style={styles.statSubtext}>
-              {publishedTestimonials ?? 0} published
-            </p>
-          </div>
-          <div style={styles.statCard}>
-            <div style={styles.statIcon}><Stethoscope size={24} color="#1B73BA" /></div>
-            <p style={styles.statNumber}>{totalServices ?? 0}</p>
-            <p style={styles.statLabel}>Total Services</p>
-            <p style={styles.statSubtext}>
-              {publishedServices ?? 0} published
-            </p>
-          </div>
-          <div style={styles.statCard}>
-            <div style={styles.statIcon}><ImageIcon size={24} color="#1B73BA" /></div>
-            <p style={styles.statNumber}>{totalTrustImages ?? 0}</p>
-            <p style={styles.statLabel}>Trust Images</p>
-            <p style={styles.statSubtext}>
-              {publishedTrustImages ?? 0} published
-            </p>
-          </div>
-          <div style={styles.statCard}>
-            <div style={styles.statIcon}><Mail size={24} color="#1B73BA" /></div>
-            <p style={styles.statNumber}>{totalContactMessages ?? 0}</p>
-            <p style={styles.statLabel}>Contact Messages</p>
-            <p style={styles.statSubtext}>
-              {newContactMessages ?? 0} new
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Quick Actions */}
-      <div style={styles.section}>
-        <h2 style={styles.sectionHeading}>Quick Actions</h2>
-        <div style={styles.linkGrid} className="admin-link-grid">
-          <Link href="/admin/testimonials/new" style={styles.actionCard}>
-            <div style={styles.actionIcon}><Plus size={24} /></div>
-            <p style={styles.actionTitle}>Add Testimonial</p>
-            <p style={styles.actionDesc}>Create a new patient testimonial</p>
-          </Link>
-          <Link href="/admin/services/new" style={styles.actionCard}>
-            <div style={styles.actionIcon}><Plus size={24} /></div>
-            <p style={styles.actionTitle}>Add Service</p>
-            <p style={styles.actionDesc}>Create a new dental service</p>
-          </Link>
-          <Link href="/admin/trust-images/new" style={styles.actionCard}>
-            <div style={styles.actionIcon}><Plus size={24} /></div>
-            <p style={styles.actionTitle}>Add Trust Image</p>
-            <p style={styles.actionDesc}>Upload trust section image</p>
-          </Link>
-          <Link href="/admin/contact-messages" style={styles.actionCard}>
-            <div style={styles.actionIcon}><Mail size={24} /></div>
-            <p style={styles.actionTitle}>View Messages</p>
-            <p style={styles.actionDesc}>Check contact form submissions</p>
-          </Link>
-          <Link href="/" target="_blank" style={{ ...styles.actionCard, ...styles.viewSiteCard }}>
-            <div style={{ ...styles.actionIcon, color: 'rgba(255,255,255,0.8)' }}><ArrowUpRight size={24} /></div>
-            <p style={{ ...styles.actionTitle, color: '#fff' }}>View Live Site</p>
-            <p style={{ ...styles.actionDesc, color: 'rgba(255,255,255,0.9)' }}>See your changes on the website</p>
-          </Link>
-        </div>
-      </div>
-
       {/* Google Analytics */}
       <div style={styles.section}>
         <div style={styles.analyticsHeader}>
@@ -213,6 +142,77 @@ export default async function AdminDashboard() {
             </div>
           </div>
         )}
+      </div>
+
+      {/* Statistics Overview */}
+      <div style={styles.section}>
+        <h2 style={styles.sectionHeading}>Content Overview</h2>
+        <div style={styles.statsGrid} className="admin-stats-grid">
+          <div style={styles.statCard}>
+            <div style={styles.statIcon}><MessageSquareQuote size={24} color="#1B73BA" /></div>
+            <p style={styles.statNumber}>{totalTestimonials ?? 0}</p>
+            <p style={styles.statLabel}>Total Testimonials</p>
+            <p style={styles.statSubtext}>
+              {publishedTestimonials ?? 0} published
+            </p>
+          </div>
+          <div style={styles.statCard}>
+            <div style={styles.statIcon}><Stethoscope size={24} color="#1B73BA" /></div>
+            <p style={styles.statNumber}>{totalServices ?? 0}</p>
+            <p style={styles.statLabel}>Total Services</p>
+            <p style={styles.statSubtext}>
+              {publishedServices ?? 0} published
+            </p>
+          </div>
+          <div style={styles.statCard}>
+            <div style={styles.statIcon}><ImageIcon size={24} color="#1B73BA" /></div>
+            <p style={styles.statNumber}>{totalTrustImages ?? 0}</p>
+            <p style={styles.statLabel}>Trust Images</p>
+            <p style={styles.statSubtext}>
+              {publishedTrustImages ?? 0} published
+            </p>
+          </div>
+          <div style={styles.statCard}>
+            <div style={styles.statIcon}><Mail size={24} color="#1B73BA" /></div>
+            <p style={styles.statNumber}>{totalContactMessages ?? 0}</p>
+            <p style={styles.statLabel}>Contact Messages</p>
+            <p style={styles.statSubtext}>
+              {newContactMessages ?? 0} new
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div style={styles.section}>
+        <h2 style={styles.sectionHeading}>Quick Actions</h2>
+        <div style={styles.linkGrid} className="admin-link-grid">
+          <Link href="/admin/testimonials/new" style={styles.actionCard}>
+            <div style={styles.actionIcon}><Plus size={24} /></div>
+            <p style={styles.actionTitle}>Add Testimonial</p>
+            <p style={styles.actionDesc}>Create a new patient testimonial</p>
+          </Link>
+          <Link href="/admin/services/new" style={styles.actionCard}>
+            <div style={styles.actionIcon}><Plus size={24} /></div>
+            <p style={styles.actionTitle}>Add Service</p>
+            <p style={styles.actionDesc}>Create a new dental service</p>
+          </Link>
+          <Link href="/admin/trust-images/new" style={styles.actionCard}>
+            <div style={styles.actionIcon}><Plus size={24} /></div>
+            <p style={styles.actionTitle}>Add Trust Image</p>
+            <p style={styles.actionDesc}>Upload trust section image</p>
+          </Link>
+          <Link href="/admin/contact-messages" style={styles.actionCard}>
+            <div style={styles.actionIcon}><Mail size={24} /></div>
+            <p style={styles.actionTitle}>View Messages</p>
+            <p style={styles.actionDesc}>Check contact form submissions</p>
+          </Link>
+          <Link href="/" target="_blank" style={{ ...styles.actionCard, ...styles.viewSiteCard }}>
+            <div style={{ ...styles.actionIcon, color: 'rgba(255,255,255,0.8)' }}><ArrowUpRight size={24} /></div>
+            <p style={{ ...styles.actionTitle, color: '#fff' }}>View Live Site</p>
+            <p style={{ ...styles.actionDesc, color: 'rgba(255,255,255,0.9)' }}>See your changes on the website</p>
+          </Link>
+        </div>
       </div>
 
       {/* Recent Activity */}

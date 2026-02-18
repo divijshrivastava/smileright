@@ -13,6 +13,7 @@ import {
   ImageIcon,
   FileText,
   Mail,
+  ChartColumn,
   ExternalLink,
   Menu,
   Users,
@@ -124,6 +125,10 @@ export default function AdminSidebar({ profile, unreadContactCount }: AdminSideb
             {unreadContactCount > 0 && (
               <span style={styles.unreadBadge}>{unreadContactCount > 99 ? '99+' : unreadContactCount}</span>
             )}
+          </Link>
+
+          <Link href="/admin/analytics" style={styles.navLink} onClick={() => setIsOpen(false)}>
+            <ChartColumn size={18} /> Analytics
           </Link>
 
           <div style={styles.divider} />
