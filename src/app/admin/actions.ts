@@ -17,7 +17,7 @@ import type { AppRole } from '@/lib/types'
 
 /** Enforce rate limit for an admin action; throws on exceeded. */
 async function enforceRateLimit(userId: string, action: string) {
-  const result = checkRateLimit(`admin:${userId}:${action}`, rateLimitConfigs.admin)
+  const result = await checkRateLimit(`admin:${userId}:${action}`, rateLimitConfigs.admin)
   if (!result.success) {
     throw new Error('Too many requests. Please try again later.')
   }
@@ -182,36 +182,15 @@ export async function approvePendingChange(changeId: string) {
         break
       }
       case 'set_primary': {
-        // For service images: unmark all, mark target, update service main image
         const serviceId = payload.service_id as string
         const imageId = change.resource_id
         if (!imageId || !serviceId) throw new Error('Image ID and Service ID required')
 
-        const { data: image } = await supabase
-          .from('service_images')
-          .select('image_url, alt_text')
-          .eq('id', imageId)
-          .single()
-        if (!image) throw new Error('Image not found')
-
-        await supabase
-          .from('service_images')
-          .update({ is_primary: false })
-          .eq('service_id', serviceId)
-
-        await supabase
-          .from('service_images')
-          .update({ is_primary: true, updated_by: user.id })
-          .eq('id', imageId)
-
-        const { error } = await supabase
-          .from('services')
-          .update({
-            image_url: image.image_url,
-            alt_text: image.alt_text || '',
-            updated_by: user.id,
-          })
-          .eq('id', serviceId)
+        const { error } = await supabase.rpc('set_service_image_primary_atomic', {
+          p_service_id: serviceId,
+          p_image_id: imageId,
+          p_actor: user.id,
+        })
         if (error) throw new Error(error.message)
         break
       }
@@ -1058,40 +1037,11 @@ export async function deleteServiceImage(imageId: string) {
   assertAdmin(role)
   await enforceRateLimit(user.id, 'service_image')
 
-  const { data: imageToDelete } = await supabase
-    .from('service_images')
-    .select('is_primary, service_id')
-    .eq('id', imageId)
-    .single()
-
-  const { error } = await supabase.from('service_images').delete().eq('id', imageId)
+  const { error } = await supabase.rpc('delete_service_image_atomic', {
+    p_image_id: imageId,
+    p_actor: user.id,
+  })
   if (error) throw new Error(error.message)
-
-  if (imageToDelete?.is_primary) {
-    const { data: nextImage } = await supabase
-      .from('service_images')
-      .select('id, image_url, alt_text')
-      .eq('service_id', imageToDelete.service_id)
-      .order('display_order', { ascending: true })
-      .limit(1)
-      .maybeSingle()
-
-    if (nextImage) {
-      await supabase
-        .from('service_images')
-        .update({ is_primary: true })
-        .eq('id', nextImage.id)
-
-      await supabase
-        .from('services')
-        .update({
-          image_url: nextImage.image_url,
-          alt_text: nextImage.alt_text || '',
-          updated_by: user.id,
-        })
-        .eq('id', imageToDelete.service_id)
-    }
-  }
 
   await logAuditEvent({
     action: 'service_image.delete',
@@ -1131,36 +1081,12 @@ export async function setServiceImagePrimary(serviceId: string, imageId: string)
     return { pending: true }
   }
 
-  const { data: image, error: imageError } = await supabase
-    .from('service_images')
-    .select('image_url, alt_text')
-    .eq('id', imageId)
-    .eq('service_id', serviceId)
-    .single()
-
-  if (imageError || !image) throw new Error('Image not found')
-
-  const { error: unmarkError } = await supabase
-    .from('service_images')
-    .update({ is_primary: false })
-    .eq('service_id', serviceId)
-  if (unmarkError) throw new Error(unmarkError.message)
-
-  const { error: markError } = await supabase
-    .from('service_images')
-    .update({ is_primary: true, updated_by: user.id })
-    .eq('id', imageId)
-  if (markError) throw new Error(markError.message)
-
-  const { error: serviceError } = await supabase
-    .from('services')
-    .update({
-      image_url: image.image_url,
-      alt_text: image.alt_text || '',
-      updated_by: user.id,
-    })
-    .eq('id', serviceId)
-  if (serviceError) throw new Error(serviceError.message)
+  const { error } = await supabase.rpc('set_service_image_primary_atomic', {
+    p_service_id: serviceId,
+    p_image_id: imageId,
+    p_actor: user.id,
+  })
+  if (error) throw new Error(error.message)
 
   await logAuditEvent({
     action: 'service_image.set_primary',
