@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { checkRateLimit } from '@/lib/security/rate-limit'
 import { validateContactInput } from '@/lib/security/input-validation'
+import { sendContactNotificationEmail } from '@/lib/notifications/contact-email'
 
 function getClientIp(request: NextRequest): string {
   const fwd = request.headers.get('x-forwarded-for')
@@ -108,6 +109,26 @@ export async function POST(request: NextRequest) {
         { error: 'Failed to submit message. Please try again.' },
         { status: 500 }
       )
+    }
+
+    try {
+      await sendContactNotificationEmail({
+        name: validated.name,
+        email: validated.email,
+        phone: validated.phone,
+        preferred_contact: validated.preferred_contact,
+        service_interest: validated.service_interest,
+        appointment_preference: validated.appointment_preference,
+        message: validated.message,
+        source_page: validated.source_page,
+        form_location: validated.form_location,
+        utm_source: validated.utm_source,
+        utm_medium: validated.utm_medium,
+        utm_campaign: validated.utm_campaign,
+      })
+    } catch (mailError) {
+      // Keep lead capture successful even if email notification fails.
+      console.error('Failed to send contact notification email:', mailError)
     }
 
     return NextResponse.json({ success: true })

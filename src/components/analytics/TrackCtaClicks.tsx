@@ -74,6 +74,10 @@ export default function TrackCtaClicks() {
           cta_type: ctaType,
           cta_text: payloadBase.link_text,
         })
+        trackEvent(`${ctaType}_click`, {
+          ...payloadBase,
+          cta_text: payloadBase.link_text,
+        })
         return
       }
 
