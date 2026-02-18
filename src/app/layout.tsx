@@ -220,7 +220,11 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${merriweather.variable} ${openSans.variable}`}>
+    <html
+      lang="en"
+      className={`${merriweather.variable} ${openSans.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         <meta
           name="viewport"
