@@ -33,11 +33,8 @@ export default function ImageUploader({ currentUrl, onUpload, bucket = 'testimon
       const supabase = createClient()
       const fileExt = file.name.split('.').pop()
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
-      const fileSizeMB = (file.size / 1024 / 1024).toFixed(2)
 
-      console.log('Uploading to bucket:', bucket, 'File:', fileName, 'Size:', fileSizeMB, 'MB')
-
-      const { error: uploadError, data: uploadData } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from(bucket)
         .upload(fileName, file)
 
@@ -48,13 +45,9 @@ export default function ImageUploader({ currentUrl, onUpload, bucket = 'testimon
         return
       }
 
-      console.log('Upload successful:', uploadData)
-
       const { data: { publicUrl } } = supabase.storage
         .from(bucket)
         .getPublicUrl(fileName)
-
-      console.log('Public URL:', publicUrl)
       onUpload(publicUrl)
       setUploading(false)
     } catch (err) {

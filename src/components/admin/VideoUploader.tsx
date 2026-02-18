@@ -49,9 +49,7 @@ export default function VideoUploader({ currentUrl, onUpload, bucket = 'testimon
       const fileExt = file.name.split('.').pop()
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
 
-      console.log('Uploading video:', fileName, 'Size:', fileSizeMB, 'MB')
-
-      const { error: uploadError, data: uploadData } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from(bucket)
         .upload(fileName, file)
 
@@ -62,13 +60,9 @@ export default function VideoUploader({ currentUrl, onUpload, bucket = 'testimon
         return
       }
 
-      console.log('Video upload successful:', uploadData)
-
       const { data: { publicUrl } } = supabase.storage
         .from(bucket)
         .getPublicUrl(fileName)
-
-      console.log('Video public URL:', publicUrl)
       onUpload(publicUrl)
       setUploading(false)
     } catch (err) {
