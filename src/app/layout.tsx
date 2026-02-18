@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Merriweather, Open_Sans } from 'next/font/google'
+import GoogleAnalytics from '@/components/analytics/GoogleAnalytics'
 import './globals.css'
 
 const merriweather = Merriweather({
@@ -17,6 +18,7 @@ const openSans = Open_Sans({
 })
 
 const BASE_URL = 'https://www.smilerightdental.org'
+const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
@@ -232,7 +234,10 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
         />
       </head>
-      <body>{children}</body>
+      <body>
+        {GA_MEASUREMENT_ID && <GoogleAnalytics measurementId={GA_MEASUREMENT_ID} />}
+        {children}
+      </body>
     </html>
   )
 }

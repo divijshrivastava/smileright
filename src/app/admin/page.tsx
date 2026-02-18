@@ -1,9 +1,11 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { MessageSquareQuote, Stethoscope, ImageIcon, Mail, Plus, ArrowUpRight } from 'lucide-react'
+import { getGoogleAnalyticsDashboard } from '@/lib/analytics/google-analytics'
+import { MessageSquareQuote, Stethoscope, ImageIcon, Mail, Plus, ArrowUpRight, Activity } from 'lucide-react'
 
 export default async function AdminDashboard() {
   const supabase = await createClient()
+  const ga = await getGoogleAnalyticsDashboard()
 
   // Fetch all statistics
   const { count: totalTestimonials } = await supabase
@@ -130,6 +132,87 @@ export default async function AdminDashboard() {
             <p style={{ ...styles.actionDesc, color: 'rgba(255,255,255,0.9)' }}>See your changes on the website</p>
           </Link>
         </div>
+      </div>
+
+      {/* Google Analytics */}
+      <div style={styles.section}>
+        <div style={styles.analyticsHeader}>
+          <h2 style={styles.sectionHeading}>Google Analytics (Last 30 Days)</h2>
+          <div style={styles.analyticsBadge}>
+            <Activity size={14} />
+            {ga.configured ? 'Connected' : 'Not Configured'}
+          </div>
+        </div>
+
+        {!ga.configured ? (
+          <div style={styles.analyticsErrorCard}>
+            <p style={styles.analyticsErrorText}>
+              Add `NEXT_PUBLIC_GA_MEASUREMENT_ID`, `GA4_PROPERTY_ID`, `GA4_CLIENT_EMAIL`, and `GA4_PRIVATE_KEY` in server environment variables.
+            </p>
+          </div>
+        ) : ga.error ? (
+          <div style={styles.analyticsErrorCard}>
+            <p style={styles.analyticsErrorText}>{ga.error}</p>
+          </div>
+        ) : (
+          <div style={styles.analyticsWrap}>
+            <div style={styles.analyticsStatsGrid}>
+              <div style={styles.analyticsStatCard}>
+                <p style={styles.analyticsStatNumber}>{ga.overview.activeUsers.toLocaleString()}</p>
+                <p style={styles.analyticsStatLabel}>Active Users</p>
+              </div>
+              <div style={styles.analyticsStatCard}>
+                <p style={styles.analyticsStatNumber}>{ga.overview.newUsers.toLocaleString()}</p>
+                <p style={styles.analyticsStatLabel}>New Users</p>
+              </div>
+              <div style={styles.analyticsStatCard}>
+                <p style={styles.analyticsStatNumber}>{ga.overview.sessions.toLocaleString()}</p>
+                <p style={styles.analyticsStatLabel}>Sessions</p>
+              </div>
+              <div style={styles.analyticsStatCard}>
+                <p style={styles.analyticsStatNumber}>{ga.overview.pageViews.toLocaleString()}</p>
+                <p style={styles.analyticsStatLabel}>Page Views</p>
+              </div>
+              <div style={styles.analyticsStatCard}>
+                <p style={styles.analyticsStatNumber}>{ga.overview.eventCount.toLocaleString()}</p>
+                <p style={styles.analyticsStatLabel}>Event Count</p>
+              </div>
+            </div>
+
+            <div style={styles.analyticsTables}>
+              <div style={styles.analyticsTableCard}>
+                <h3 style={styles.analyticsTableHeading}>Top Events</h3>
+                {ga.events.length === 0 ? (
+                  <p style={styles.analyticsEmpty}>No events found.</p>
+                ) : (
+                  <div style={styles.analyticsList}>
+                    {ga.events.map((event) => (
+                      <div key={event.eventName} style={styles.analyticsRow}>
+                        <span style={styles.analyticsRowLabel}>{event.eventName}</span>
+                        <span style={styles.analyticsRowValue}>{event.count.toLocaleString()}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div style={styles.analyticsTableCard}>
+                <h3 style={styles.analyticsTableHeading}>Top Pages</h3>
+                {ga.pages.length === 0 ? (
+                  <p style={styles.analyticsEmpty}>No pages found.</p>
+                ) : (
+                  <div style={styles.analyticsList}>
+                    {ga.pages.map((page) => (
+                      <div key={page.path} style={styles.analyticsRow}>
+                        <span style={styles.analyticsRowLabel}>{page.path}</span>
+                        <span style={styles.analyticsRowValue}>{page.views.toLocaleString()}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Recent Activity */}
@@ -294,6 +377,126 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '0.9rem',
     color: '#666',
     margin: 0,
+  },
+  analyticsHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: '10px',
+    marginBottom: '1rem',
+  },
+  analyticsBadge: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '6px',
+    background: '#e8f1fb',
+    color: '#1B73BA',
+    borderRadius: '999px',
+    padding: '6px 12px',
+    fontSize: '0.78rem',
+    fontWeight: 700,
+    fontFamily: 'var(--font-sans)',
+    textTransform: 'uppercase' as const,
+    letterSpacing: '0.06em',
+  },
+  analyticsWrap: {
+    display: 'flex',
+    flexDirection: 'column' as const,
+    gap: '18px',
+  },
+  analyticsStatsGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))',
+    gap: '12px',
+  },
+  analyticsStatCard: {
+    background: '#fff',
+    border: '1px solid #e0e0e0',
+    borderRadius: '10px',
+    padding: '16px',
+    boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
+    textAlign: 'center' as const,
+  },
+  analyticsStatNumber: {
+    margin: 0,
+    fontSize: '1.55rem',
+    fontWeight: 700,
+    color: '#1B73BA',
+    fontFamily: 'var(--font-serif)',
+  },
+  analyticsStatLabel: {
+    margin: '6px 0 0',
+    fontSize: '0.82rem',
+    color: '#666',
+    fontFamily: 'var(--font-sans)',
+    textTransform: 'uppercase' as const,
+    letterSpacing: '0.06em',
+    fontWeight: 600,
+  },
+  analyticsTables: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+    gap: '16px',
+  },
+  analyticsTableCard: {
+    background: '#fff',
+    border: '1px solid #e0e0e0',
+    borderRadius: '10px',
+    padding: '16px',
+    boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
+  },
+  analyticsTableHeading: {
+    margin: '0 0 12px',
+    fontSize: '1rem',
+    color: '#292828',
+    fontFamily: 'var(--font-serif)',
+  },
+  analyticsList: {
+    display: 'flex',
+    flexDirection: 'column' as const,
+    gap: '8px',
+  },
+  analyticsRow: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: '10px',
+    padding: '8px 0',
+    borderBottom: '1px solid #f0f0f0',
+  },
+  analyticsRowLabel: {
+    fontSize: '0.88rem',
+    color: '#3f3f3f',
+    fontFamily: 'var(--font-sans)',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap' as const,
+  },
+  analyticsRowValue: {
+    fontSize: '0.86rem',
+    color: '#1B73BA',
+    fontWeight: 700,
+    fontFamily: 'var(--font-sans)',
+    whiteSpace: 'nowrap' as const,
+  },
+  analyticsEmpty: {
+    margin: 0,
+    color: '#777',
+    fontFamily: 'var(--font-sans)',
+    fontSize: '0.9rem',
+  },
+  analyticsErrorCard: {
+    background: '#fff5f5',
+    border: '1px solid #ffc9c9',
+    borderRadius: '10px',
+    padding: '14px 16px',
+  },
+  analyticsErrorText: {
+    margin: 0,
+    color: '#9b2c2c',
+    fontFamily: 'var(--font-sans)',
+    fontSize: '0.88rem',
+    lineHeight: 1.5,
   },
   recentSection: {
     display: 'grid',

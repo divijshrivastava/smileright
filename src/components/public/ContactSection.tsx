@@ -42,6 +42,7 @@ type AnalyticsState = {
 declare global {
   interface Window {
     dataLayer?: Array<Record<string, unknown>>
+    gtag?: (...args: unknown[]) => void
   }
 }
 
@@ -135,6 +136,13 @@ export default function ContactSection({
 
       window.dataLayer?.push({
         event: 'contact_form_submit',
+        form_id: formId,
+        form_location: formLocation,
+        source_page: sourcePage,
+        preferred_contact: form.preferred_contact,
+        service_interest: form.service_interest || 'not_selected',
+      })
+      window.gtag?.('event', 'contact_form_submit', {
         form_id: formId,
         form_location: formLocation,
         source_page: sourcePage,
