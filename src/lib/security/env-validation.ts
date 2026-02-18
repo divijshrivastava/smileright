@@ -37,6 +37,11 @@ const envSchema: EnvSchema = {
     type: 'string',
     description: 'Node environment (development, production, test)',
   },
+  CRON_SECRET: {
+    required: false,
+    type: 'string',
+    description: 'Secret used to authorize internal cron routes',
+  },
 }
 
 /**
