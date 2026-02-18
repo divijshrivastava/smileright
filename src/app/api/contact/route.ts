@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { checkRateLimit } from '@/lib/security/rate-limit'
 import { validateContactInput } from '@/lib/security/input-validation'
 import { sendContactNotificationEmail } from '@/lib/notifications/contact-email'
@@ -88,10 +88,7 @@ export async function POST(request: NextRequest) {
       return duplicateBlock
     }
 
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    )
+    const supabase = createAdminClient()
 
     const userAgent = request.headers.get('user-agent') || validated.user_agent || null
 
