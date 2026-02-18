@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useState, useEffect, useRef } from 'react'
+import { createClient } from '@/lib/supabase/client'
 
 interface TreatmentItem {
     slug: string
@@ -18,11 +19,7 @@ export default function TreatmentsDropdown() {
         // Fetch published services from the API
         async function fetchServices() {
             try {
-                const { createClient } = await import('@supabase/supabase-js')
-                const supabase = createClient(
-                    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-                    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-                )
+                const supabase = createClient()
 
                 const { data: services } = await supabase
                     .from('services')

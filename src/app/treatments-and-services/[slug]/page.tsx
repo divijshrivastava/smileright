@@ -7,6 +7,7 @@ import Footer from '@/components/public/Footer'
 import FloatingWhatsApp from '@/components/interactive/FloatingWhatsApp'
 import ContactSection from '@/components/public/ContactSection'
 import { createClient } from '@/lib/supabase/server'
+import { createStaticClient } from '@/lib/supabase/static'
 import type { Service } from '@/lib/types'
 
 const BASE_URL = 'https://www.smilerightdental.org'
@@ -18,12 +19,7 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
 
-  // Use direct client for static generation
-  const { createClient: createSupabaseClient } = await import('@supabase/supabase-js')
-  const supabase = createSupabaseClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+  const supabase = createStaticClient()
 
   const { data: service } = await supabase
     .from('services')
@@ -53,12 +49,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export async function generateStaticParams() {
-  // Use direct client for static generation (no cookies needed)
-  const { createClient: createSupabaseClient } = await import('@supabase/supabase-js')
-  const supabase = createSupabaseClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+  const supabase = createStaticClient()
 
   const { data: services } = await supabase
     .from('services')
