@@ -13,7 +13,11 @@
       "Bash(gh pr create:*)",
       "Bash(gh pr merge:*)",
       "WebFetch(domain:search.google.com)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(gh run list:*)",
+      "Bash(gh api:*)",
+      "WebFetch(domain:vercel.com)",
+      "Bash(tree:*)"
     ]
   }
 }
