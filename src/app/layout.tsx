@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Merriweather, Open_Sans } from 'next/font/google'
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics'
+import TrackCtaClicks from '@/components/analytics/TrackCtaClicks'
 import './globals.css'
 
 const merriweather = Merriweather({
@@ -235,7 +236,12 @@ export default function RootLayout({
         />
       </head>
       <body>
-        {GA_MEASUREMENT_ID && <GoogleAnalytics measurementId={GA_MEASUREMENT_ID} />}
+        {GA_MEASUREMENT_ID && (
+          <>
+            <GoogleAnalytics measurementId={GA_MEASUREMENT_ID} />
+            <TrackCtaClicks />
+          </>
+        )}
         {children}
       </body>
     </html>

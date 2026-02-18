@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { Activity } from 'lucide-react'
+import { Activity, Users, UserPlus, Gauge, Eye, MousePointerClick } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { getGoogleAnalyticsDashboard } from '@/lib/analytics/google-analytics'
 import type { AppRole } from '@/lib/types'
@@ -25,6 +25,15 @@ export default async function AnalyticsPage() {
   }
 
   const ga = await getGoogleAnalyticsDashboard()
+  const maxEventCount = Math.max(1, ...ga.events.map((item) => item.count))
+  const maxPageViews = Math.max(1, ...ga.pages.map((item) => item.views))
+  const statCards = [
+    { label: 'Active Users', value: ga.overview.activeUsers, icon: <Users size={18} color="#1B73BA" /> },
+    { label: 'New Users', value: ga.overview.newUsers, icon: <UserPlus size={18} color="#1B73BA" /> },
+    { label: 'Sessions', value: ga.overview.sessions, icon: <Gauge size={18} color="#1B73BA" /> },
+    { label: 'Page Views', value: ga.overview.pageViews, icon: <Eye size={18} color="#1B73BA" /> },
+    { label: 'Event Count', value: ga.overview.eventCount, icon: <MousePointerClick size={18} color="#1B73BA" /> },
+  ]
 
   return (
     <div>
@@ -52,26 +61,13 @@ export default async function AnalyticsPage() {
       ) : (
         <>
           <div style={styles.statsGrid}>
-            <div style={styles.statCard}>
-              <p style={styles.statNumber}>{ga.overview.activeUsers.toLocaleString()}</p>
-              <p style={styles.statLabel}>Active Users</p>
-            </div>
-            <div style={styles.statCard}>
-              <p style={styles.statNumber}>{ga.overview.newUsers.toLocaleString()}</p>
-              <p style={styles.statLabel}>New Users</p>
-            </div>
-            <div style={styles.statCard}>
-              <p style={styles.statNumber}>{ga.overview.sessions.toLocaleString()}</p>
-              <p style={styles.statLabel}>Sessions</p>
-            </div>
-            <div style={styles.statCard}>
-              <p style={styles.statNumber}>{ga.overview.pageViews.toLocaleString()}</p>
-              <p style={styles.statLabel}>Page Views</p>
-            </div>
-            <div style={styles.statCard}>
-              <p style={styles.statNumber}>{ga.overview.eventCount.toLocaleString()}</p>
-              <p style={styles.statLabel}>Event Count</p>
-            </div>
+            {statCards.map((stat) => (
+              <div key={stat.label} style={styles.statCard}>
+                <div style={styles.statIconWrap}>{stat.icon}</div>
+                <p style={styles.statNumber}>{stat.value.toLocaleString()}</p>
+                <p style={styles.statLabel}>{stat.label}</p>
+              </div>
+            ))}
           </div>
 
           <div style={styles.tablesGrid}>
@@ -83,7 +79,17 @@ export default async function AnalyticsPage() {
                 <div style={styles.list}>
                   {ga.events.map((event) => (
                     <div key={event.eventName} style={styles.row}>
-                      <span style={styles.rowLabel}>{event.eventName}</span>
+                      <div style={styles.rowMain}>
+                        <span style={styles.rowLabel}>{event.eventName}</span>
+                        <div style={styles.rowBarTrack}>
+                          <div
+                            style={{
+                              ...styles.rowBarFill,
+                              width: `${Math.max(8, (event.count / maxEventCount) * 100)}%`,
+                            }}
+                          />
+                        </div>
+                      </div>
                       <span style={styles.rowValue}>{event.count.toLocaleString()}</span>
                     </div>
                   ))}
@@ -99,7 +105,17 @@ export default async function AnalyticsPage() {
                 <div style={styles.list}>
                   {ga.pages.map((page) => (
                     <div key={page.path} style={styles.row}>
-                      <span style={styles.rowLabel}>{page.path}</span>
+                      <div style={styles.rowMain}>
+                        <span style={styles.rowLabel}>{page.path}</span>
+                        <div style={styles.rowBarTrack}>
+                          <div
+                            style={{
+                              ...styles.rowBarFill,
+                              width: `${Math.max(8, (page.views / maxPageViews) * 100)}%`,
+                            }}
+                          />
+                        </div>
+                      </div>
                       <span style={styles.rowValue}>{page.views.toLocaleString()}</span>
                     </div>
                   ))}
@@ -156,11 +172,21 @@ const styles: Record<string, React.CSSProperties> = {
   },
   statCard: {
     background: '#fff',
-    border: '1px solid #e0e0e0',
-    borderRadius: '10px',
-    padding: '18px',
+    border: '1px solid #d9e7f6',
+    borderRadius: '12px',
+    padding: '16px 18px',
     textAlign: 'center' as const,
-    boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
+    boxShadow: '0 3px 10px rgba(27,115,186,0.08)',
+  },
+  statIconWrap: {
+    width: '34px',
+    height: '34px',
+    margin: '0 auto 8px',
+    borderRadius: '50%',
+    background: '#edf4fb',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   statNumber: {
     margin: 0,
@@ -199,23 +225,41 @@ const styles: Record<string, React.CSSProperties> = {
   list: {
     display: 'flex',
     flexDirection: 'column' as const,
-    gap: '8px',
+    gap: '10px',
   },
   row: {
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     gap: '10px',
-    borderBottom: '1px solid #f0f0f0',
-    padding: '8px 0',
+    borderBottom: '1px solid #edf0f4',
+    padding: '8px 0 10px',
+  },
+  rowMain: {
+    minWidth: 0,
+    flex: 1,
   },
   rowLabel: {
+    display: 'block',
     color: '#3f3f3f',
     fontFamily: 'var(--font-sans)',
     fontSize: '0.88rem',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap' as const,
+  },
+  rowBarTrack: {
+    width: '100%',
+    height: '7px',
+    marginTop: '7px',
+    background: '#e8eef6',
+    borderRadius: '999px',
+    overflow: 'hidden',
+  },
+  rowBarFill: {
+    height: '100%',
+    background: 'linear-gradient(90deg, #1B73BA, #4a9fe3)',
+    borderRadius: '999px',
   },
   rowValue: {
     color: '#1B73BA',
