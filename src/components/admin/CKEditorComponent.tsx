@@ -28,7 +28,7 @@ interface FileRepositoryPlugin {
 }
 
 interface EditorInstance {
-  destroy: () => Promise<void>
+  destroy: () => Promise<unknown>
   getData: () => string
   setData: (data: string) => void
   model: {
@@ -104,7 +104,8 @@ export default function CKEditorComponent({ value, onChange }: CKEditorComponent
           }
         }
 
-        function uploadPlugin(editor: EditorInstance) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        function uploadPlugin(editor: any) {
           editor.plugins.get('FileRepository').createUploadAdapter = (loader: UploadLoader) => {
             return uploadAdapter(loader)
           }
