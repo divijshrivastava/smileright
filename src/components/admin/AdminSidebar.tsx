@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -75,6 +75,8 @@ export default function AdminSidebar({
   })
   const isEditor = canEditContent(profile.role)
   const isAdmin = canApproveChanges(profile.role)
+  const previousContactCountRef = useRef(unreadContactCount)
+  const hasLoadedCountsRef = useRef(false)
 
   const syncPushSubscription = useCallback(async () => {
     try {
@@ -128,7 +130,7 @@ export default function AdminSidebar({
   useEffect(() => {
     if (!('serviceWorker' in navigator)) return
 
-    navigator.serviceWorker.register('/sw.js', { scope: '/admin' }).catch((error: unknown) => {
+    navigator.serviceWorker.register('/sw.js', { scope: '/admin/' }).catch((error: unknown) => {
       console.error('Failed to register service worker:', error)
     })
   }, [])
@@ -203,13 +205,49 @@ export default function AdminSidebar({
       }
     }
 
-    const refreshCounts = async () => {
+    const maybeNotifyNewContact = async (nextContactCount: number) => {
+      if (!hasLoadedCountsRef.current) return
+      if (nextContactCount <= previousContactCountRef.current) return
+      if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return
+
+      const unseenCount = nextContactCount - previousContactCountRef.current
+      const title = unseenCount === 1 ? 'New contact message' : `${unseenCount} new contact messages`
+      const body = 'Tap to open admin contact messages'
+
+      try {
+        const registration = await navigator.serviceWorker.getRegistration('/admin/')
+        if (registration) {
+          await registration.showNotification(title, {
+            body,
+            tag: 'contact-message-local',
+            data: { url: '/admin/contact-messages' },
+            icon: '/images/logo.png',
+            badge: '/images/logo.png',
+            renotify: true,
+          })
+          return
+        }
+      } catch {
+        // Fall back to window notification below.
+      }
+
+      try {
+        new Notification(title, { body })
+      } catch {
+        // Ignore notification errors on unsupported browsers.
+      }
+    }
+
+    const refreshCounts = async (source: 'initial' | 'realtime' | 'poll' = 'realtime') => {
       const { count: newContacts } = await supabase
         .from('contact_messages')
         .select('*', { count: 'exact', head: true })
         .eq('status', 'new')
 
       const nextContactCount = newContacts ?? 0
+      if (source !== 'initial') {
+        await maybeNotifyNewContact(nextContactCount)
+      }
       setContactCount(nextContactCount)
 
       let nextApprovalCount = 0
@@ -224,9 +262,11 @@ export default function AdminSidebar({
       }
 
       await applyAppBadge(nextContactCount, nextApprovalCount)
+      previousContactCountRef.current = nextContactCount
+      hasLoadedCountsRef.current = true
     }
 
-    void refreshCounts()
+    void refreshCounts('initial')
 
     const contactChannel = supabase
       .channel('admin-contact-messages')
@@ -236,21 +276,21 @@ export default function AdminSidebar({
         table: 'contact_messages',
       }, (payload) => {
         void payload
-        void refreshCounts()
+        void refreshCounts('realtime')
       })
       .on('postgres_changes', {
         event: 'UPDATE',
         schema: 'public',
         table: 'contact_messages',
       }, () => {
-        void refreshCounts()
+        void refreshCounts('realtime')
       })
       .on('postgres_changes', {
         event: 'DELETE',
         schema: 'public',
         table: 'contact_messages',
       }, () => {
-        void refreshCounts()
+        void refreshCounts('realtime')
       })
       .subscribe()
 
@@ -265,26 +305,31 @@ export default function AdminSidebar({
           filter: 'status=eq.pending',
         }, (payload) => {
           void payload
-          void refreshCounts()
+          void refreshCounts('realtime')
         })
         .on('postgres_changes', {
           event: 'UPDATE',
           schema: 'public',
           table: 'pending_changes',
         }, () => {
-          void refreshCounts()
+          void refreshCounts('realtime')
         })
         .on('postgres_changes', {
           event: 'DELETE',
           schema: 'public',
           table: 'pending_changes',
         }, () => {
-          void refreshCounts()
+          void refreshCounts('realtime')
         })
         .subscribe()
     }
 
+    const pollTimer = window.setInterval(() => {
+      void refreshCounts('poll')
+    }, 30_000)
+
     return () => {
+      window.clearInterval(pollTimer)
       void supabase.removeChannel(contactChannel)
       if (approvalsChannel) {
         void supabase.removeChannel(approvalsChannel)
