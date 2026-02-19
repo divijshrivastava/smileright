@@ -4,6 +4,11 @@ import Link from 'next/link'
 import ServiceList from '@/components/admin/ServiceList'
 import type { Service, Profile } from '@/lib/types'
 import { canEditContent } from '@/lib/permissions'
+import {
+  adminPageHeaderStyle,
+  adminPageTitleInHeaderStyle,
+  adminPrimaryActionLinkStyle,
+} from '@/styles/admin'
 
 export default async function ServicesPage() {
   const supabase = await createClient()
@@ -43,10 +48,10 @@ export default async function ServicesPage() {
 
   return (
     <div className="admin-page-content">
-      <div style={styles.header} className="admin-page-header">
-        <h1 style={styles.title} className="admin-page-title">Treatments & Services</h1>
+      <div style={adminPageHeaderStyle} className="admin-page-header">
+        <h1 style={adminPageTitleInHeaderStyle} className="admin-page-title">Treatments & Services</h1>
         {canEditContent(role) && (
-          <Link href="/admin/services/new" style={styles.addBtn} className="admin-add-btn admin-primary-btn">
+          <Link href="/admin/services/new" style={adminPrimaryActionLinkStyle} className="admin-add-btn admin-primary-btn">
             + Add Treatment/Service
           </Link>
         )}
@@ -54,32 +59,4 @@ export default async function ServicesPage() {
       <ServiceList services={(services as Service[]) || []} userRole={role} />
     </div>
   )
-}
-
-const styles: Record<string, React.CSSProperties> = {
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '2rem',
-  },
-  title: {
-    fontFamily: 'var(--font-serif)',
-    fontSize: '2rem',
-    color: '#292828',
-    margin: 0,
-  },
-  addBtn: {
-    display: 'inline-block',
-    padding: '12px 24px',
-    background: '#1B73BA',
-    color: '#fff',
-    textDecoration: 'none',
-    borderRadius: '4px',
-    fontSize: '0.95rem',
-    fontWeight: 600,
-    fontFamily: 'var(--font-sans)',
-    textTransform: 'uppercase' as const,
-    letterSpacing: '0.05em',
-  },
 }

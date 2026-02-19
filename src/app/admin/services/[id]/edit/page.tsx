@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import ServiceForm from '@/components/admin/ServiceForm'
 import type { Service, ServiceImage } from '@/lib/types'
+import { adminPageTitleStyle } from '@/styles/admin'
 
 export default async function EditServicePage({
   params,
@@ -51,18 +52,9 @@ export default async function EditServicePage({
   }
 
   return (
-    <div>
-      <h1 style={styles.title}>Edit Service</h1>
+    <div className="admin-page-content">
+      <h1 style={adminPageTitleStyle} className="admin-page-title">Edit Service</h1>
       <ServiceForm service={serviceWithSortedImages as Service} />
     </div>
   )
-}
-
-const styles: Record<string, React.CSSProperties> = {
-  title: {
-    fontFamily: 'var(--font-serif)',
-    fontSize: '2rem',
-    color: '#292828',
-    marginBottom: '2rem',
-  },
 }

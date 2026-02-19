@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import ServiceForm from '@/components/admin/ServiceForm'
+import { adminPageTitleStyle } from '@/styles/admin'
 
 export default async function NewServicePage() {
   const supabase = await createClient()
@@ -12,17 +13,8 @@ export default async function NewServicePage() {
 
   return (
     <div className="admin-page-content">
-      <h1 style={styles.title} className="admin-page-title">Add New Service</h1>
+      <h1 style={adminPageTitleStyle} className="admin-page-title">Add New Service</h1>
       <ServiceForm />
     </div>
   )
-}
-
-const styles: Record<string, React.CSSProperties> = {
-  title: {
-    fontFamily: 'var(--font-serif)',
-    fontSize: '2rem',
-    color: '#292828',
-    marginBottom: '2rem',
-  },
 }

@@ -4,6 +4,11 @@ import Link from 'next/link'
 import TrustImageList from '@/components/admin/TrustImageList'
 import type { TrustImage, Profile } from '@/lib/types'
 import { canEditContent } from '@/lib/permissions'
+import {
+  adminPageHeaderStyle,
+  adminPageTitleInHeaderStyle,
+  adminPrimaryActionLinkStyle,
+} from '@/styles/admin'
 
 export default async function TrustImagesPage() {
   const supabase = await createClient()
@@ -32,10 +37,10 @@ export default async function TrustImagesPage() {
 
   return (
     <div className="admin-page-content">
-      <div style={styles.header} className="admin-page-header">
-        <h1 style={styles.title} className="admin-page-title">Trust Section Images</h1>
+      <div style={adminPageHeaderStyle} className="admin-page-header">
+        <h1 style={adminPageTitleInHeaderStyle} className="admin-page-title">Trust Section Images</h1>
         {canEditContent(role) && (
-          <Link href="/admin/trust-images/new" style={styles.createBtn} className="admin-add-btn admin-primary-btn">
+          <Link href="/admin/trust-images/new" style={adminPrimaryActionLinkStyle} className="admin-add-btn admin-primary-btn">
             + New Image
           </Link>
         )}
@@ -44,32 +49,4 @@ export default async function TrustImagesPage() {
       <TrustImageList images={trustImages} userRole={role} />
     </div>
   )
-}
-
-const styles: Record<string, React.CSSProperties> = {
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '2rem',
-  },
-  title: {
-    fontFamily: 'var(--font-serif)',
-    fontSize: '2rem',
-    color: '#292828',
-    margin: 0,
-  },
-  createBtn: {
-    display: 'inline-block',
-    padding: '12px 24px',
-    background: '#1B73BA',
-    color: '#fff',
-    textDecoration: 'none',
-    borderRadius: '4px',
-    fontSize: '0.95rem',
-    fontWeight: 600,
-    fontFamily: 'var(--font-sans)',
-    textTransform: 'uppercase' as const,
-    letterSpacing: '0.05em',
-  },
 }

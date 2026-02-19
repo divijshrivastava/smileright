@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import TrustImageForm from '@/components/admin/TrustImageForm'
 import type { TrustImage } from '@/lib/types'
+import { adminPageTitleStyle } from '@/styles/admin'
 
 interface EditTrustImagePageProps {
   params: Promise<{ id: string }>
@@ -30,17 +31,8 @@ export default async function EditTrustImagePage({ params }: EditTrustImagePageP
 
   return (
     <div className="admin-page-content">
-      <h1 style={styles.title} className="admin-page-title">Edit Trust Image</h1>
+      <h1 style={adminPageTitleStyle} className="admin-page-title">Edit Trust Image</h1>
       <TrustImageForm trustImage={trustImage} />
     </div>
   )
-}
-
-const styles: Record<string, React.CSSProperties> = {
-  title: {
-    fontFamily: 'var(--font-serif)',
-    fontSize: '2rem',
-    color: '#292828',
-    marginBottom: '2rem',
-  },
 }
