@@ -1,5 +1,3 @@
-'use server'
-
 export { submitPendingChange, approvePendingChange, rejectPendingChange } from './actions/approvals'
 export { revalidateHomePage } from './actions/revalidation'
 export { createTestimonial, updateTestimonial, deleteTestimonial, togglePublish } from './actions/testimonials'
