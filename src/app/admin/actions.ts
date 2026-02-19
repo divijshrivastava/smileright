@@ -1,6 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { BASE_URL } from '@/lib/constants'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { logAuditEvent } from '@/lib/security/audit-log'
@@ -1410,13 +1411,7 @@ export async function inviteUser(emailInput: string, roleInput: AppRole, fullNam
     }
 
     const adminClient = createAdminClient()
-    const baseUrl = (
-      process.env.NEXT_PUBLIC_SITE_URL ||
-      process.env.NEXT_PUBLIC_APP_URL ||
-      process.env.SITE_URL ||
-      'https://www.smilerightdental.org'
-    ).replace(/\/$/, '')
-    const redirectTo = `${baseUrl}/auth/set-password`
+    const redirectTo = `${BASE_URL}/auth/set-password`
 
     const { data: inviteData, error: inviteError } = await adminClient.auth.admin.inviteUserByEmail(email, {
       redirectTo,

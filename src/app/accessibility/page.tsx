@@ -2,12 +2,13 @@ import type { Metadata } from 'next'
 import Header from '@/components/public/Header'
 import Footer from '@/components/public/Footer'
 import FloatingWhatsApp from '@/components/interactive/FloatingWhatsApp'
+import { BASE_URL } from '@/lib/constants'
 
 export const metadata: Metadata = {
   title: 'Accessibility | Smile Right Dental Clinic',
   description: 'Accessibility statement for Smile Right Multispecialty Dental Clinic & Implant Centre. Learn about our commitment to making our website accessible to everyone.',
   alternates: {
-    canonical: 'https://www.smilerightdental.org/accessibility',
+    canonical: `${BASE_URL}/accessibility`,
   },
 }
 

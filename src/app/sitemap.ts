@@ -1,7 +1,6 @@
 import type { MetadataRoute } from 'next'
+import { BASE_URL } from '@/lib/constants'
 import { createStaticClient } from '@/lib/supabase/static'
-
-const BASE_URL = 'https://www.smilerightdental.org'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = createStaticClient()

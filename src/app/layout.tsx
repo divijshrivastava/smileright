@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Merriweather, Open_Sans } from 'next/font/google'
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics'
 import TrackCtaClicks from '@/components/analytics/TrackCtaClicks'
+import { BASE_URL } from '@/lib/constants'
 import './globals.css'
 
 const merriweather = Merriweather({
@@ -18,7 +19,6 @@ const openSans = Open_Sans({
   display: 'swap',
 })
 
-const BASE_URL = 'https://www.smilerightdental.org'
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID
 
 export const metadata: Metadata = {

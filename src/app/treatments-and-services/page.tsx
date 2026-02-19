@@ -4,8 +4,7 @@ import Header from '@/components/public/Header'
 import Footer from '@/components/public/Footer'
 import FloatingWhatsApp from '@/components/interactive/FloatingWhatsApp'
 import ContactSection from '@/components/public/ContactSection'
-
-const BASE_URL = 'https://www.smilerightdental.org'
+import { BASE_URL } from '@/lib/constants'
 
 export const metadata: Metadata = {
   title: 'Dental Treatments & Services | Smile Right Dental Clinic Kandivali, Malad & Borivali',

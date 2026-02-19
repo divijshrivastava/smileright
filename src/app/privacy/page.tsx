@@ -2,12 +2,13 @@ import type { Metadata } from 'next'
 import Header from '@/components/public/Header'
 import Footer from '@/components/public/Footer'
 import FloatingWhatsApp from '@/components/interactive/FloatingWhatsApp'
+import { BASE_URL } from '@/lib/constants'
 
 export const metadata: Metadata = {
   title: 'Privacy Policy | Smile Right Dental Clinic',
   description: 'Privacy Policy for Smile Right Multispecialty Dental Clinic & Implant Centre. Learn how we collect, use, and protect your personal information.',
   alternates: {
-    canonical: 'https://www.smilerightdental.org/privacy',
+    canonical: `${BASE_URL}/privacy`,
   },
 }
 

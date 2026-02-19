@@ -6,12 +6,11 @@ import Footer from '@/components/public/Footer'
 import FloatingWhatsApp from '@/components/interactive/FloatingWhatsApp'
 import BlogRouteScrollReset from '@/components/interactive/BlogRouteScrollReset'
 import ContactSection from '@/components/public/ContactSection'
+import { BASE_URL } from '@/lib/constants'
 import { createClient } from '@/lib/supabase/server'
 import type { Blog } from '@/lib/types'
 
 export const revalidate = 3600
-
-const BASE_URL = 'https://www.smilerightdental.org'
 
 export const metadata: Metadata = {
   title: 'Dental Health Blog | Expert Tips & Advice | Smile Right Dental',

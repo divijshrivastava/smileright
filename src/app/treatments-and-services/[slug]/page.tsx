@@ -6,11 +6,10 @@ import Header from '@/components/public/Header'
 import Footer from '@/components/public/Footer'
 import FloatingWhatsApp from '@/components/interactive/FloatingWhatsApp'
 import ContactSection from '@/components/public/ContactSection'
+import { BASE_URL } from '@/lib/constants'
 import { createClient } from '@/lib/supabase/server'
 import { createStaticClient } from '@/lib/supabase/static'
 import type { Service, ServiceImage } from '@/lib/types'
-
-const BASE_URL = 'https://www.smilerightdental.org'
 
 type Props = {
   params: Promise<{ slug: string }>

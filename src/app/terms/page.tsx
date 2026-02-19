@@ -2,12 +2,13 @@ import type { Metadata } from 'next'
 import Header from '@/components/public/Header'
 import Footer from '@/components/public/Footer'
 import FloatingWhatsApp from '@/components/interactive/FloatingWhatsApp'
+import { BASE_URL } from '@/lib/constants'
 
 export const metadata: Metadata = {
   title: 'Terms of Service | Smile Right Dental Clinic',
   description: 'Terms of Service for Smile Right Multispecialty Dental Clinic & Implant Centre. Read about our website usage terms, appointment policies, and treatment disclaimers.',
   alternates: {
-    canonical: 'https://www.smilerightdental.org/terms',
+    canonical: `${BASE_URL}/terms`,
   },
 }
 
