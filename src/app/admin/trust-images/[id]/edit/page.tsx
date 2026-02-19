@@ -29,8 +29,8 @@ export default async function EditTrustImagePage({ params }: EditTrustImagePageP
   const trustImage: TrustImage = image
 
   return (
-    <div>
-      <h1 style={styles.title}>Edit Trust Image</h1>
+    <div className="admin-page-content">
+      <h1 style={styles.title} className="admin-page-title">Edit Trust Image</h1>
       <TrustImageForm trustImage={trustImage} />
     </div>
   )

@@ -31,11 +31,11 @@ export default async function TrustImagesPage() {
   const trustImages: TrustImage[] = images ?? []
 
   return (
-    <div>
+    <div className="admin-page-content">
       <div style={styles.header} className="admin-page-header">
-        <h1 style={styles.title}>Trust Section Images</h1>
+        <h1 style={styles.title} className="admin-page-title">Trust Section Images</h1>
         {canEditContent(role) && (
-          <Link href="/admin/trust-images/new" style={styles.createBtn} className="admin-add-btn">
+          <Link href="/admin/trust-images/new" style={styles.createBtn} className="admin-add-btn admin-primary-btn">
             + New Image
           </Link>
         )}

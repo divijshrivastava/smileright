@@ -24,46 +24,65 @@ export default function AdminLoginPage() {
     if (authError) {
       setError(authError.message)
       setLoading(false)
-      logFailedLoginEvent(email).catch(() => {})
+      logFailedLoginEvent(email).catch(() => { })
       return
     }
 
-    logLoginEvent(true).catch(() => {})
+    logLoginEvent(true).catch(() => { })
     // Use hard navigation to ensure server-side auth state is properly loaded
     window.location.href = '/admin'
   }
 
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        <h1 style={styles.title}>Smile Right Admin</h1>
-        <p style={styles.subtitle}>Sign in to manage your clinic content</p>
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: 'var(--admin-gray-50)',
+      padding: 'var(--admin-space-5)',
+    }}>
+      <div className="admin-card admin-card--form" style={{ maxWidth: '400px', width: '100%', padding: 'var(--admin-space-10)' }}>
+        <h1 style={{
+          fontFamily: 'var(--admin-font-heading)',
+          fontSize: 'var(--admin-text-2xl)',
+          color: 'var(--admin-gray-900)',
+          marginBottom: 'var(--admin-space-2)',
+          textAlign: 'center',
+        }}>Smile Right Admin</h1>
+        <p style={{
+          fontFamily: 'var(--admin-font-body)',
+          fontSize: 'var(--admin-text-sm)',
+          color: 'var(--admin-gray-500)',
+          textAlign: 'center',
+          marginBottom: 'var(--admin-space-8)',
+        }}>Sign in to manage your clinic content</p>
 
-        <form onSubmit={handleSubmit} style={styles.form}>
-          {error && <div style={styles.error}>{error}</div>}
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--admin-space-5)' }}>
+          {error && <div className="admin-error">{error}</div>}
 
-          <div style={styles.field}>
-            <label htmlFor="email" style={styles.label}>Email</label>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--admin-space-2)' }}>
+            <label htmlFor="email" className="admin-label">Email</label>
             <input
               id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              style={styles.input}
+              className="admin-input"
               placeholder="admin@smileright.in"
             />
           </div>
 
-          <div style={styles.field}>
-            <label htmlFor="password" style={styles.label}>Password</label>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--admin-space-2)' }}>
+            <label htmlFor="password" className="admin-label">Password</label>
             <input
               id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              style={styles.input}
+              className="admin-input"
               placeholder="Enter your password"
             />
           </div>
@@ -71,9 +90,13 @@ export default function AdminLoginPage() {
           <button
             type="submit"
             disabled={loading}
+            className="admin-btn admin-btn--primary admin-btn--lg"
             style={{
-              ...styles.button,
+              width: '100%',
+              marginTop: 'var(--admin-space-2)',
               opacity: loading ? 0.7 : 1,
+              textTransform: 'uppercase',
+              letterSpacing: '0.1em',
             }}
           >
             {loading ? 'Signing in...' : 'Sign In'}
@@ -82,87 +105,4 @@ export default function AdminLoginPage() {
       </div>
     </div>
   )
-}
-
-const styles: Record<string, React.CSSProperties> = {
-  container: {
-    minHeight: '100vh',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    background: '#f5f5f5',
-    padding: '20px',
-  },
-  card: {
-    background: '#fff',
-    padding: '40px',
-    borderRadius: '8px',
-    boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
-    maxWidth: '400px',
-    width: '100%',
-  },
-  title: {
-    fontFamily: 'var(--font-serif)',
-    fontSize: '1.8rem',
-    color: '#292828',
-    marginBottom: '0.5rem',
-    textAlign: 'center' as const,
-  },
-  subtitle: {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '0.95rem',
-    color: '#666',
-    textAlign: 'center' as const,
-    marginBottom: '2rem',
-  },
-  form: {
-    display: 'flex',
-    flexDirection: 'column' as const,
-    gap: '1.25rem',
-  },
-  field: {
-    display: 'flex',
-    flexDirection: 'column' as const,
-    gap: '0.5rem',
-  },
-  label: {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '0.85rem',
-    fontWeight: 600,
-    color: '#292828',
-    textTransform: 'uppercase' as const,
-    letterSpacing: '0.05em',
-  },
-  input: {
-    padding: '12px 16px',
-    border: '1px solid #ddd',
-    borderRadius: '4px',
-    fontSize: '1rem',
-    fontFamily: 'var(--font-sans)',
-    outline: 'none',
-    transition: 'border-color 0.2s',
-  },
-  button: {
-    padding: '14px',
-    background: '#1B73BA',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '4px',
-    fontSize: '1rem',
-    fontWeight: 600,
-    fontFamily: 'var(--font-sans)',
-    cursor: 'pointer',
-    textTransform: 'uppercase' as const,
-    letterSpacing: '0.1em',
-    marginTop: '0.5rem',
-  },
-  error: {
-    background: '#fee',
-    color: '#c00',
-    padding: '12px',
-    borderRadius: '4px',
-    fontSize: '0.9rem',
-    fontFamily: 'var(--font-sans)',
-    textAlign: 'center' as const,
-  },
 }

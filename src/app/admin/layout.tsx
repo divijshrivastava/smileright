@@ -33,16 +33,16 @@ export default async function AdminLayout({
     .eq('status', 'new')
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
+    <div style={{ minHeight: '100vh' }} className="admin-layout-shell">
       <AdminSidebar profile={profile as Profile} unreadContactCount={unreadContactCount ?? 0} />
       <main style={{
-        flex: 1,
-        marginLeft: '260px',
         padding: '40px',
-        background: '#f5f5f5',
+        background: 'transparent',
         minHeight: '100vh',
       }} className="admin-main">
-        {children}
+        <div className="admin-page-shell">
+          {children}
+        </div>
       </main>
     </div>
   )

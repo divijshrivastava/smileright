@@ -8,7 +8,7 @@ export default function LogoutButton() {
   const router = useRouter()
 
   const handleLogout = async () => {
-    await logLogoutEvent().catch(() => {})
+    await logLogoutEvent().catch(() => { })
     const supabase = createClient()
     await supabase.auth.signOut()
     router.push('/admin/login')
@@ -18,15 +18,10 @@ export default function LogoutButton() {
   return (
     <button
       onClick={handleLogout}
+      className="admin-btn admin-btn--ghost"
       style={{
-        padding: '8px 16px',
-        background: 'transparent',
         color: 'rgba(255,255,255,0.7)',
-        border: '1px solid rgba(255,255,255,0.3)',
-        borderRadius: '4px',
-        fontSize: '0.85rem',
-        cursor: 'pointer',
-        fontFamily: 'var(--font-sans)',
+        borderColor: 'rgba(255,255,255,0.3)',
       }}
     >
       Sign Out

@@ -11,8 +11,8 @@ export default async function NewTrustImagePage() {
   }
 
   return (
-    <div>
-      <h1 style={styles.title}>Create New Trust Image</h1>
+    <div className="admin-page-content">
+      <h1 style={styles.title} className="admin-page-title">Create New Trust Image</h1>
       <TrustImageForm />
     </div>
   )

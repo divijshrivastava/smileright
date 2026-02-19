@@ -45,14 +45,24 @@ export default async function ApprovalsPage() {
         .limit(20)
 
     return (
-        <div>
-            <div style={styles.header} className="admin-page-header">
-                <h1 style={styles.title}>Content Approvals</h1>
-                <div style={styles.stats}>
-                    <span style={styles.pendingBadge}>
-                        {pendingChanges?.length ?? 0} pending
-                    </span>
-                </div>
+        <div className="admin-page-content">
+            <div className="admin-page-header" style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                gap: 'var(--admin-space-4)',
+            }}>
+                <h1 className="admin-page-title">Content Approvals</h1>
+                <span className="admin-chip" style={{
+                    padding: 'var(--admin-space-2) var(--admin-space-4)',
+                    borderRadius: 'var(--admin-radius-full)',
+                    fontSize: 'var(--admin-text-sm)',
+                    fontWeight: 600,
+                    fontFamily: 'var(--admin-font-body)',
+                }}>
+                    {pendingChanges?.length ?? 0} pending
+                </span>
             </div>
 
             <ApprovalList
@@ -61,34 +71,4 @@ export default async function ApprovalsPage() {
             />
         </div>
     )
-}
-
-const styles: Record<string, React.CSSProperties> = {
-    header: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: '2rem',
-        flexWrap: 'wrap',
-        gap: '1rem',
-    },
-    title: {
-        fontFamily: 'var(--font-serif)',
-        fontSize: '2rem',
-        color: '#292828',
-        margin: 0,
-    },
-    stats: {
-        display: 'flex',
-        gap: '0.75rem',
-    },
-    pendingBadge: {
-        padding: '8px 16px',
-        background: '#fff3cd',
-        color: '#856404',
-        borderRadius: '20px',
-        fontSize: '0.9rem',
-        fontWeight: 600,
-        fontFamily: 'var(--font-sans)',
-    },
 }

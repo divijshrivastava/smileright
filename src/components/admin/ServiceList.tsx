@@ -47,51 +47,81 @@ export default function ServiceList({ services, userRole }: ServiceListProps) {
 
   if (services.length === 0) {
     return (
-      <div style={styles.emptyState}>
-        <p>No services yet. Create your first service!</p>
+      <div className="admin-empty-state">
+        <p className="admin-empty-state__title">No services yet</p>
+        <p className="admin-empty-state__description">Create your first service to get started.</p>
+        <button
+          onClick={() => router.push('/admin/services/new')}
+          className="admin-btn admin-btn--primary admin-btn--lg"
+        >
+          Create Your First Service
+        </button>
       </div>
     )
   }
 
   return (
     <>
-      <div style={styles.list}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--admin-space-6)' }}>
         {services.map((service) => (
-          <div key={service.id} style={styles.card} className="service-card">
-            <div style={styles.imageContainer} className="service-image-container">
+          <div key={service.id} className="admin-card service-card" style={{ display: 'flex', gap: 0, padding: 0, overflow: 'hidden' }}>
+            <div className="service-image-container" style={{ width: '200px', flexShrink: 0 }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={service.image_url}
                 alt={service.alt_text}
-                style={styles.image}
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
             </div>
-            <div style={styles.content} className="service-content">
-              <div style={styles.header}>
-                <h3 style={styles.title}>{service.title}</h3>
-                <span style={{
-                  ...styles.badge,
-                  background: service.is_published ? '#d4edda' : '#f8d7da',
-                  color: service.is_published ? '#155724' : '#721c24',
+            <div className="service-content" style={{
+              flex: 1,
+              padding: 'var(--admin-space-5)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 'var(--admin-space-4)',
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <h3 style={{
+                  fontFamily: 'var(--admin-font-heading)',
+                  fontSize: 'var(--admin-text-2xl)',
+                  color: 'var(--admin-gray-900)',
+                  margin: 0,
                 }}>
+                  {service.title}
+                </h3>
+                <span className={`admin-badge ${service.is_published ? 'admin-badge--published' : 'admin-badge--draft'}`}>
                   {service.is_published ? 'Published' : 'Draft'}
                 </span>
               </div>
-              <p style={styles.description}>{service.description}</p>
-              <div style={styles.meta}>
+              <p style={{
+                fontFamily: 'var(--admin-font-body)',
+                fontSize: 'var(--admin-text-sm)',
+                color: 'var(--admin-gray-500)',
+                margin: 0,
+                lineHeight: 1.6,
+              }}>
+                {service.description}
+              </p>
+              <div style={{
+                fontFamily: 'var(--admin-font-body)',
+                fontSize: 'var(--admin-text-xs)',
+                color: 'var(--admin-gray-400)',
+                display: 'flex',
+                gap: 'var(--admin-space-4)',
+                alignItems: 'center',
+              }}>
                 <span>Order: {service.display_order}</span>
                 {service.service_images && service.service_images.length > 0 && (
-                  <span style={styles.imageBadge}>
+                  <span className="admin-badge admin-badge--info">
                     📷 {service.service_images.length} {service.service_images.length === 1 ? 'image' : 'images'}
                   </span>
                 )}
               </div>
-              <div style={styles.actions} className="service-actions">
+              <div className="service-actions" style={{ display: 'flex', gap: 'var(--admin-space-3)', marginTop: 'auto' }}>
                 {isEditor && (
                   <button
                     onClick={() => router.push(`/admin/services/${service.id}/edit`)}
-                    style={styles.editBtn}
-                    className="action-btn-mobile"
+                    className="admin-btn admin-btn--primary action-btn-mobile"
                   >
                     Edit
                   </button>
@@ -99,8 +129,7 @@ export default function ServiceList({ services, userRole }: ServiceListProps) {
                 {isEditor && (
                   <button
                     onClick={() => handleTogglePublish(service.id, service.is_published)}
-                    style={styles.toggleBtn}
-                    className="action-btn-mobile"
+                    className="admin-btn admin-btn--secondary action-btn-mobile"
                   >
                     {canPublish
                       ? (service.is_published ? 'Unpublish' : 'Publish')
@@ -111,11 +140,7 @@ export default function ServiceList({ services, userRole }: ServiceListProps) {
                   <button
                     onClick={() => handleDelete(service.id, service.title)}
                     disabled={deleting === service.id}
-                    style={{
-                      ...styles.deleteBtn,
-                      opacity: deleting === service.id ? 0.5 : 1,
-                    }}
-                    className="action-btn-mobile"
+                    className="admin-btn admin-btn--danger-outline action-btn-mobile"
                   >
                     {deleting === service.id ? 'Deleting...' : 'Delete'}
                   </button>
@@ -138,7 +163,7 @@ export default function ServiceList({ services, userRole }: ServiceListProps) {
           }
           
           .service-content {
-            padding: 1rem !important;
+            padding: var(--admin-space-4) !important;
           }
           
           .service-actions {
@@ -147,8 +172,6 @@ export default function ServiceList({ services, userRole }: ServiceListProps) {
           
           .action-btn-mobile {
             width: 100% !important;
-            padding: 12px 16px !important;
-            font-size: 0.95rem !important;
             min-height: 48px !important;
           }
         }
@@ -161,120 +184,4 @@ export default function ServiceList({ services, userRole }: ServiceListProps) {
       `}</style>
     </>
   )
-}
-
-const styles: Record<string, React.CSSProperties> = {
-  list: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1.5rem',
-  },
-  card: {
-    display: 'flex',
-    gap: '1.5rem',
-    background: '#fff',
-    border: '1px solid #ddd',
-    borderRadius: '8px',
-    overflow: 'hidden',
-  },
-  imageContainer: {
-    width: '200px',
-    flexShrink: 0,
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-    objectFit: 'cover',
-  },
-  content: {
-    flex: 1,
-    padding: '1.5rem',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1rem',
-  },
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  title: {
-    fontFamily: 'var(--font-serif)',
-    fontSize: '1.5rem',
-    color: '#292828',
-    margin: 0,
-  },
-  badge: {
-    padding: '4px 12px',
-    borderRadius: '12px',
-    fontSize: '0.85rem',
-    fontWeight: 600,
-  },
-  description: {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '0.95rem',
-    color: '#666',
-    margin: 0,
-    lineHeight: 1.6,
-  },
-  meta: {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '0.85rem',
-    color: '#999',
-    display: 'flex',
-    gap: '16px',
-    alignItems: 'center',
-  },
-  imageBadge: {
-    background: '#e3f2fd',
-    color: '#1976d2',
-    padding: '4px 10px',
-    borderRadius: '12px',
-    fontSize: '0.8rem',
-    fontWeight: 600,
-  },
-  actions: {
-    display: 'flex',
-    gap: '12px',
-    marginTop: 'auto',
-  },
-  editBtn: {
-    padding: '8px 16px',
-    background: '#1B73BA',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '4px',
-    fontSize: '0.9rem',
-    fontWeight: 600,
-    cursor: 'pointer',
-    fontFamily: 'var(--font-sans)',
-  },
-  toggleBtn: {
-    padding: '8px 16px',
-    background: '#28a745',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '4px',
-    fontSize: '0.9rem',
-    fontWeight: 600,
-    cursor: 'pointer',
-    fontFamily: 'var(--font-sans)',
-  },
-  deleteBtn: {
-    padding: '8px 16px',
-    background: '#dc3545',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '4px',
-    fontSize: '0.9rem',
-    fontWeight: 600,
-    cursor: 'pointer',
-    fontFamily: 'var(--font-sans)',
-  },
-  emptyState: {
-    textAlign: 'center',
-    padding: '3rem',
-    color: '#999',
-    fontFamily: 'var(--font-sans)',
-  },
 }

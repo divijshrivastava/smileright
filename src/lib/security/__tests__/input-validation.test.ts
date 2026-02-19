@@ -3,7 +3,6 @@ import {
   sanitizeString,
   sanitizeURL,
   validateInteger,
-  containsSQLInjection,
   slugify,
   validateTestimonialInput,
   validateBlogInput,
@@ -73,29 +72,6 @@ describe('validateInteger', () => {
     expect(validateInteger(NaN)).toBeNull()
     // Note: parseInt('3.5') returns 3 (truncates decimal), which is valid integer behavior
     expect(validateInteger('3.5')).toBe(3)
-  })
-})
-
-describe('containsSQLInjection', () => {
-  it('detects SELECT statements', () => {
-    expect(containsSQLInjection('SELECT * FROM users')).toBe(true)
-  })
-
-  it('detects DROP TABLE', () => {
-    expect(containsSQLInjection("'; DROP TABLE users--")).toBe(true)
-  })
-
-  it('detects UNION attacks', () => {
-    expect(containsSQLInjection("1 UNION SELECT password FROM users")).toBe(true)
-  })
-
-  it('allows normal text', () => {
-    expect(containsSQLInjection('Hello world')).toBe(false)
-  })
-
-  it('allows text with common words', () => {
-    expect(containsSQLInjection('Please update your profile')).toBe(true)
-    // Note: "update" triggers the pattern - this is expected defense-in-depth behavior
   })
 })
 

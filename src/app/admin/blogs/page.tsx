@@ -24,7 +24,7 @@ export default async function BlogsPage() {
     .limit(100)
 
   return (
-    <div>
+    <div className="admin-page-content">
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
@@ -38,7 +38,7 @@ export default async function BlogsPage() {
           fontSize: '2rem',
           color: '#292828',
           margin: 0,
-        }}>
+        }} className="admin-page-title">
           Blogs
         </h1>
         {canEditContent(role) && (
@@ -55,7 +55,7 @@ export default async function BlogsPage() {
               fontWeight: 600,
               whiteSpace: 'nowrap',
             }}
-            className="admin-add-btn"
+            className="admin-add-btn admin-primary-btn"
           >
             Add Blog
           </Link>

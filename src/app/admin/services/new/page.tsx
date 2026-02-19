@@ -11,8 +11,8 @@ export default async function NewServicePage() {
   }
 
   return (
-    <div>
-      <h1 style={styles.title}>Add New Service</h1>
+    <div className="admin-page-content">
+      <h1 style={styles.title} className="admin-page-title">Add New Service</h1>
       <ServiceForm />
     </div>
   )

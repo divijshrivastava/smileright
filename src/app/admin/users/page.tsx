@@ -28,30 +28,12 @@ export default async function UsersPage() {
   const users = await getUsers()
 
   return (
-    <div>
-      <div style={styles.header}>
-        <h1 style={styles.title}>User Management</h1>
-        <p style={styles.subtitle}>Invite new users and manage roles and permissions</p>
+    <div className="admin-page-content">
+      <div className="admin-page-header">
+        <h1 className="admin-page-title">User Management</h1>
+        <p className="admin-page-subtitle">Invite new users and manage roles and permissions</p>
       </div>
-      <UserList users={users as Profile[]} currentUserId={user.id} />
+      <UserList users={users as Profile[]} currentUserRole={role} />
     </div>
   )
-}
-
-const styles: Record<string, React.CSSProperties> = {
-  header: {
-    marginBottom: '2rem',
-  },
-  title: {
-    fontFamily: 'var(--font-serif)',
-    fontSize: '2rem',
-    color: '#292828',
-    margin: 0,
-  },
-  subtitle: {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '0.95rem',
-    color: '#666',
-    margin: '0.5rem 0 0',
-  },
 }

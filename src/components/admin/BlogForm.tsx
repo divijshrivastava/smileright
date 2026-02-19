@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import { createBlog, updateBlog } from '@/app/admin/actions'
@@ -12,14 +12,16 @@ const CKEditorComponent = dynamic(() => import('./CKEditorComponent'), {
   ssr: false,
   loading: () => (
     <div style={{
+      padding: 'var(--admin-space-8)',
+      background: 'var(--admin-gray-50)',
+      borderRadius: 'var(--admin-radius-md)',
+      textAlign: 'center',
+      color: 'var(--admin-gray-400)',
+      fontFamily: 'var(--admin-font-body)',
       minHeight: '300px',
-      background: '#f5f5f5',
-      borderRadius: '4px',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      color: '#666',
-      fontFamily: 'var(--font-sans)',
     }}>
       Loading editor...
     </div>
@@ -30,61 +32,44 @@ interface BlogFormProps {
   blog?: Blog
 }
 
-function slugifyLocal(input: string): string {
-  return (input || '')
-    .trim()
-    .toLowerCase()
-    .replace(/['"]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .substring(0, 200)
-}
-
 export default function BlogForm({ blog }: BlogFormProps) {
   const router = useRouter()
+  const [contentHtml, setContentHtml] = useState(blog?.content_html ?? '<p></p>')
+  const [mainImageUrl, setMainImageUrl] = useState(blog?.main_image_url ?? '')
+  const [error, setError] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [slug, setSlug] = useState(blog?.slug ?? '')
   const isEditing = !!blog
 
-  const [title, setTitle] = useState(blog?.title ?? '')
-  const [slug, setSlug] = useState(blog?.slug ?? '')
-  const [slugTouched, setSlugTouched] = useState(false)
-  const [excerpt, setExcerpt] = useState(blog?.excerpt ?? '')
-  const [displayOrder, setDisplayOrder] = useState<number>(blog?.display_order ?? 0)
-  const [isPublished, setIsPublished] = useState<boolean>(blog?.is_published ?? false)
-  const [mainImageUrl, setMainImageUrl] = useState<string>(blog?.main_image_url ?? '')
-  const [mainImageAltText, setMainImageAltText] = useState<string>(blog?.main_image_alt_text ?? '')
-
-  const [contentHtml, setContentHtml] = useState(blog?.content_html ?? '<p></p>')
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState('')
-
-
-  const submitLabel = useMemo(() => {
-    if (saving) return 'Saving...'
-    return isEditing ? 'Update Blog' : 'Create Blog'
-  }, [saving, isEditing])
+  // Auto-generate slug from title for new blogs
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!isEditing && !slug) {
+      const autoSlug = e.target.value
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '')
+      setSlug(autoSlug)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setError('')
     setSaving(true)
 
-    const formData = new FormData()
-    formData.set('title', title)
-    formData.set('slug', slug)
-    formData.set('excerpt', excerpt)
+    const form = e.currentTarget
+    const formData = new FormData(form)
     formData.set('content_html', contentHtml)
-    formData.set('main_image_url', mainImageUrl)
-    formData.set('main_image_alt_text', mainImageAltText)
-    formData.set('display_order', String(displayOrder))
-    formData.set('is_published', isPublished ? 'true' : 'false')
+    formData.set('main_image_url', mainImageUrl || '')
+    formData.set('slug', slug)
+    formData.set('is_published', formData.has('is_published') ? 'true' : 'false')
 
     try {
-      if (isEditing && blog) {
+      if (isEditing) {
         await updateBlog(blog.id, formData)
       } else {
         await createBlog(formData)
       }
-
       router.push('/admin/blogs')
       router.refresh()
     } catch (err) {
@@ -94,209 +79,118 @@ export default function BlogForm({ blog }: BlogFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} style={styles.form}>
-      {error && <div style={styles.error}>{error}</div>}
+    <form onSubmit={handleSubmit} className="admin-form-card" style={{
+      maxWidth: '800px',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 'var(--admin-space-6)',
+    }}>
+      {error && <div className="admin-error">{error}</div>}
 
-      <div style={styles.field}>
-        <label htmlFor="title" style={styles.label}>Title *</label>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--admin-space-2)' }}>
+        <label htmlFor="title" className="admin-label">Title *</label>
         <input
           id="title"
+          name="title"
           type="text"
-          value={title}
-          onChange={(e) => {
-            const nextTitle = e.target.value
-            setTitle(nextTitle)
-            if (!slugTouched) {
-              setSlug(slugifyLocal(nextTitle))
-            }
-          }}
-          placeholder="e.g. 5 Signs You Might Need a Root Canal"
           required
-          style={styles.input}
+          defaultValue={blog?.title ?? ''}
+          placeholder="e.g. 10 Tips for Healthy Gums"
+          className="admin-input"
+          onChange={handleTitleChange}
         />
       </div>
 
-      <div style={styles.field}>
-        <label htmlFor="slug" style={styles.label}>Slug (URL) *</label>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--admin-space-2)' }}>
+        <label htmlFor="slug" className="admin-label">URL Slug *</label>
         <input
           id="slug"
+          name="slug"
           type="text"
-          value={slug}
-          onChange={(e) => {
-            setSlugTouched(true)
-            setSlug(slugifyLocal(e.target.value))
-          }}
-          placeholder="e.g. 5-signs-root-canal"
           required
-          style={styles.input}
+          value={slug}
+          onChange={(e) => setSlug(e.target.value)}
+          placeholder="e.g. 10-tips-for-healthy-gums"
+          pattern="[a-z0-9-]+"
+          className="admin-input"
         />
-        <small style={styles.help}>Public URL will be: /blog/{slug || 'your-slug'}</small>
+        <small className="admin-help-text">
+          URL-friendly identifier (lowercase letters, numbers, and hyphens only)
+        </small>
       </div>
 
-      <div style={styles.field}>
-        <label htmlFor="excerpt" style={styles.label}>Excerpt (optional)</label>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--admin-space-2)' }}>
+        <label htmlFor="excerpt" className="admin-label">Excerpt</label>
         <textarea
           id="excerpt"
-          value={excerpt}
-          onChange={(e) => setExcerpt(e.target.value)}
-          placeholder="Short summary shown on the blog listing"
+          name="excerpt"
           rows={3}
-          style={{ ...styles.input, resize: 'vertical' as const }}
+          defaultValue={blog?.excerpt ?? ''}
+          placeholder="Short summary shown in blog listings..."
+          className="admin-input"
+          style={{ resize: 'vertical' }}
         />
       </div>
 
-      <div style={styles.field}>
-        <label style={styles.label}>Main Image (optional)</label>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--admin-space-2)' }}>
+        <label className="admin-label">Featured Image</label>
         <ImageUploader
           currentUrl={mainImageUrl || null}
           onUpload={(url) => setMainImageUrl(url)}
           bucket="blog-media"
         />
-        <small style={styles.help}>This image will be displayed as the featured image for the blog post</small>
       </div>
 
-      <div style={styles.field}>
-        <label htmlFor="main_image_alt_text" style={styles.label}>Main Image Alt Text (optional)</label>
-        <input
-          id="main_image_alt_text"
-          type="text"
-          value={mainImageAltText}
-          onChange={(e) => setMainImageAltText(e.target.value)}
-          placeholder="e.g. Dentist examining patient's teeth"
-          style={styles.input}
-        />
-        <small style={styles.help}>Describe the image for accessibility and SEO</small>
-      </div>
-
-      <div style={styles.row}>
-        <div style={styles.field}>
-          <label htmlFor="display_order" style={styles.label}>Display Order</label>
-          <input
-            id="display_order"
-            type="number"
-            min={0}
-            value={displayOrder}
-            onChange={(e) => setDisplayOrder(Number(e.target.value))}
-            style={styles.input}
-          />
-          <small style={styles.help}>Lower numbers appear first</small>
-        </div>
-
-        <div style={{ ...styles.field, justifyContent: 'flex-end' }}>
-          <label style={styles.label}>Status</label>
-          <label style={styles.checkboxRow}>
-            <input
-              type="checkbox"
-              checked={isPublished}
-              onChange={(e) => setIsPublished(e.target.checked)}
-              style={{ width: '18px', height: '18px' }}
-            />
-            <span style={{ fontFamily: 'var(--font-sans)', fontWeight: 600 }}>
-              Published (visible on public site)
-            </span>
-          </label>
-        </div>
-      </div>
-
-      <div style={styles.field}>
-        <label style={styles.label}>Content *</label>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--admin-space-2)' }}>
+        <label className="admin-label">Content *</label>
         <CKEditorComponent value={contentHtml} onChange={setContentHtml} />
         <input type="hidden" name="content_html" value={contentHtml} />
       </div>
 
-      <div style={styles.actions}>
-        <button type="button" onClick={() => router.back()} style={styles.cancelBtn}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--admin-space-2)' }}>
+        <label htmlFor="main_image_alt_text" className="admin-label">
+          Image Alt Text <span style={{ fontWeight: 400, textTransform: 'none', letterSpacing: 'normal', color: 'var(--admin-gray-400)' }}>(SEO)</span>
+        </label>
+        <input
+          id="main_image_alt_text"
+          name="main_image_alt_text"
+          type="text"
+          defaultValue={blog?.main_image_alt_text ?? ''}
+          placeholder="Descriptive alt text for the featured image"
+          className="admin-input"
+        />
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--admin-space-3)' }}>
+        <input
+          id="is_published"
+          name="is_published"
+          type="checkbox"
+          defaultChecked={blog?.is_published ?? false}
+          style={{ width: '18px', height: '18px' }}
+        />
+        <label htmlFor="is_published" className="admin-label" style={{ margin: 0 }}>
+          Published (visible on public site)
+        </label>
+      </div>
+
+      <div style={{ display: 'flex', gap: 'var(--admin-space-3)', justifyContent: 'flex-end', paddingTop: 'var(--admin-space-4)' }}>
+        <button
+          type="button"
+          onClick={() => router.back()}
+          className="admin-btn admin-btn--secondary admin-btn--lg"
+        >
           Cancel
         </button>
-        <button type="submit" disabled={saving} style={{ ...styles.submitBtn, opacity: saving ? 0.7 : 1 }}>
-          {submitLabel}
+        <button
+          type="submit"
+          disabled={saving}
+          className="admin-btn admin-btn--primary admin-btn--lg"
+          style={{ opacity: saving ? 0.7 : 1 }}
+        >
+          {saving ? 'Saving...' : isEditing ? 'Update Blog' : 'Create Blog'}
         </button>
       </div>
     </form>
   )
-}
-
-const styles: Record<string, React.CSSProperties> = {
-  form: {
-    maxWidth: '900px',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1.5rem',
-  },
-  field: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.5rem',
-  },
-  row: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: '1.5rem',
-  },
-  label: {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '0.85rem',
-    fontWeight: 600,
-    color: '#292828',
-    textTransform: 'uppercase' as const,
-    letterSpacing: '0.05em',
-  },
-  input: {
-    padding: '12px 16px',
-    border: '1px solid #ddd',
-    borderRadius: '4px',
-    fontSize: '1rem',
-    fontFamily: 'var(--font-sans)',
-    outline: 'none',
-    width: '100%',
-  },
-  help: {
-    color: '#666',
-    fontSize: '0.85rem',
-    fontFamily: 'var(--font-sans)',
-  },
-  checkboxRow: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '12px',
-    marginTop: '8px',
-  },
-  actions: {
-    display: 'flex',
-    gap: '12px',
-    justifyContent: 'flex-end',
-    paddingTop: '1rem',
-  },
-  cancelBtn: {
-    padding: '12px 24px',
-    background: '#f5f5f5',
-    color: '#292828',
-    border: '1px solid #ddd',
-    borderRadius: '4px',
-    fontSize: '0.95rem',
-    fontWeight: 600,
-    fontFamily: 'var(--font-sans)',
-    cursor: 'pointer',
-  },
-  submitBtn: {
-    padding: '12px 24px',
-    background: '#1B73BA',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '4px',
-    fontSize: '0.95rem',
-    fontWeight: 600,
-    fontFamily: 'var(--font-sans)',
-    cursor: 'pointer',
-    textTransform: 'uppercase' as const,
-    letterSpacing: '0.05em',
-  },
-  error: {
-    background: '#fee',
-    color: '#c00',
-    padding: '12px',
-    borderRadius: '4px',
-    fontSize: '0.9rem',
-    fontFamily: 'var(--font-sans)',
-  },
 }

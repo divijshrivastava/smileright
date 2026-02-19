@@ -17,7 +17,15 @@
       "Bash(gh run list:*)",
       "Bash(gh api:*)",
       "WebFetch(domain:vercel.com)",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "Bash(npm run test:run:*)",
+      "Bash(git -C /Users/divij/code/ai/smile-right status)",
+      "Bash(git -C /Users/divij/code/ai/smile-right log --oneline -5)",
+      "Bash(git -C /Users/divij/code/ai/smile-right diff --stat HEAD)",
+      "Bash(git -C:*)",
+      "Bash(pkill:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npx vercel:*)"
     ]
   }
 }

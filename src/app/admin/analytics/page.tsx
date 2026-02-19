@@ -56,7 +56,7 @@ export default async function AnalyticsPage() {
 
   return (
     <div style={styles.container}>
-      <header style={styles.header}>
+      <div style={styles.header}>
         <div>
           <h1 style={styles.title}>Analytics Dashboard</h1>
           <p style={styles.subtitle}>Overview of your website's performance for the last 30 days.</p>
@@ -65,7 +65,7 @@ export default async function AnalyticsPage() {
           <Activity size={14} />
           {configured ? 'Live Data' : 'Not Configured'}
         </div>
-      </header>
+      </div>
 
       {!configured ? (
         <div style={styles.errorCard}>
@@ -219,16 +219,15 @@ export default async function AnalyticsPage() {
 
 const styles: Record<string, React.CSSProperties> = {
   container: {
-    padding: '2rem',
-    maxWidth: '1600px',
-    margin: '0 auto',
+    // AdminLayout already adds 40px padding
+    maxWidth: '1600px', // Keep max-width for readability on large screens
     fontFamily: 'var(--font-sans)',
     color: '#1e293b',
   },
   header: {
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    alignItems: 'center', // Center vertically
     marginBottom: '2.5rem',
   },
   title: {
@@ -256,6 +255,7 @@ const styles: Record<string, React.CSSProperties> = {
     fontWeight: 600,
     backgroundColor: '#eff6ff',
     color: '#3b82f6',
+    flexShrink: 0, // Prevent shrinking
   },
   statsGrid: {
     display: 'grid',

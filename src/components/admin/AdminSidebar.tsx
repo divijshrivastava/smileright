@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import LogoutButton from './LogoutButton'
 import type { Profile } from '@/lib/types'
 import { canEditContent, canApproveChanges, getRoleLabel } from '@/lib/permissions'
@@ -17,6 +18,8 @@ import {
   ExternalLink,
   Menu,
   Users,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from 'lucide-react'
 
 interface AdminSidebarProps {
@@ -25,127 +28,331 @@ interface AdminSidebarProps {
 }
 
 export default function AdminSidebar({ profile, unreadContactCount }: AdminSidebarProps) {
+  const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    if (typeof window === 'undefined') return false
+    return window.localStorage.getItem('admin_sidebar_collapsed') === '1' && window.innerWidth > 768
+  })
   const isEditor = canEditContent(profile.role)
   const isAdmin = canApproveChanges(profile.role)
 
+  useEffect(() => {
+    window.localStorage.setItem('admin_sidebar_collapsed', isCollapsed ? '1' : '0')
+    document.documentElement.classList.toggle('admin-sidebar-collapsed', isCollapsed)
+  }, [isCollapsed])
+
+  const isActive = (href: string) => {
+    if (href === '/admin') return pathname === '/admin'
+    return pathname === href || pathname.startsWith(`${href}/`)
+  }
+
+  const linkClass = (active: boolean) => `admin-nav-link${active ? ' is-active' : ''}`
+
   return (
     <>
-      {/* Mobile Menu Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        style={{
-          ...styles.menuButton,
-          display: 'none',
-        }}
         className="mobile-menu-btn"
+        style={{
+          position: 'fixed',
+          top: 'var(--admin-space-4)',
+          left: 'var(--admin-space-4)',
+          zIndex: 1001,
+          background: 'var(--admin-gray-900)',
+          border: 'none',
+          padding: 'var(--admin-space-3) var(--admin-space-4)',
+          borderRadius: 'var(--admin-radius-md)',
+          cursor: 'pointer',
+          boxShadow: 'var(--admin-shadow-lg)',
+          display: 'none',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
       >
         <Menu size={22} color="#fff" />
       </button>
 
-      {/* Overlay for mobile */}
       {isOpen && (
         <div
           onClick={() => setIsOpen(false)}
-          style={styles.overlay}
           className="mobile-overlay"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0,0,0,0.5)',
+            zIndex: 999,
+            display: 'none',
+          }}
         />
       )}
 
-      <aside style={{
-        ...styles.sidebar,
-        transform: isOpen ? 'translateX(0)' : undefined,
-      }} className="admin-sidebar">
-        <div style={styles.brand}>
-          <h2 style={styles.brandTitle}>Smile Right</h2>
-          <p style={styles.brandSub}>Admin Panel</p>
+      <aside
+        style={{
+          minHeight: '100vh',
+          background: 'var(--admin-gray-900)',
+          color: '#fff',
+          display: 'flex',
+          flexDirection: 'column',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          bottom: 0,
+          zIndex: 1000,
+          transform: isOpen ? 'translateX(0)' : undefined,
+          width: isCollapsed ? '88px' : '236px',
+        }}
+        className={`admin-sidebar${isCollapsed ? ' admin-sidebar--collapsed' : ''}`}
+      >
+        <div style={{
+          padding: 'var(--admin-space-5) var(--admin-space-4)',
+          borderBottom: '1px solid rgba(255,255,255,0.1)',
+        }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 'var(--admin-space-3)',
+          }}>
+            <div className="sidebar-brand-copy">
+              <h2 style={{
+                fontFamily: 'var(--admin-font-heading)',
+                fontSize: 'var(--admin-text-xl)',
+                fontWeight: 700,
+                color: '#fff',
+                margin: 0,
+              }}>Smile Right</h2>
+              <p style={{
+                fontFamily: 'var(--admin-font-body)',
+                fontSize: 'var(--admin-text-xs)',
+                color: 'rgba(255,255,255,0.5)',
+                margin: 0,
+                textTransform: 'uppercase',
+                letterSpacing: '0.1em',
+              }}>Admin Panel</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsCollapsed((prev) => !prev)}
+              className="sidebar-collapse-btn"
+              aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: 'var(--admin-radius-md)',
+                border: '1px solid rgba(255,255,255,0.22)',
+                background: 'rgba(255,255,255,0.08)',
+                color: 'rgba(255,255,255,0.92)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                flexShrink: 0,
+              }}
+            >
+              {isCollapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
+            </button>
+          </div>
         </div>
 
-        <nav style={styles.nav}>
-          <Link href="/admin" style={styles.navLink} onClick={() => setIsOpen(false)}>
-            <LayoutDashboard size={18} /> Dashboard
+        <nav style={{
+          padding: 'var(--admin-space-4) 0',
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          overflowY: 'auto',
+        }}>
+          <Link href="/admin" style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 'var(--admin-space-3)',
+            padding: '11px var(--admin-space-4)',
+            color: 'rgba(255,255,255,0.8)',
+            textDecoration: 'none',
+            fontFamily: 'var(--admin-font-body)',
+            fontSize: 'var(--admin-text-sm)',
+            fontWeight: 500,
+            transition: 'background var(--admin-transition-fast), color var(--admin-transition-fast)',
+            position: 'relative',
+          }} className={linkClass(isActive('/admin'))} onClick={() => setIsOpen(false)} title="Dashboard">
+            <LayoutDashboard size={18} /> <span className="sidebar-label">Dashboard</span>
           </Link>
 
-          {/* Approval queue - Admin only */}
           {isAdmin && (
-            <Link href="/admin/approvals" style={{ ...styles.navLink, ...styles.approvalLink }} onClick={() => setIsOpen(false)}>
-              <ClipboardCheck size={18} /> Approvals
+            <Link href="/admin/approvals" style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 'var(--admin-space-3)',
+              padding: '11px var(--admin-space-4)',
+              color: 'var(--admin-warning-500)',
+              textDecoration: 'none',
+              fontFamily: 'var(--admin-font-body)',
+              fontSize: 'var(--admin-text-sm)',
+              fontWeight: 600,
+              transition: 'background var(--admin-transition-fast), color var(--admin-transition-fast)',
+              position: 'relative',
+            }} className={linkClass(isActive('/admin/approvals'))} onClick={() => setIsOpen(false)} title="Approvals">
+              <ClipboardCheck size={18} /> <span className="sidebar-label">Approvals</span>
             </Link>
           )}
 
-          {/* User management - Admin only */}
           {isAdmin && (
-            <Link href="/admin/users" style={styles.navLink} onClick={() => setIsOpen(false)}>
-              <Users size={18} /> Users
+            <Link href="/admin/users" style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 'var(--admin-space-3)',
+              padding: '11px var(--admin-space-4)',
+              color: 'rgba(255,255,255,0.8)',
+              textDecoration: 'none',
+              fontFamily: 'var(--admin-font-body)',
+              fontSize: 'var(--admin-text-sm)',
+              fontWeight: 500,
+              transition: 'background var(--admin-transition-fast), color var(--admin-transition-fast)',
+              position: 'relative',
+            }} className={linkClass(isActive('/admin/users'))} onClick={() => setIsOpen(false)} title="Users">
+              <Users size={18} /> <span className="sidebar-label">Users</span>
             </Link>
           )}
 
-          <div style={styles.divider} />
+          <div className="sidebar-divider" style={{
+            height: '1px',
+            background: 'rgba(255,255,255,0.1)',
+            margin: 'var(--admin-space-2) var(--admin-space-4)',
+          }} />
 
-          {/* Content management - visible to all, but create/edit links only for editors+ */}
-          <Link href="/admin/testimonials" style={styles.navLink} onClick={() => setIsOpen(false)}>
-            <MessageSquareQuote size={18} /> Testimonials
-          </Link>
-          {isEditor && (
-            <Link href="/admin/testimonials/new" style={styles.subLink} onClick={() => setIsOpen(false)}>
-              + Add Testimonial
-            </Link>
-          )}
+          {[
+            { href: '/admin/testimonials', icon: <MessageSquareQuote size={18} />, label: 'Testimonials', addHref: '/admin/testimonials/new', addLabel: '+ Add Testimonial' },
+            { href: '/admin/services', icon: <Stethoscope size={18} />, label: 'Treatments & Services', addHref: '/admin/services/new', addLabel: '+ Add Treatment/Service' },
+            { href: '/admin/trust-images', icon: <ImageIcon size={18} />, label: 'Trust Images', addHref: '/admin/trust-images/new', addLabel: '+ Add Trust Image' },
+            { href: '/admin/blogs', icon: <FileText size={18} />, label: 'Blogs', addHref: '/admin/blogs/new', addLabel: '+ Add Blog' },
+          ].map(item => (
+            <div key={item.href}>
+              <Link href={item.href} style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 'var(--admin-space-3)',
+                padding: '11px var(--admin-space-4)',
+                color: 'rgba(255,255,255,0.8)',
+                textDecoration: 'none',
+                fontFamily: 'var(--admin-font-body)',
+                fontSize: 'var(--admin-text-sm)',
+                fontWeight: 500,
+                transition: 'background var(--admin-transition-fast), color var(--admin-transition-fast)',
+                position: 'relative',
+              }} className={linkClass(isActive(item.href))} onClick={() => setIsOpen(false)} title={item.label}>
+                {item.icon} <span className="sidebar-label">{item.label}</span>
+              </Link>
+              {isEditor && (
+                <Link href={item.addHref} className="sidebar-sub-link" style={{
+                  display: 'block',
+                  padding: 'var(--admin-space-2) var(--admin-space-4) var(--admin-space-2) 44px',
+                  color: 'rgba(255,255,255,0.45)',
+                  textDecoration: 'none',
+                  fontFamily: 'var(--admin-font-body)',
+                  fontSize: 'var(--admin-text-xs)',
+                  fontWeight: 400,
+                  transition: 'background var(--admin-transition-fast), color var(--admin-transition-fast)',
+                }} onClick={() => setIsOpen(false)}>
+                  {item.addLabel}
+                </Link>
+              )}
+            </div>
+          ))}
 
-          <Link href="/admin/services" style={styles.navLink} onClick={() => setIsOpen(false)}>
-            <Stethoscope size={18} /> Treatments & Services
-          </Link>
-          {isEditor && (
-            <Link href="/admin/services/new" style={styles.subLink} onClick={() => setIsOpen(false)}>
-              + Add Treatment/Service
-            </Link>
-          )}
-
-          <Link href="/admin/trust-images" style={styles.navLink} onClick={() => setIsOpen(false)}>
-            <ImageIcon size={18} /> Trust Images
-          </Link>
-          {isEditor && (
-            <Link href="/admin/trust-images/new" style={styles.subLink} onClick={() => setIsOpen(false)}>
-              + Add Trust Image
-            </Link>
-          )}
-
-          <Link href="/admin/blogs" style={styles.navLink} onClick={() => setIsOpen(false)}>
-            <FileText size={18} /> Blogs
-          </Link>
-          {isEditor && (
-            <Link href="/admin/blogs/new" style={styles.subLink} onClick={() => setIsOpen(false)}>
-              + Add Blog
-            </Link>
-          )}
-
-          <Link href="/admin/contact-messages" style={styles.navLink} onClick={() => setIsOpen(false)}>
+          <Link href="/admin/contact-messages" style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 'var(--admin-space-3)',
+            padding: '11px var(--admin-space-4)',
+            color: 'rgba(255,255,255,0.8)',
+            textDecoration: 'none',
+            fontFamily: 'var(--admin-font-body)',
+            fontSize: 'var(--admin-text-sm)',
+            fontWeight: 500,
+            transition: 'background var(--admin-transition-fast), color var(--admin-transition-fast)',
+            position: 'relative',
+          }} className={linkClass(isActive('/admin/contact-messages'))} onClick={() => setIsOpen(false)} title="Contact Messages">
             <Mail size={18} />
-            <span>Contact Messages</span>
+            <span className="sidebar-label">Contact Messages</span>
             {unreadContactCount > 0 && (
-              <span style={styles.unreadBadge}>{unreadContactCount > 99 ? '99+' : unreadContactCount}</span>
+              <span className="admin-unread-badge" style={{
+                marginLeft: 'auto',
+                minWidth: '22px',
+                height: '22px',
+                borderRadius: 'var(--admin-radius-full)',
+                background: 'var(--admin-danger-500)',
+                color: '#fff',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '0 7px',
+                fontSize: 'var(--admin-text-xs)',
+                fontWeight: 700,
+                lineHeight: 1,
+                fontFamily: 'var(--admin-font-body)',
+              }}>{unreadContactCount > 99 ? '99+' : unreadContactCount}</span>
             )}
           </Link>
 
-          <Link href="/admin/analytics" style={styles.navLink} onClick={() => setIsOpen(false)}>
-            <ChartColumn size={18} /> Analytics
+          <Link href="/admin/analytics" style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 'var(--admin-space-3)',
+            padding: '11px var(--admin-space-4)',
+            color: 'rgba(255,255,255,0.8)',
+            textDecoration: 'none',
+            fontFamily: 'var(--admin-font-body)',
+            fontSize: 'var(--admin-text-sm)',
+            fontWeight: 500,
+            transition: 'background var(--admin-transition-fast), color var(--admin-transition-fast)',
+            position: 'relative',
+          }} className={linkClass(isActive('/admin/analytics'))} onClick={() => setIsOpen(false)} title="Analytics">
+            <ChartColumn size={18} /> <span className="sidebar-label">Analytics</span>
           </Link>
 
-          <div style={styles.divider} />
+          <div className="sidebar-divider" style={{
+            height: '1px',
+            background: 'rgba(255,255,255,0.1)',
+            margin: 'var(--admin-space-2) var(--admin-space-4)',
+          }} />
 
-          <Link href="/" style={styles.navLink} target="_blank" onClick={() => setIsOpen(false)}>
-            <ExternalLink size={18} /> View Site
+          <Link href="/" className="admin-nav-link" target="_blank" style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 'var(--admin-space-3)',
+            padding: '11px var(--admin-space-4)',
+            color: 'rgba(255,255,255,0.8)',
+            textDecoration: 'none',
+            fontFamily: 'var(--admin-font-body)',
+            fontSize: 'var(--admin-text-sm)',
+            fontWeight: 500,
+            transition: 'background var(--admin-transition-fast), color var(--admin-transition-fast)',
+            position: 'relative',
+          }} onClick={() => setIsOpen(false)} title="View Site">
+            <ExternalLink size={18} /> <span className="sidebar-label">View Site</span>
           </Link>
         </nav>
 
-        <div style={styles.userSection}>
-          <div style={styles.userInfo}>
-            <p style={styles.userName}>{profile.full_name || profile.email}</p>
-            <p style={styles.userRoleLabel}>
-              <span style={{
-                ...styles.roleBadge,
-                background: profile.role === 'admin' ? '#1B73BA' :
-                  profile.role === 'editor' ? '#28a745' : '#6c757d',
+        <div className="sidebar-user-info" style={{
+          padding: 'var(--admin-space-4)',
+          borderTop: '1px solid rgba(255,255,255,0.1)',
+        }}>
+          <div style={{ marginBottom: 'var(--admin-space-3)' }}>
+            <p style={{
+              fontFamily: 'var(--admin-font-body)',
+              fontSize: 'var(--admin-text-sm)',
+              color: '#fff',
+              margin: 0,
+              fontWeight: 600,
+            }}>{profile.full_name || profile.email}</p>
+            <p style={{ margin: 'var(--admin-space-1) 0 0' }}>
+              <span className={`admin-badge admin-badge--${profile.role}`} style={{
+                padding: '2px 10px',
+                fontSize: 'var(--admin-text-xs)',
               }}>
                 {getRoleLabel(profile.role)}
               </span>
@@ -156,146 +363,4 @@ export default function AdminSidebar({ profile, unreadContactCount }: AdminSideb
       </aside>
     </>
   )
-}
-
-const styles: Record<string, React.CSSProperties> = {
-  menuButton: {
-    position: 'fixed',
-    top: '16px',
-    left: '16px',
-    zIndex: 1001,
-    background: '#292828',
-    border: 'none',
-    padding: '12px 16px',
-    borderRadius: '8px',
-    cursor: 'pointer',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  overlay: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    background: 'rgba(0,0,0,0.5)',
-    zIndex: 999,
-    display: 'none',
-  },
-  sidebar: {
-    width: '260px',
-    minHeight: '100vh',
-    background: '#292828',
-    color: '#fff',
-    display: 'flex',
-    flexDirection: 'column',
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    bottom: 0,
-    zIndex: 1000,
-  },
-  brand: {
-    padding: '24px 20px',
-    borderBottom: '1px solid rgba(255,255,255,0.1)',
-  },
-  brandTitle: {
-    fontFamily: 'var(--font-serif)',
-    fontSize: '1.3rem',
-    fontWeight: 700,
-    color: '#fff',
-    margin: 0,
-  },
-  brandSub: {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '0.8rem',
-    color: 'rgba(255,255,255,0.5)',
-    margin: 0,
-    textTransform: 'uppercase' as const,
-    letterSpacing: '0.1em',
-  },
-  nav: {
-    padding: '20px 0',
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    overflowY: 'auto',
-  },
-  navLink: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '10px',
-    padding: '12px 20px',
-    color: 'rgba(255,255,255,0.8)',
-    textDecoration: 'none',
-    fontFamily: 'var(--font-sans)',
-    fontSize: '0.9rem',
-    fontWeight: 500,
-    transition: 'background 0.2s, color 0.2s',
-  },
-  unreadBadge: {
-    marginLeft: 'auto',
-    minWidth: '22px',
-    height: '22px',
-    borderRadius: '999px',
-    background: '#dc3545',
-    color: '#fff',
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '0 7px',
-    fontSize: '0.72rem',
-    fontWeight: 700,
-    lineHeight: 1,
-    fontFamily: 'var(--font-sans)',
-  },
-  subLink: {
-    display: 'block',
-    padding: '8px 20px 8px 48px',
-    color: 'rgba(255,255,255,0.45)',
-    textDecoration: 'none',
-    fontFamily: 'var(--font-sans)',
-    fontSize: '0.8rem',
-    fontWeight: 400,
-    transition: 'background 0.2s, color 0.2s',
-  },
-  approvalLink: {
-    color: '#ffc107',
-    fontWeight: 600,
-  },
-  divider: {
-    height: '1px',
-    background: 'rgba(255,255,255,0.1)',
-    margin: '8px 20px',
-  },
-  userSection: {
-    padding: '20px',
-    borderTop: '1px solid rgba(255,255,255,0.1)',
-  },
-  userInfo: {
-    marginBottom: '12px',
-  },
-  userName: {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '0.9rem',
-    color: '#fff',
-    margin: 0,
-    fontWeight: 600,
-  },
-  userRoleLabel: {
-    margin: '6px 0 0',
-  },
-  roleBadge: {
-    display: 'inline-block',
-    padding: '2px 10px',
-    borderRadius: '10px',
-    fontSize: '0.7rem',
-    fontWeight: 700,
-    fontFamily: 'var(--font-sans)',
-    color: '#fff',
-    textTransform: 'uppercase' as const,
-    letterSpacing: '0.08em',
-  },
 }

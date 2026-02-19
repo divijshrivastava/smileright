@@ -134,20 +134,6 @@ export function validateFileExtension(filename: string, allowedExtensions: strin
 }
 
 /**
- * Check for SQL injection patterns (basic)
- */
-export function containsSQLInjection(input: string): boolean {
-  const sqlPatterns = [
-    /(\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|UNION)\b)/i,
-    /(--|;|\/\*|\*\/)/,
-    /(\bOR\b.*=.*)/i,
-    /(\bAND\b.*=.*)/i,
-  ]
-
-  return sqlPatterns.some(pattern => pattern.test(input))
-}
-
-/**
  * Comprehensive input validation for testimonial data
  */
 export interface TestimonialInput {
@@ -220,11 +206,6 @@ export function validateServiceInput(data: FormData, requireImage: boolean = tru
   const slug = slugify(rawSlug || title)
   if (!slug || slug.length < 3) {
     return { error: 'Slug must be at least 3 characters' }
-  }
-
-  // Avoid obvious SQLi patterns in slug (defense-in-depth)
-  if (containsSQLInjection(slug)) {
-    return { error: 'Invalid slug' }
   }
 
   if (!description || description.length < 10) {
@@ -387,10 +368,6 @@ export function validateContactInput(raw: Record<string, unknown>): ContactMessa
     return { error: 'Please consent to being contacted' }
   }
 
-  if (containsSQLInjection(name) || containsSQLInjection(message)) {
-    return { error: 'Invalid input detected' }
-  }
-
   const preferred_contact: ContactMessageInput['preferred_contact'] =
     preferredContactRaw === 'phone' || preferredContactRaw === 'whatsapp'
       ? preferredContactRaw
@@ -445,11 +422,6 @@ export function validateBlogInput(data: FormData): BlogInput | { error: string }
 
   if (!content_html || content_html.length < 10) {
     return { error: 'Content must be at least 10 characters' }
-  }
-
-  // Avoid obvious SQLi patterns in slug (defense-in-depth)
-  if (containsSQLInjection(slug)) {
-    return { error: 'Invalid slug' }
   }
 
   return {

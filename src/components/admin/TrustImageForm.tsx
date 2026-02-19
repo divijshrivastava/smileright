@@ -48,7 +48,7 @@ export default function TrustImageForm({ trustImage }: TrustImageFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} style={styles.form}>
+    <form onSubmit={handleSubmit} style={styles.form} className="admin-form-card">
       {error && <div style={styles.error}>{error}</div>}
 
       <div style={styles.field}>
@@ -69,6 +69,7 @@ export default function TrustImageForm({ trustImage }: TrustImageFormProps) {
           defaultValue={trustImage?.alt_text ?? ''}
           placeholder="e.g. Modern dental clinic interior"
           style={styles.input}
+          className="admin-input"
         />
       </div>
 
@@ -81,6 +82,7 @@ export default function TrustImageForm({ trustImage }: TrustImageFormProps) {
           defaultValue={trustImage?.caption ?? ''}
           placeholder="Enter an optional caption to display on the image..."
           style={{ ...styles.input, resize: 'vertical' as const }}
+          className="admin-input"
         />
       </div>
 
@@ -93,6 +95,7 @@ export default function TrustImageForm({ trustImage }: TrustImageFormProps) {
           min="0"
           defaultValue={trustImage?.display_order ?? 0}
           style={styles.input}
+          className="admin-input"
         />
       </div>
 
@@ -114,6 +117,7 @@ export default function TrustImageForm({ trustImage }: TrustImageFormProps) {
           type="button"
           onClick={() => router.back()}
           style={styles.cancelBtn}
+          className="admin-secondary-btn"
         >
           Cancel
         </button>
@@ -121,6 +125,7 @@ export default function TrustImageForm({ trustImage }: TrustImageFormProps) {
           type="submit"
           disabled={saving}
           style={{ ...styles.submitBtn, opacity: saving ? 0.7 : 1 }}
+          className="admin-primary-btn"
         >
           {saving ? 'Saving...' : isEditing ? 'Update Image' : 'Create Image'}
         </button>

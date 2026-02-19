@@ -17,13 +17,13 @@ export default async function EditBlogPage({
     .single()
 
   return (
-    <div>
+    <div className="admin-page-content">
       <h1 style={{
         fontFamily: 'var(--font-serif)',
         fontSize: '2rem',
         color: '#292828',
         marginBottom: '1.5rem',
-      }}>
+      }} className="admin-page-title">
         Edit Blog
       </h1>
       <BlogForm blog={(blog as Blog) ?? undefined} />

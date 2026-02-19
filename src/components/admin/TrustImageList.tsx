@@ -47,11 +47,12 @@ export default function TrustImageList({ images, userRole }: TrustImageListProps
 
   if (images.length === 0) {
     return (
-      <div style={styles.empty}>
-        <p>No trust section images yet.</p>
+      <div className="admin-empty-state">
+        <p className="admin-empty-state__title">No trust section images yet</p>
+        <p className="admin-empty-state__description">Upload your first trust image to build credibility.</p>
         <button
           onClick={() => router.push('/admin/trust-images/new')}
-          style={styles.createBtn}
+          className="admin-btn admin-btn--primary admin-btn--lg"
         >
           Create Your First Image
         </button>
@@ -61,39 +62,51 @@ export default function TrustImageList({ images, userRole }: TrustImageListProps
 
   return (
     <>
-      <div style={styles.list}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--admin-space-6)' }}>
         {images.map((image) => (
-          <div key={image.id} style={styles.card} className="trust-image-card">
-            <div style={styles.imageContainer} className="trust-image-container">
+          <div key={image.id} className="admin-card trust-image-card" style={{ display: 'flex', gap: 'var(--admin-space-6)', padding: 'var(--admin-space-6)' }}>
+            <div className="trust-image-container" style={{ flexShrink: 0 }}>
               <Image
                 src={image.image_url}
                 alt={image.alt_text || 'Trust image'}
                 width={300}
                 height={200}
-                style={{ objectFit: 'cover', borderRadius: '4px' }}
+                style={{ objectFit: 'cover', borderRadius: 'var(--admin-radius-sm)' }}
               />
             </div>
 
-            <div style={styles.content} className="trust-image-content">
-              <div style={styles.info}>
-                <p style={styles.caption}>
-                  {image.caption || <em style={{ color: '#999' }}>No caption</em>}
+            <div className="trust-image-content" style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <div>
+                <p style={{
+                  fontSize: 'var(--admin-text-base)',
+                  fontFamily: 'var(--admin-font-body)',
+                  margin: '0 0 var(--admin-space-2)',
+                  color: 'var(--admin-gray-900)',
+                }}>
+                  {image.caption || <em style={{ color: 'var(--admin-gray-400)' }}>No caption</em>}
                 </p>
-                <p style={styles.meta}>
-                  Order: {image.display_order} · {image.is_published ? 'Published' : 'Draft'}
+                <p style={{
+                  fontSize: 'var(--admin-text-xs)',
+                  color: 'var(--admin-gray-400)',
+                  fontFamily: 'var(--admin-font-body)',
+                  margin: 0,
+                  display: 'flex',
+                  gap: 'var(--admin-space-2)',
+                  alignItems: 'center',
+                }}>
+                  <span>Order: {image.display_order}</span>
+                  <span>·</span>
+                  <span className={`admin-badge ${image.is_published ? 'admin-badge--published' : 'admin-badge--draft'}`}>
+                    {image.is_published ? 'Published' : 'Draft'}
+                  </span>
                 </p>
               </div>
 
-              <div style={styles.actions} className="trust-image-actions">
+              <div className="trust-image-actions" style={{ display: 'flex', gap: 'var(--admin-space-3)', marginTop: 'var(--admin-space-4)' }}>
                 {isEditor && (
                   <button
                     onClick={() => handleTogglePublish(image.id, image.is_published)}
-                    style={{
-                      ...styles.actionBtn,
-                      background: image.is_published ? '#f5f5f5' : '#1B73BA',
-                      color: image.is_published ? '#292828' : '#fff',
-                    }}
-                    className="trust-action-btn"
+                    className={`admin-btn trust-action-btn ${image.is_published ? 'admin-btn--secondary' : 'admin-btn--primary'}`}
                   >
                     {canPublish
                       ? (image.is_published ? 'Unpublish' : 'Publish')
@@ -103,8 +116,7 @@ export default function TrustImageList({ images, userRole }: TrustImageListProps
                 {isEditor && (
                   <button
                     onClick={() => router.push(`/admin/trust-images/${image.id}/edit`)}
-                    style={styles.actionBtn}
-                    className="trust-action-btn"
+                    className="admin-btn admin-btn--secondary trust-action-btn"
                   >
                     Edit
                   </button>
@@ -113,8 +125,7 @@ export default function TrustImageList({ images, userRole }: TrustImageListProps
                   <button
                     onClick={() => handleDelete(image.id)}
                     disabled={deletingId === image.id}
-                    style={{ ...styles.actionBtn, ...styles.deleteBtn }}
-                    className="trust-action-btn"
+                    className="admin-btn admin-btn--danger-outline trust-action-btn"
                   >
                     {deletingId === image.id ? 'Deleting...' : 'Delete'}
                   </button>
@@ -143,18 +154,16 @@ export default function TrustImageList({ images, userRole }: TrustImageListProps
           }
           
           .trust-image-content {
-            padding: 1rem 0 0 0 !important;
+            padding: var(--admin-space-4) 0 0 0 !important;
           }
           
           .trust-image-actions {
             flex-direction: column !important;
-            gap: 10px !important;
+            gap: var(--admin-space-3) !important;
           }
           
           .trust-action-btn {
             width: 100% !important;
-            padding: 12px 16px !important;
-            font-size: 0.95rem !important;
             min-height: 48px !important;
             text-align: center !important;
           }
@@ -162,89 +171,4 @@ export default function TrustImageList({ images, userRole }: TrustImageListProps
       `}</style>
     </>
   )
-}
-
-const styles: Record<string, React.CSSProperties> = {
-  list: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1.5rem',
-  },
-  card: {
-    display: 'flex',
-    gap: '1.5rem',
-    padding: '1.5rem',
-    background: '#fff',
-    border: '1px solid #ddd',
-    borderRadius: '8px',
-    boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-  },
-  imageContainer: {
-    flexShrink: 0,
-  },
-  content: {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-  },
-  info: {
-    flex: 1,
-  },
-  caption: {
-    fontSize: '1rem',
-    fontFamily: 'var(--font-sans)',
-    margin: '0 0 0.5rem',
-    color: '#292828',
-  },
-  meta: {
-    fontSize: '0.85rem',
-    color: '#666',
-    fontFamily: 'var(--font-sans)',
-    margin: 0,
-  },
-  actions: {
-    display: 'flex',
-    gap: '0.75rem',
-    marginTop: '1rem',
-  },
-  actionBtn: {
-    padding: '8px 16px',
-    background: '#f5f5f5',
-    color: '#292828',
-    border: '1px solid #ddd',
-    borderRadius: '4px',
-    fontSize: '0.85rem',
-    fontWeight: 600,
-    fontFamily: 'var(--font-sans)',
-    cursor: 'pointer',
-    textTransform: 'uppercase' as const,
-    letterSpacing: '0.05em',
-  },
-  deleteBtn: {
-    background: '#fee',
-    color: '#c00',
-    borderColor: '#fcc',
-  },
-  empty: {
-    textAlign: 'center' as const,
-    padding: '3rem',
-    background: '#f9f9f9',
-    borderRadius: '8px',
-    border: '1px dashed #ddd',
-  },
-  createBtn: {
-    padding: '12px 24px',
-    background: '#1B73BA',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '4px',
-    fontSize: '0.95rem',
-    fontWeight: 600,
-    fontFamily: 'var(--font-sans)',
-    cursor: 'pointer',
-    marginTop: '1rem',
-    textTransform: 'uppercase' as const,
-    letterSpacing: '0.05em',
-  },
 }

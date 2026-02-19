@@ -24,7 +24,7 @@ export default async function TestimonialsPage() {
     .limit(100)
 
   return (
-    <div>
+    <div className="admin-page-content">
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
@@ -38,7 +38,7 @@ export default async function TestimonialsPage() {
           fontSize: '2rem',
           color: '#292828',
           margin: 0,
-        }}>
+        }} className="admin-page-title">
           Testimonials
         </h1>
         {canEditContent(role) && (
@@ -55,7 +55,7 @@ export default async function TestimonialsPage() {
               fontWeight: 600,
               whiteSpace: 'nowrap',
             }}
-            className="admin-add-btn"
+            className="admin-add-btn admin-primary-btn"
           >
             Add Testimonial
           </Link>

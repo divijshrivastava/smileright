@@ -42,11 +42,11 @@ export default async function ServicesPage() {
     .limit(100)
 
   return (
-    <div>
+    <div className="admin-page-content">
       <div style={styles.header} className="admin-page-header">
-        <h1 style={styles.title}>Treatments & Services</h1>
+        <h1 style={styles.title} className="admin-page-title">Treatments & Services</h1>
         {canEditContent(role) && (
-          <Link href="/admin/services/new" style={styles.addBtn} className="admin-add-btn">
+          <Link href="/admin/services/new" style={styles.addBtn} className="admin-add-btn admin-primary-btn">
             + Add Treatment/Service
           </Link>
         )}

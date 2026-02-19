@@ -52,13 +52,13 @@ export default async function ContactMessagesPage() {
   >[]) || []
 
   return (
-    <div>
+    <div className="admin-page-content">
       <div style={styles.header} className="admin-page-header">
         <div>
-          <h1 style={styles.title}>Contact Messages</h1>
-          <p style={styles.subtitle}>Leads received from contact forms across blog and treatment pages.</p>
+          <h1 style={styles.title} className="admin-page-title">Contact Messages</h1>
+          <p style={styles.subtitle} className="admin-page-subtitle">Leads received from contact forms across blog and treatment pages.</p>
         </div>
-        <span style={styles.countBadge}>{rows.length} shown</span>
+        <span style={styles.countBadge} className="admin-chip">{rows.length} shown</span>
       </div>
 
       {rows.length === 0 ? (

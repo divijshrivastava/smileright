@@ -8,87 +8,45 @@ export default function AdminError({
   reset: () => void
 }) {
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        <h1 style={styles.title}>Something went wrong</h1>
-        <p style={styles.message}>
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: '60vh',
+      padding: 'var(--admin-space-5)',
+      fontFamily: 'var(--admin-font-body)',
+    }}>
+      <div className="admin-card admin-card--form" style={{ maxWidth: '480px', width: '100%', textAlign: 'center' }}>
+        <h1 style={{
+          fontFamily: 'var(--admin-font-heading)',
+          fontSize: 'var(--admin-text-2xl)',
+          color: 'var(--admin-gray-900)',
+          marginBottom: 'var(--admin-space-4)',
+        }}>Something went wrong</h1>
+        <p style={{
+          fontSize: 'var(--admin-text-base)',
+          color: 'var(--admin-gray-500)',
+          lineHeight: 1.6,
+          marginBottom: 'var(--admin-space-6)',
+        }}>
           An error occurred in the admin panel. Please try again.
         </p>
         {error.digest && (
-          <p style={styles.digest}>Error reference: {error.digest}</p>
+          <p style={{
+            fontSize: 'var(--admin-text-xs)',
+            color: 'var(--admin-gray-400)',
+            marginBottom: 'var(--admin-space-6)',
+          }}>Error reference: {error.digest}</p>
         )}
-        <div style={styles.actions}>
-          <button onClick={reset} style={styles.retryBtn}>
+        <div style={{ display: 'flex', gap: 'var(--admin-space-4)', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <button onClick={reset} className="admin-btn admin-btn--primary admin-btn--lg">
             Try Again
           </button>
-          <a href="/admin" style={styles.homeLink}>
+          <a href="/admin" className="admin-btn admin-btn--secondary admin-btn--lg">
             Back to Dashboard
           </a>
         </div>
       </div>
     </div>
   )
-}
-
-const styles: Record<string, React.CSSProperties> = {
-  container: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: '60vh',
-    padding: '20px',
-    fontFamily: 'var(--font-sans, system-ui, sans-serif)',
-  },
-  card: {
-    background: '#fff',
-    padding: '48px',
-    borderRadius: '8px',
-    boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
-    maxWidth: '480px',
-    width: '100%',
-    textAlign: 'center' as const,
-  },
-  title: {
-    fontFamily: 'var(--font-serif, Georgia, serif)',
-    fontSize: '1.5rem',
-    color: '#292828',
-    marginBottom: '1rem',
-  },
-  message: {
-    fontSize: '1rem',
-    color: '#666',
-    lineHeight: 1.6,
-    marginBottom: '1.5rem',
-  },
-  digest: {
-    fontSize: '0.8rem',
-    color: '#999',
-    marginBottom: '1.5rem',
-  },
-  actions: {
-    display: 'flex',
-    gap: '1rem',
-    justifyContent: 'center',
-    flexWrap: 'wrap' as const,
-  },
-  retryBtn: {
-    padding: '12px 24px',
-    background: '#1B73BA',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '4px',
-    fontSize: '0.95rem',
-    fontWeight: 600,
-    cursor: 'pointer',
-  },
-  homeLink: {
-    padding: '12px 24px',
-    background: 'transparent',
-    color: '#1B73BA',
-    border: '1px solid #1B73BA',
-    borderRadius: '4px',
-    fontSize: '0.95rem',
-    fontWeight: 600,
-    textDecoration: 'none',
-  },
 }

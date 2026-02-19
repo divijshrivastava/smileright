@@ -2,7 +2,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 
 export default function AnalyticsLoading() {
     return (
-        <div style={{ padding: '2rem', maxWidth: '1600px', margin: '0 auto' }}>
+        <div style={{ maxWidth: '1600px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
                 <div>
                     <Skeleton style={{ height: '40px', width: '250px', marginBottom: '0.5rem' }} />
