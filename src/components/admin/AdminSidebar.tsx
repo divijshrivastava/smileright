@@ -223,7 +223,6 @@ export default function AdminSidebar({
             data: { url: '/admin/contact-messages' },
             icon: '/images/logo.png',
             badge: '/images/logo.png',
-            renotify: true,
           })
           return
         }
