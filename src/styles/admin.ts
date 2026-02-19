@@ -7,6 +7,12 @@ export const adminPageHeaderStyle: CSSProperties = {
   marginBottom: '2rem',
 }
 
+export const adminPageHeaderWrapStyle: CSSProperties = {
+  ...adminPageHeaderStyle,
+  flexWrap: 'wrap',
+  gap: '1rem',
+}
+
 export const adminPageTitleStyle: CSSProperties = {
   fontFamily: 'var(--font-serif)',
   fontSize: '2rem',
@@ -31,4 +37,11 @@ export const adminPrimaryActionLinkStyle: CSSProperties = {
   fontFamily: 'var(--font-sans)',
   textTransform: 'uppercase',
   letterSpacing: '0.05em',
+}
+
+export const adminPrimaryActionLinkCompactStyle: CSSProperties = {
+  ...adminPrimaryActionLinkStyle,
+  padding: '10px 20px',
+  fontSize: '0.9rem',
+  whiteSpace: 'nowrap',
 }

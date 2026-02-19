@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import BlogForm from '@/components/admin/BlogForm'
 import type { Blog } from '@/lib/types'
+import { adminPageTitleStyle } from '@/styles/admin'
 
 export default async function EditBlogPage({
   params,
@@ -18,12 +19,7 @@ export default async function EditBlogPage({
 
   return (
     <div className="admin-page-content">
-      <h1 style={{
-        fontFamily: 'var(--font-serif)',
-        fontSize: '2rem',
-        color: '#292828',
-        marginBottom: '1.5rem',
-      }} className="admin-page-title">
+      <h1 style={adminPageTitleStyle} className="admin-page-title">
         Edit Blog
       </h1>
       <BlogForm blog={(blog as Blog) ?? undefined} />

@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import TestimonialForm from '@/components/admin/TestimonialForm'
 import type { Testimonial } from '@/lib/types'
+import { adminPageTitleStyle } from '@/styles/admin'
 
 interface EditTestimonialPageProps {
   params: Promise<{ id: string }>
@@ -23,12 +24,7 @@ export default async function EditTestimonialPage({ params }: EditTestimonialPag
 
   return (
     <div className="admin-page-content">
-      <h1 style={{
-        fontFamily: 'var(--font-serif)',
-        fontSize: '2rem',
-        color: '#292828',
-        marginBottom: '2rem',
-      }} className="admin-page-title">
+      <h1 style={adminPageTitleStyle} className="admin-page-title">
         Edit Testimonial
       </h1>
       <TestimonialForm testimonial={testimonial as Testimonial} />

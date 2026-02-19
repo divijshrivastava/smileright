@@ -3,6 +3,11 @@ import { createClient } from '@/lib/supabase/server'
 import BlogList from '@/components/admin/BlogList'
 import type { Blog, Profile } from '@/lib/types'
 import { canEditContent } from '@/lib/permissions'
+import {
+  adminPageHeaderWrapStyle,
+  adminPageTitleInHeaderStyle,
+  adminPrimaryActionLinkCompactStyle,
+} from '@/styles/admin'
 
 export default async function BlogsPage() {
   const supabase = await createClient()
@@ -25,36 +30,14 @@ export default async function BlogsPage() {
 
   return (
     <div className="admin-page-content">
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: '2rem',
-        flexWrap: 'wrap',
-        gap: '1rem',
-      }} className="admin-page-header">
-        <h1 style={{
-          fontFamily: 'var(--font-serif)',
-          fontSize: '2rem',
-          color: '#292828',
-          margin: 0,
-        }} className="admin-page-title">
+      <div style={adminPageHeaderWrapStyle} className="admin-page-header">
+        <h1 style={adminPageTitleInHeaderStyle} className="admin-page-title">
           Blogs
         </h1>
         {canEditContent(role) && (
           <Link
             href="/admin/blogs/new"
-            style={{
-              padding: '10px 20px',
-              background: '#1B73BA',
-              color: '#fff',
-              borderRadius: '4px',
-              textDecoration: 'none',
-              fontFamily: 'var(--font-sans)',
-              fontSize: '0.9rem',
-              fontWeight: 600,
-              whiteSpace: 'nowrap',
-            }}
+            style={adminPrimaryActionLinkCompactStyle}
             className="admin-add-btn admin-primary-btn"
           >
             Add Blog
