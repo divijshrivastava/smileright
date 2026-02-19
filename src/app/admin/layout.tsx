@@ -1,7 +1,31 @@
+import type { Metadata, Viewport } from 'next'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import AdminSidebar from '@/components/admin/AdminSidebar'
 import type { Profile } from '@/lib/types'
+
+export const viewport: Viewport = {
+  themeColor: '#0f172a',
+}
+
+export const metadata: Metadata = {
+  title: 'Smile Right Admin',
+  description: 'Admin dashboard for Smile Right',
+  manifest: '/admin/manifest.webmanifest',
+  applicationName: 'Smile Right Admin',
+  appleWebApp: {
+    capable: true,
+    title: 'Smile Right Admin',
+    statusBarStyle: 'black-translucent',
+  },
+  icons: {
+    icon: [
+      { url: '/images/logo.png', sizes: '192x192', type: 'image/png' },
+      { url: '/images/logo.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: [{ url: '/images/logo.png' }],
+  },
+}
 
 export default async function AdminLayout({
   children,
