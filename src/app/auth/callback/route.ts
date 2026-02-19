@@ -11,8 +11,7 @@ export async function GET(request: Request) {
   const next = searchParams.get('next') ?? '/admin'
 
   // Validate redirect URL to prevent open redirect attacks
-  const allowedRedirectPaths = ['/admin', '/admin/testimonials', '/admin/services', '/admin/trust-images']
-  const isValidRedirect = allowedRedirectPaths.some(path => next.startsWith(path))
+  const isValidRedirect = next === '/admin' || next.startsWith('/admin/')
   const redirectPath = isValidRedirect ? next : '/admin'
 
   if (code) {
