@@ -1,4 +1,4 @@
-'use server'
+import 'server-only'
 
 import { createClient } from '@/lib/supabase/server'
 import { checkRateLimit, rateLimitConfigs } from '@/lib/security/rate-limit'
