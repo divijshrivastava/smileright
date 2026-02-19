@@ -1,6 +1,12 @@
 import ContactSection from './ContactSection'
 
 export default function ClinicInfo() {
+  const embedApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_EMBED_API_KEY
+  const clinicQuery = encodeURIComponent('19.214694,72.869028')
+  const mapSrc = embedApiKey
+    ? `https://www.google.com/maps/embed/v1/place?key=${embedApiKey}&q=${clinicQuery}`
+    : 'https://www.google.com/maps?q=19.214694,72.869028&z=17&output=embed'
+
   return (
     <section id="contact" className="clinic-info">
       <div className="container">
@@ -81,7 +87,8 @@ export default function ClinicInfo() {
 
               <div className="map-container">
                 <iframe
-                  src= "https://www.google.com/maps?q=19.214694,72.869028&z=17&output=embed"                  style={{ border: 0 }}
+                  src={mapSrc}
+                  style={{ border: 0 }}
                   allowFullScreen
                   allow="fullscreen"
                   loading="lazy"
