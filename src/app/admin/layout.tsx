@@ -32,9 +32,18 @@ export default async function AdminLayout({
     .select('*', { count: 'exact', head: true })
     .eq('status', 'new')
 
+  const { count: pendingApprovalCount } = await supabase
+    .from('pending_changes')
+    .select('*', { count: 'exact', head: true })
+    .eq('status', 'pending')
+
   return (
     <div style={{ minHeight: '100vh' }} className="admin-layout-shell">
-      <AdminSidebar profile={profile as Profile} unreadContactCount={unreadContactCount ?? 0} />
+      <AdminSidebar
+        profile={profile as Profile}
+        unreadContactCount={unreadContactCount ?? 0}
+        pendingApprovalCount={pendingApprovalCount ?? 0}
+      />
       <main style={{
         padding: '40px',
         background: 'transparent',
